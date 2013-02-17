@@ -71,7 +71,7 @@ function setupEventListener(component, eventname, callback, arg) {
 }
 
 function find(component, uid) {
-  if (component.el == undefined) // debugging trap
+  if (component.el === undefined) // debugging trap
      debugger;
   return component.el.dom.getElementsByClassName(uid)[0];
 }
