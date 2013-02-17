@@ -775,7 +775,7 @@ var pdfview = {
   watchScroll: function(viewAreaElement, state, callback) {
     state.down = true;
     state.lastY = viewAreaElement.scrollTop;
-    viewAreaElement.addEventListener('scroll', function webViewerScroll(evt) {
+    viewAreaElement.addEventListener('scroll', function(evt) {
       var currentY = viewAreaElement.scrollTop;
       var lastY = state.lastY;
       if (currentY > lastY)
@@ -960,7 +960,7 @@ var pdfview = {
       this.loadingBar = new ProgressBar('#loadingBar', {}, this.component);
     }
 
-    setupEventListener(this.component, 'message', function window_message(e) {
+    setupEventListener(this.component, 'message', function(e) {
       var args = e.data;
 
       if (typeof args !== 'object' || !('pdfjsLoadAction' in args))
@@ -1115,7 +1115,7 @@ var pdfview = {
 //    return;
 //  this.fellback = true;
 //  var url = this.url.split('#')[0];
-//  FirefoxCom.request('fallback', url, function response(download) {
+//  FirefoxCom.request('fallback', url, function(download) {
 //    if (!download)
 //      return;
 //    PDFView.download();
@@ -1984,11 +1984,11 @@ var PageView = function pageView(container, pdfPage, id, scale,
             e.appendChild(create(component,'br'));
         }
         text.appendChild(e);
-        image.addEventListener('mouseover', function annotationImageOver() {
+        image.addEventListener('mouseover', function() {
            content.removeAttribute('hidden');
         }, false);
 
-        image.addEventListener('mouseout', function annotationImageOut() {
+        image.addEventListener('mouseout', function() {
            content.setAttribute('hidden', true);
         }, false);
       }
@@ -2855,7 +2855,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
 };
 
 /// TODO
-//document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
+//document.addEventListener('DOMContentLoaded', function(evt) {
 var PDFViewer = function pdfviewerInitialize(component, src, hashParams) {
     var pdfview = new PDFView(component);
     var file = src;
@@ -3140,7 +3140,7 @@ function selectScaleOption(value, component) {
 }
 
 function initEvents(component, pdfview) {
-setupEventListener(component, 'resize', function webViewerResize(evt) {
+setupEventListener(component, 'resize', function(evt) {
   if (pdfview.initialized &&
       (find(component,'pageWidthOption').selected ||
        find(component,'pageFitOption').selected ||
@@ -3149,11 +3149,11 @@ setupEventListener(component, 'resize', function webViewerResize(evt) {
   updateViewarea.bind(pdfview)(component);
 });
 
-setupEventListener(component, 'hashchange', function webViewerHashchange(evt) {
+setupEventListener(component, 'hashchange', function(evt) {
   pdfview.setHash(document.location.hash.substring(1));
 });
 
-setupEventListener(component, 'change', function webViewerChange(evt) {
+setupEventListener(component, 'change', function(evt) {
   var files = evt.target.files;
   if (!files || files.length === 0)
     return;
@@ -3175,7 +3175,7 @@ setupEventListener(component, 'change', function webViewerChange(evt) {
   find(component,'download').setAttribute('hidden', 'true');
 }, true);
 
-setupEventListener(component, 'localized', function localized(evt) {
+setupEventListener(component, 'localized', function(evt) {
   document.getElementsByTagName('html')[0].dir = mozL10n.getDirection();
 
   // Adjust the width of the zoom box to fit the content.
@@ -3189,7 +3189,7 @@ setupEventListener(component, 'localized', function localized(evt) {
   select.setAttribute('style', 'min-width: ' + (width + 20) + 'px;');
 }, true);
 
-setupEventListener(component, 'scalechange', function scalechange(evt) {
+setupEventListener(component, 'scalechange', function(evt) {
   var customScaleOption = find(component, 'customScaleOption');
   customScaleOption.selected = false;
 
@@ -3213,7 +3213,7 @@ setupEventListener(component, 'scalechange', function scalechange(evt) {
   updateViewarea.bind(pdfview)(component);
 }, true);
 
-setupEventListener(component, 'pagechange', function pagechange(evt) {
+setupEventListener(component, 'pagechange', function(evt) {
   var page = evt.pageNumber;
   if (pdfview.previousPageNumber !== page) {
     find(component,'pageNumber').value = page;
@@ -3418,11 +3418,11 @@ c.addEventListener('keydown', function(evt) {
   }
 });
 
-setupEventListener(component, 'beforeprint', function beforePrint(evt) {
+setupEventListener(component, 'beforeprint', function(evt) {
   pdfview.beforePrint();
 });
 
-setupEventListener(component, 'afterprint', function afterPrint(evt) {
+setupEventListener(component, 'afterprint', function(evt) {
   pdfview.afterPrint();
 });
 
