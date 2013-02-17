@@ -13,36 +13,18 @@
  * limitations under the License.
  */
 
-* {
-  padding: 0;
-  margin: 0;
-}
-
-html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
+.pdfviewer .outerContainer {
   background-color: #404040;
   background-image: url(images/texture.png);
 }
-
-body,
-input,
-button,
-select {
-  font: message-box;
-}
-
-.hidden {
+.pdfviewer .hidden {
   display: none;
 }
-[hidden] {
+.pdfviewer [hidden] {
   display: none !important;
 }
 
-#viewerContainer:-webkit-full-screen {
+.viewerContainer:-webkit-full-screen {
   top: 0px;
   border-top: 2px solid transparent;
   background-color: #404040;
@@ -53,7 +35,7 @@ select {
   cursor: none;
 }
 
-#viewerContainer:-moz-full-screen {
+.viewerContainer:-moz-full-screen {
   top: 0px;
   border-top: 2px solid transparent;
   background-color: #404040;
@@ -64,7 +46,7 @@ select {
   cursor: none;
 }
 
-#viewerContainer:fullscreen {
+.viewerContainer:fullscreen {
   top: 0px;
   border-top: 2px solid transparent;
   background-color: #404040;
@@ -88,38 +70,28 @@ select {
   margin-bottom: 100%;
 }
 
-#viewerContainer.presentationControls {
+.viewerContainer.presentationControls {
   cursor: default;
 }
 
 /* outer/inner center provides horizontal center */
-html[dir='ltr'] .outerCenter {
+.outerCenter {
   float: right;
   position: relative;
   right: 50%;
 }
-html[dir='rtl'] .outerCenter {
-  float: left;
-  position: relative;
-  left: 50%;
-}
-html[dir='ltr'] .innerCenter {
+.innerCenter {
   float: right;
   position: relative;
   right: -50%;
 }
-html[dir='rtl'] .innerCenter {
-  float: left;
-  position: relative;
-  left: -50%;
-}
 
-#outerContainer {
+.outerContainer {
   width: 100%;
   height: 100%;
 }
 
-#sidebarContainer {
+.sidebarContainer {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -137,7 +109,7 @@ html[dir='rtl'] .innerCenter {
   transition-timing-function: ease;
 
 }
-html[dir='ltr'] #sidebarContainer {
+.sidebarContainer {
   -webkit-transition-property: left;
   -moz-transition-property: left;
   -ms-transition-property: left;
@@ -145,26 +117,16 @@ html[dir='ltr'] #sidebarContainer {
   transition-property: left;
   left: -200px;
 }
-html[dir='rtl'] #sidebarContainer {
-  -webkit-transition-property: right;
-  -ms-transition-property: right;
-  -o-transition-property: right;
-  transition-property: right;
-  right: -200px;
-}
 
-#outerContainer.sidebarMoving > #sidebarContainer,
-#outerContainer.sidebarOpen > #sidebarContainer {
+.outerContainer.sidebarMoving > .sidebarContainer,
+.outerContainer.sidebarOpen > .sidebarContainer {
   visibility: visible;
 }
-html[dir='ltr'] #outerContainer.sidebarOpen > #sidebarContainer {
+.outerContainer.sidebarOpen > .sidebarContainer {
   left: 0px;
 }
-html[dir='rtl'] #outerContainer.sidebarOpen > #sidebarContainer {
-  right: 0px;
-}
 
-#mainContainer {
+.mainContainer {
   position: absolute;
   top: 0;
   right: 0;
@@ -181,7 +143,7 @@ html[dir='rtl'] #outerContainer.sidebarOpen > #sidebarContainer {
   transition-duration: 200ms;
   transition-timing-function: ease;
 }
-html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
+.outerContainer.sidebarOpen > .mainContainer {
   -webkit-transition-property: left;
   -moz-transition-property: left;
   -ms-transition-property: left;
@@ -189,16 +151,8 @@ html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
   transition-property: left;
   left: 200px;
 }
-html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
-  -webkit-transition-property: right;
-  -moz-transition-property: right;
-  -ms-transition-property: right;
-  -o-transition-property: right;
-  transition-property: right;
-  right: 200px;
-}
 
-#sidebarContent {
+.sidebarContent {
   top: 32px;
   bottom: 0;
   overflow: auto;
@@ -208,14 +162,11 @@ html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
   background-color: hsla(0,0%,0%,.1);
   box-shadow: inset -1px 0 0 hsla(0,0%,0%,.25);
 }
-html[dir='ltr'] #sidebarContent {
+.sidebarContent {
   left: 0;
 }
-html[dir='rtl'] #sidebarContent {
-  right: 0;
-}
 
-#viewerContainer {
+.viewerContainer {
   overflow: auto;
   box-shadow: inset 1px 0 0 hsla(0,0%,100%,.05);
   position: absolute;
@@ -234,11 +185,11 @@ html[dir='rtl'] #sidebarContent {
   cursor: default;
 }
 
-#toolbarContainer {
+.toolbarContainer {
   width: 100%;
 }
 
-#toolbarSidebar {
+.toolbarSidebar {
   width: 200px;
   height: 32px;
   background-image: url(images/texture.png),
@@ -258,7 +209,7 @@ html[dir='rtl'] #sidebarContent {
               0 0 1px hsla(0,0%,0%,.1);
 }
 
-#toolbarViewer, .findbar {
+.toolbarViewer, .findbar {
   position: relative;
   height: 32px;
   background-image: url(images/texture.png),
@@ -294,12 +245,8 @@ html[dir='rtl'] #sidebarContent {
   cursor: default;
 }
 
-html[dir='ltr'] .findbar {
+.findbar {
   left: 68px;
-}
-
-html[dir='rtl'] .findbar {
-  right: 68px;
 }
 
 .findbar label {
@@ -307,7 +254,7 @@ html[dir='rtl'] .findbar {
   -moz-user-select:none;
 }
 
-#findInput[data-status="pending"] {
+.findInput[data-status="pending"] {
   background-image: url(images/loading-small.png);
   background-repeat: no-repeat;
   background-position: right;
@@ -336,27 +283,17 @@ html[dir='rtl'] .findbar {
   border-width: 9px;
 }
 
-html[dir='ltr'] .doorHanger:after {
+.doorHanger:after {
   left: 16px;
   margin-left: -8px;
 }
 
-html[dir='ltr'] .doorHanger:before {
+.doorHanger:before {
   left: 16px;
   margin-left: -9px;
 }
 
-html[dir='rtl'] .doorHanger:after {
-  right: 16px;
-  margin-right: -8px;
-}
-
-html[dir='rtl'] .doorHanger:before {
-  right: 16px;
-  margin-right: -9px;
-}
-
-#findMsg {
+.findMsg {
   font-style: italic;
   color: #A6B7D0;
 }
@@ -365,54 +302,35 @@ html[dir='rtl'] .doorHanger:before {
   background-color: rgb(255, 137, 153);
 }
 
-html[dir='ltr'] #toolbarViewerLeft {
-  margin-left: -1px;
-}
-html[dir='rtl'] #toolbarViewerRight {
+.toolbarViewerLeft {
   margin-left: -1px;
 }
 
-
-html[dir='ltr'] #toolbarViewerLeft,
-html[dir='rtl'] #toolbarViewerRight {
+.toolbarViewerLeft {
   position: absolute;
   top: 0;
   left: 0;
 }
-html[dir='ltr'] #toolbarViewerRight,
-html[dir='rtl'] #toolbarViewerLeft {
+.toolbarViewerRight {
   position: absolute;
   top: 0;
   right: 0;
 }
-html[dir='ltr'] #toolbarViewerLeft > *,
-html[dir='ltr'] #toolbarViewerMiddle > *,
-html[dir='ltr'] #toolbarViewerRight > *,
-html[dir='ltr'] .findbar > * {
+.toolbarViewerLeft > *,
+.toolbarViewerMiddle > *,
+.toolbarViewerRight > *,
+.findbar > * {
   float: left;
 }
-html[dir='rtl'] #toolbarViewerLeft > *,
-html[dir='rtl'] #toolbarViewerMiddle > *,
-html[dir='rtl'] #toolbarViewerRight > *,
-html[dir='rtl'] .findbar > * {
-  float: right;
-}
 
-html[dir='ltr'] .splitToolbarButton {
+.splitToolbarButton {
   margin: 3px 2px 4px 0;
   display: inline-block;
 }
-html[dir='rtl'] .splitToolbarButton {
-  margin: 3px 0 4px 2px;
-  display: inline-block;
-}
-html[dir='ltr'] .splitToolbarButton > .toolbarButton {
+
+.splitToolbarButton > .toolbarButton {
   border-radius: 0;
   float: left;
-}
-html[dir='rtl'] .splitToolbarButton > .toolbarButton {
-  border-radius: 0;
-  float: right;
 }
 
 .toolbarButton {
@@ -485,8 +403,7 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton {
               0 0 1px hsla(0,0%,0%,.05);
   z-index: 199;
 }
-html[dir='ltr'] .splitToolbarButton > .toolbarButton:first-child,
-html[dir='rtl'] .splitToolbarButton > .toolbarButton:last-child {
+.splitToolbarButton > .toolbarButton:first-child {
   position: relative;
   margin: 0;
   margin-right: -1px;
@@ -494,8 +411,7 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton:last-child {
   border-bottom-left-radius: 2px;
   border-right-color: transparent;
 }
-html[dir='ltr'] .splitToolbarButton > .toolbarButton:last-child,
-html[dir='rtl'] .splitToolbarButton > .toolbarButton:first-child {
+.splitToolbarButton > .toolbarButton:last-child {
   position: relative;
   margin: 0;
   margin-left: -1px;
@@ -512,11 +428,8 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton:first-child {
   display: inline-block;
   margin: 5px 0;
 }
-html[dir='ltr'] .splitToolbarButtonSeparator {
+.splitToolbarButtonSeparator {
   float:left;
-}
-html[dir='rtl'] .splitToolbarButtonSeparator {
-  float:right;
 }
 .splitToolbarButton:hover > .splitToolbarButtonSeparator,
 .splitToolbarButton.toggled > .splitToolbarButtonSeparator {
@@ -571,15 +484,10 @@ html[dir='rtl'] .splitToolbarButtonSeparator {
   transition-timing-function: ease;
 }
 
-html[dir='ltr'] .toolbarButton,
-html[dir='ltr'] .dropdownToolbarButton {
+.toolbarButton,
+.dropdownToolbarButton {
   margin: 3px 2px 4px 0;
 }
-html[dir='rtl'] .toolbarButton,
-html[dir='rtl'] .dropdownToolbarButton {
-  margin: 3px 0 4px 2px;
-}
-
 .toolbarButton:hover,
 .toolbarButton:focus,
 .dropdownToolbarButton {
@@ -665,16 +573,14 @@ html[dir='rtl'] .dropdownToolbarButton {
 }
 
 .dropdownToolbarButton {
+  min-width: 120px;
   max-width: 120px;
   padding: 3px 2px 2px;
   overflow: hidden;
   background: url(images/toolbarButton-menuArrows.png) no-repeat;
 }
-html[dir='ltr'] .dropdownToolbarButton {
+.dropdownToolbarButton {
   background-position: 95%;
-}
-html[dir='rtl'] .dropdownToolbarButton {
-  background-position: 5%;
 }
 
 .dropdownToolbarButton > select {
@@ -693,115 +599,91 @@ html[dir='rtl'] .dropdownToolbarButton {
   background: hsl(0,0%,24%);
 }
 
-#customScaleOption {
+.customScaleOption {
   display: none;
 }
 
-#pageWidthOption {
+.pageWidthOption {
   border-bottom: 1px rgba(255, 255, 255, .5) solid;
 }
 
-html[dir='ltr'] .splitToolbarButton:first-child,
-html[dir='ltr'] .toolbarButton:first-child,
-html[dir='rtl'] .splitToolbarButton:last-child,
-html[dir='rtl'] .toolbarButton:last-child {
+.splitToolbarButton:first-child,
+.toolbarButton:first-child {
   margin-left: 4px;
 }
-html[dir='ltr'] .splitToolbarButton:last-child,
-html[dir='ltr'] .toolbarButton:last-child,
-html[dir='rtl'] .splitToolbarButton:first-child,
-html[dir='rtl'] .toolbarButton:first-child {
+.splitToolbarButton:last-child,
+.toolbarButton:last-child {
   margin-right: 4px;
 }
 
-.toolbarButtonSpacer {
+.pdfviewer .toolbarButtonSpacer {
   width: 30px;
   display: inline-block;
   height: 1px;
 }
 
-.toolbarButtonFlexibleSpacer {
+.pdfviewer .toolbarButtonFlexibleSpacer {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   min-width: 30px;
 }
 
-.toolbarButton#sidebarToggle::before {
+.pdfviewer .toolbarButton.sidebarToggle::before {
   display: inline-block;
   content: url(images/toolbarButton-sidebarToggle.png);
 }
 
-html[dir='ltr'] .toolbarButton.findPrevious::before {
+.pdfviewer .toolbarButton.findPrevious::before {
   display: inline-block;
   content: url(images/findbarButton-previous.png);
 }
 
-html[dir='rtl'] .toolbarButton.findPrevious::before {
-  display: inline-block;
-  content: url(images/findbarButton-previous-rtl.png);
-}
-
-html[dir='ltr'] .toolbarButton.findNext::before {
+.pdfviewer .toolbarButton.findNext::before {
   display: inline-block;
   content: url(images/findbarButton-next.png);
 }
 
-html[dir='rtl'] .toolbarButton.findNext::before {
-  display: inline-block;
-  content: url(images/findbarButton-next-rtl.png);
-}
-
-html[dir='ltr'] .toolbarButton.pageUp::before {
+.pdfviewer .toolbarButton.pageUp::before {
   display: inline-block;
   content: url(images/toolbarButton-pageUp.png);
 }
 
-html[dir='rtl'] .toolbarButton.pageUp::before {
-  display: inline-block;
-  content: url(images/toolbarButton-pageUp-rtl.png);
-}
-
-html[dir='ltr'] .toolbarButton.pageDown::before {
+.pdfviewer .toolbarButton.pageDown::before {
   display: inline-block;
   content: url(images/toolbarButton-pageDown.png);
 }
 
-html[dir='rtl'] .toolbarButton.pageDown::before {
-  display: inline-block;
-  content: url(images/toolbarButton-pageDown-rtl.png);
-}
-
-.toolbarButton.zoomOut::before {
+.pdfviewer .toolbarButton.zoomOut::before {
   display: inline-block;
   content: url(images/toolbarButton-zoomOut.png);
 }
 
-.toolbarButton.zoomIn::before {
+.pdfviewer .toolbarButton.zoomIn::before {
   display: inline-block;
   content: url(images/toolbarButton-zoomIn.png);
 }
 
-.toolbarButton.fullscreen::before {
+.pdfviewer .toolbarButton.fullscreen::before {
   display: inline-block;
   content: url(images/toolbarButton-fullscreen.png);
 }
 
-.toolbarButton.print::before {
+.pdfviewer .toolbarButton.print::before {
   display: inline-block;
   content: url(images/toolbarButton-print.png);
 }
 
-.toolbarButton.openFile::before {
+.pdfviewer .toolbarButton.openFile::before {
   display: inline-block;
   content: url(images/toolbarButton-openFile.png);
 }
 
-.toolbarButton.download::before {
+.pdfviewer .toolbarButton.download::before {
   display: inline-block;
   content: url(images/toolbarButton-download.png);
 }
 
-.toolbarButton.bookmark {
+.pdfviewer .toolbarButton.bookmark {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -809,27 +691,27 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
   padding-top: 4px;
 }
 
-.toolbarButton.bookmark::before {
+.pdfviewer .toolbarButton.bookmark::before {
   content: url(images/toolbarButton-bookmark.png);
 }
 
-#viewThumbnail.toolbarButton::before {
+.pdfviewer .viewThumbnail.toolbarButton::before {
   display: inline-block;
   content: url(images/toolbarButton-viewThumbnail.png);
 }
 
-#viewOutline.toolbarButton::before {
+.pdfviewer .viewOutline.toolbarButton::before {
   display: inline-block;
   content: url(images/toolbarButton-viewOutline.png);
 }
 
-#viewFind.toolbarButton::before {
+.pdfviewer .viewFind.toolbarButton::before {
   display: inline-block;
   content: url(images/toolbarButton-search.png);
 }
 
 
-.toolbarField {
+.pdfviewer .toolbarField {
   padding: 3px 6px;
   margin: 4px 0 4px 0;
   border: 1px solid transparent;
@@ -850,34 +732,34 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
   -moz-transition-timing-function: ease;
 }
 
-.toolbarField[type=checkbox] {
+.pdfviewer .toolbarField[type=checkbox] {
   display: inline-block;
   margin: 8px 0px;
 }
 
-.toolbarField.pageNumber {
+.pdfviewer .toolbarField.pageNumber {
   min-width: 16px;
   text-align: right;
   width: 40px;
 }
 
-.toolbarField.pageNumber::-webkit-inner-spin-button,
-.toolbarField.pageNumber::-webkit-outer-spin-button {
+.pdfviewer .toolbarField.pageNumber::-webkit-inner-spin-button,
+.pdfviewer .toolbarField.pageNumber::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.toolbarField:hover {
+.pdfviewer .toolbarField:hover {
   background-color: hsla(0,0%,100%,.11);
   border-color: hsla(0,0%,0%,.4) hsla(0,0%,0%,.43) hsla(0,0%,0%,.45);
 }
 
-.toolbarField:focus {
+.pdfviewer .toolbarField:focus {
   background-color: hsla(0,0%,100%,.15);
   border-color: hsla(204,100%,65%,.8) hsla(204,100%,65%,.85) hsla(204,100%,65%,.9);
 }
 
-.toolbarLabel {
+.pdfviewer .toolbarLabel {
   min-width: 16px;
   padding: 3px 6px 3px 2px;
   margin: 4px 2px 4px 0;
@@ -892,25 +774,24 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
   cursor: default;
 }
 
-#thumbnailView {
+.pdfviewer .thumbnailView {
   position: absolute;
-  width: 120px;
   top: 0;
   bottom: 0;
   padding: 10px 40px 0;
   overflow: auto;
 }
 
-.thumbnail {
+.pdfviewer .thumbnail {
   margin-bottom: 15px;
   float: left;
 }
 
-.thumbnail:not([data-loaded]) {
+.pdfviewer .thumbnail:not([data-loaded]) {
   border: 1px dashed rgba(255, 255, 255, 0.5);
 }
 
-.thumbnailImage {
+.pdfviewer .thumbnailImage {
   -moz-transition-duration: 150ms;
   border: 1px solid transparent;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -940,12 +821,12 @@ a:focus > .thumbnail > .thumbnailSelectionRing,
   color: hsla(0,0%,100%,.9);
 }
 
-.thumbnail.selected > .thumbnailSelectionRing > .thumbnailImage {
+.pdfviewer .thumbnail.selected > .thumbnailSelectionRing > .thumbnailImage {
   box-shadow: 0 0 0 1px hsla(0,0%,0%,.5);
   opacity: 1;
 }
 
-.thumbnail.selected > .thumbnailSelectionRing {
+.pdfviewer .thumbnail.selected > .thumbnailSelectionRing {
   background-color: hsla(0,0%,100%,.3);
   background-image: -moz-linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
   background-clip: padding-box;
@@ -955,7 +836,7 @@ a:focus > .thumbnail > .thumbnailSelectionRing,
   color: hsla(0,0%,100%,1);
 }
 
-#outlineView {
+.outlineView {
   position: absolute;
   width: 192px;
   top: 0;
@@ -966,12 +847,8 @@ a:focus > .thumbnail > .thumbnailSelectionRing,
   -moz-user-select:none;
 }
 
-html[dir='ltr'] .outlineItem > .outlineItems {
+.outlineItem > .outlineItems {
   margin-left: 20px;
-}
-
-html[dir='rtl'] .outlineItem > .outlineItems {
-  margin-right: 20px;
 }
 
 .outlineItem > a {
@@ -989,12 +866,8 @@ html[dir='rtl'] .outlineItem > .outlineItems {
   white-space: normal;
 }
 
-html[dir='ltr'] .outlineItem > a {
+.outlineItem > a {
   padding: 2px 0 5px 10px;
-}
-
-html[dir='rtl'] .outlineItem > a {
-  padding: 2px 10px 5px 0;
 }
 
 .outlineItem > a:hover {
@@ -1024,7 +897,7 @@ html[dir='rtl'] .outlineItem > a {
   font-style: italic;
 }
 
-#findScrollView {
+.findScrollView {
   position: absolute;
   top: 10px;
   bottom: 10px;
@@ -1032,7 +905,7 @@ html[dir='rtl'] .outlineItem > a {
   width: 280px;
 }
 
-#sidebarControls {
+.pdfviewer .sidebarControls {
   position:absolute;
   width: 180px;
   height: 32px;
@@ -1040,12 +913,12 @@ html[dir='rtl'] .outlineItem > a {
   bottom: 35px;
 }
 
-canvas {
+.pdfviewer canvas {
   margin: auto;
   display: block;
 }
 
-.page {
+.pdfviewer .page {
   direction: ltr;
   width: 816px;
   height: 1056px;
@@ -1058,12 +931,12 @@ canvas {
   background-color: white;
 }
 
-.page > a {
+.pdfviewer .page > a {
   display: block;
   position: absolute;
 }
 
-.page > a:hover {
+.pdfviewer .page > a:hover {
   opacity: 0.2;
   background: #ff0;
   -webkit-box-shadow: 0px 2px 10px #ff0;
@@ -1081,7 +954,7 @@ canvas {
   background: url('images/loading-icon.gif') center no-repeat;
 }
 
-#loadingBox {
+.loadingBox {
   position: absolute;
   top: 50%;
   margin-top: -25px;
@@ -1092,7 +965,7 @@ canvas {
   font-size: 14px;
 }
 
-#loadingBar {
+.loadingBar {
   display: inline-block;
   clear: both;
   margin: 0px;
@@ -1111,7 +984,7 @@ canvas {
               0 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-#loadingBar .progress {
+.loadingBar .progress {
   display: inline-block;
   float: left;
 
@@ -1130,12 +1003,12 @@ canvas {
   height: 100%;
 }
 
-#loadingBar .progress.full {
+.loadingBar .progress.full {
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
 
-#loadingBar .progress.indeterminate {
+.loadingBar .progress.indeterminate {
   width: 100%;
   height: 25px;
   background-image: -moz-linear-gradient( 30deg, #404040, #404040 15%, #898989, #404040 85%, #404040);
@@ -1165,7 +1038,6 @@ canvas {
   bottom: 0;
   color: #000;
   font-family: sans-serif;
-  overflow: hidden;
 }
 
 .textLayer > div {
@@ -1234,7 +1106,7 @@ canvas {
   margin: 0px;
 }
 
-#errorWrapper {
+.errorWrapper {
   background: none repeat scroll 0 0 #FF5555;
   color: white;
   left: 0;
@@ -1246,15 +1118,15 @@ canvas {
   font-size: 0.8em;
 }
 
-#errorMessageLeft {
+.errorMessageLeft {
   float: left;
 }
 
-#errorMessageRight {
+.errorMessageRight {
   float: right;
 }
 
-#errorMoreInfo {
+.errorMoreInfo {
   background-color: #FFFFFF;
   color: black;
   padding: 3px;
@@ -1272,7 +1144,7 @@ canvas {
   margin-top: 5px;
 }
 
-#PDFBug {
+.PDFBug {
   background: none repeat scroll 0 0 white;
   border: 1px solid #666666;
   position: fixed;
@@ -1283,12 +1155,12 @@ canvas {
   padding: 0;
   width: 300px;
 }
-#PDFBug .controls {
+.PDFBug .controls {
     background:#EEEEEE;
     border-bottom: 1px solid #666666;
     padding: 3px;
 }
-#PDFBug .panels {
+.PDFBug .panels {
   bottom: 0;
   left: 0;
   overflow: auto;
@@ -1296,7 +1168,7 @@ canvas {
   right: 0;
   top: 27px;
 }
-#PDFBug button.active {
+.PDFBug button.active {
   font-weight: bold;
 }
 .debuggerShowText {
@@ -1308,25 +1180,25 @@ canvas {
   background: none repeat scroll 0 0 yellow;
   opacity: 0.3;
 }
-#PDFBug .stats {
+.PDFBug .stats {
   font-family: courier;
   font-size: 10px;
   white-space: pre;
 }
-#PDFBug .stats .title {
+.PDFBug .stats .title {
     font-weight: bold;
 }
-#PDFBug table {
+.PDFBug table {
   font-size: 10px;
 }
 
-#viewer.textLayer-visible .textLayer > div,
-#viewer.textLayer-hover .textLayer > div:hover {
+.viewer.textLayer-visible .textLayer > div,
+.viewer.textLayer-hover .textLayer > div:hover {
   background-color: white;
   color: black;
 }
 
-#viewer.textLayer-shadow .textLayer > div {
+.viewer.textLayer-shadow .textLayer > div {
   background-color: rgba(255,255,255, .6);
   color: black;
 }
@@ -1335,17 +1207,17 @@ canvas {
   margin: 0;
 }
 
-#printContainer {
+.printContainer {
   display: none;
 }
 
 @media print {
   /* Rules for browsers that don't support mozPrintCallback. */
-  #sidebarContainer, .toolbar, #loadingBox, #errorWrapper, .textLayer {
+  .sidebarContainer, .toolbar, .loadingBox, .errorWrapper, .textLayer {
     display: none;
   }
 
-  #mainContainer, #viewerContainer, .page, .page canvas {
+  .mainContainer, .viewerContainer, .page, .page canvas {
     position: static;
     padding: 0;
     margin: 0;
@@ -1364,13 +1236,13 @@ canvas {
   }
 
   /* Rules for browsers that support mozPrintCallback */
-  body[data-mozPrintCallback] #outerContainer {
+  body[data-mozPrintCallback] .outerContainer {
     display: none;
   }
-  body[data-mozPrintCallback] #printContainer {
+  body[data-mozPrintCallback] .printContainer {
     display: block;
   }
-  #printContainer canvas {
+  .printContainer canvas {
     position: relative;
     top: 0;
     left: 0;
@@ -1378,53 +1250,41 @@ canvas {
 }
 
 @media all and (max-width: 950px) {
-  html[dir='ltr'] #outerContainer.sidebarMoving .outerCenter,
-  html[dir='ltr'] #outerContainer.sidebarOpen .outerCenter {
+  .outerContainer.sidebarMoving .outerCenter,
+  .outerContainer.sidebarOpen .outerCenter {
     float: left;
     left: 180px;
-  }
-  html[dir='rtl'] #outerContainer.sidebarMoving .outerCenter,
-  html[dir='rtl'] #outerContainer.sidebarOpen .outerCenter {
-    float: right;
-    right: 180px;
   }
 }
 
 @media all and (max-width: 770px) {
-  #sidebarContainer {
+  .sidebarContainer {
     top: 33px;
     z-index: 100;
   }
-  #sidebarContent {
+  .sidebarContent {
     top: 32px;
     background-color: hsla(0,0%,0%,.7);
   }
 
-  html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
+  .outerContainer.sidebarOpen > .mainContainer {
     left: 0px;
   }
-  html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
-    right: 0px;
-  }
 
-  html[dir='ltr'] .outerCenter {
+  .outerCenter {
     float: left;
     left: 180px;
-  }
-  html[dir='rtl'] .outerCenter {
-    float: right;
-    right: 180px;
   }
 }
 
 @media all and (max-width: 600px) {
-  #toolbarViewerRight, #findbar, #viewFind {
+  .toolbarViewerRight, .findbar, .viewFind {
     display: none;
   }
 }
 
 @media all and (max-width: 500px) {
-  #scaleSelectContainer, #pageNumberLabel {
+  .scaleSelectContainer, .pageNumberLabel {
     display: none;
   }
 }
