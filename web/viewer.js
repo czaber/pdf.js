@@ -71,6 +71,8 @@ function setupEventListener(component, eventname, callback, arg) {
 }
 
 function find(component, uid) {
+  if (component.el == undefined) // debugging trap
+     debugger;
   return component.el.dom.getElementsByClassName(uid)[0];
 }
 
@@ -579,7 +581,7 @@ var PDFFindController = {
                          {result: state, findPrevious: previous});
       return;
     }
-    this.pdffindbar.updateUIState(state, previous);
+    this.pdfview.pdffindbar.updateUIState(state, previous);
   }
 };
 
@@ -709,7 +711,6 @@ var PDFFindBar = {
   },
 
   toggle: function() {
-    debugger;
     if (this.opened) {
       this.close();
     } else {
@@ -3123,6 +3124,21 @@ function updateViewarea(c) {
   find(component,'viewBookmark').href = href;
 }
 
+function selectScaleOption(value, component) {
+  var options = find(component,'scaleSelect').options;
+  var predefinedValueFound = false;
+  for (var i = 0; i < options.length; i++) {
+    var option = options[i];
+    if (option.value != value) {
+      option.selected = false;
+      continue;
+    }
+    option.selected = true;
+    predefinedValueFound = true;
+  }
+  return predefinedValueFound;
+}
+
 function initEvents(component, pdfview) {
 setupEventListener(component, 'resize', function webViewerResize(evt) {
   if (pdfview.initialized &&
@@ -3159,22 +3175,6 @@ setupEventListener(component, 'change', function webViewerChange(evt) {
   find(component,'download').setAttribute('hidden', 'true');
 }, true);
 
-
-function selectScaleOption(value, component) {
-  var options = find(component,'scaleSelect').options;
-  var predefinedValueFound = false;
-  for (var i = 0; i < options.length; i++) {
-    var option = options[i];
-    if (option.value != value) {
-      option.selected = false;
-      continue;
-    }
-    option.selected = true;
-    predefinedValueFound = true;
-  }
-  return predefinedValueFound;
-}
-
 setupEventListener(component, 'localized', function localized(evt) {
   document.getElementsByTagName('html')[0].dir = mozL10n.getDirection();
 
@@ -3207,8 +3207,8 @@ setupEventListener(component, 'scalechange', function scalechange(evt) {
     customScaleOption.selected = true;
   }
   
-  find(component,'zoom_out').disabled = (evt.scale === MIN_SCALE);
-  find(component,'zoom_in').disabled = (evt.scale === MAX_SCALE);
+  find(component,'zoomOut').disabled = (evt.scale === MIN_SCALE);
+  find(component,'zoomIn').disabled = (evt.scale === MAX_SCALE);
 
   updateViewarea.bind(pdfview)(component);
 }, true);
@@ -3254,13 +3254,13 @@ setupEventListener(component, 'DOMMouseScroll', function(evt) {
   }
 }, false);
 
-setupEventListener(component, 'mousemove', function keydown(evt) {
+setupEventListener(component, 'mousemove', function(evt) {
   if (pdfview.isFullscreen) {
     pdfview.showPresentationControls();
   }
 }, false);
 
-setupEventListener(component, 'mousedown', function mousedown(evt) {
+setupEventListener(component, 'mousedown', function(evt) {
   if (pdfview.isFullscreen && evt.button === 0) {
     // Mouse click in fullmode advances a page
     evt.preventDefault();
@@ -3269,13 +3269,14 @@ setupEventListener(component, 'mousedown', function mousedown(evt) {
   }
 }, false);
 
-setupEventListener(component, 'keydown', function keydown(evt) {
+//setupEventListener(component, 'keydown', function(evt) {
+var c = component.el.dom.parentElement.parentElement;
+c.addEventListener('keydown', function(evt) {
   var handled = false;
   var cmd = (evt.ctrlKey ? 1 : 0) |
             (evt.altKey ? 2 : 0) |
             (evt.shiftKey ? 4 : 0) |
             (evt.metaKey ? 8 : 0);
-
   // First, handle the key bindings that are independent whether an input
   // control is selected or not.
   if (cmd == 1 || cmd == 8) { // either CTRL or META key.
@@ -3343,9 +3344,9 @@ setupEventListener(component, 'keydown', function keydown(evt) {
       case 38: // up arrow
       case 33: // pg up
       case 8: // backspace
-        if (!pdfview.isFullscreen && pdfview.currentScaleValue !== 'page-fit') {
-          break;
-        }
+        //if (!pdfview.isFullscreen && pdfview.currentScaleValue !== 'page-fit') {
+        //  break;
+        //}
         /* in fullscreen mode */
         /* falls through */
       case 37: // left arrow
@@ -3368,9 +3369,9 @@ setupEventListener(component, 'keydown', function keydown(evt) {
       case 40: // down arrow
       case 34: // pg down
       case 32: // spacebar
-        if (!pdfview.isFullscreen && pdfview.currentScaleValue !== 'page-fit') {
-          break;
-        }
+        //if (!pdfview.isFullscreen && pdfview.currentScaleValue !== 'page-fit') {
+        //  break;
+        //}
         /* falls through */
       case 39: // right arrow
         // horizontal scrolling using arrow keys
