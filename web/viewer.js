@@ -137,7 +137,7 @@ var ProgressBar = (function ProgressBarClosure() {
 
   ProgressBar.prototype = {
 
-    updateBar: function ProgressBar_updateBar() {
+    updateBar: function() {
       if (this._indeterminate) {
         this.div.classList.add('indeterminate');
         return;
@@ -215,7 +215,7 @@ var Settings = (function SettingsClosure() {
   }
 
   Settings.prototype = {
-    initialize: function settingsInitialize(database) {
+    initialize: function(database) {
       database = JSON.parse(database);
       if (!('files' in database))
         database.files = [];
@@ -235,7 +235,7 @@ var Settings = (function SettingsClosure() {
       this.database = database;
     },
 
-    set: function settingsSet(name, val) {
+    set: function(name, val) {
       if (!this.initializedPromise.isResolved)
         return;
 
@@ -257,7 +257,7 @@ var Settings = (function SettingsClosure() {
 //#endif
     },
 
-    get: function settingsGet(name, defaultValue) {
+    get: function(name, defaultValue) {
       if (!this.initializedPromise.isResolved)
         return defaultValue;
 
@@ -744,7 +744,7 @@ var pdfview = {
   previousPageNumber: 1,
   component: null,
   // called once when the document is loaded
-  initialize: function pdfViewInitialize(component) {
+  initialize: function(component) {
     var self = this;
     var container = this.container = find(component,'viewerContainer');
     self.pageViewScroll = {};
@@ -771,7 +771,7 @@ var pdfview = {
 
   // Helper function to keep track whether a div was scrolled up or down and
   // then call a callback.
-  watchScroll: function pdfViewWatchScroll(viewAreaElement, state, callback) {
+  watchScroll: function(viewAreaElement, state, callback) {
     state.down = true;
     state.lastY = viewAreaElement.scrollTop;
     viewAreaElement.addEventListener('scroll', function webViewerScroll(evt) {
@@ -787,7 +787,7 @@ var pdfview = {
     }, true);
   },
 
-  setScale: function pdfViewSetScale(val, resetAutoSettings, noScroll) {
+  setScale: function(val, resetAutoSettings, noScroll) {
     if (val == this.currentScale)
       return;
 
@@ -806,7 +806,7 @@ var pdfview = {
     dispatch(this.component,event);
   },
 
-  parseScale: function pdfViewParseScale(value, resetAutoSettings, noScroll) {
+  parseScale: function(value, resetAutoSettings, noScroll) {
     if ('custom' == value)
       return;
 
@@ -849,13 +849,13 @@ var pdfview = {
     selectScaleOption(value, this.component);
   },
 
-  zoomIn: function pdfViewZoomIn() {
+  zoomIn: function() {
     var newScale = (this.currentScale * DEFAULT_SCALE_DELTA).toFixed(2);
     newScale = Math.min(MAX_SCALE, newScale);
     this.parseScale(newScale, true);
   },
 
-  zoomOut: function pdfViewZoomOut() {
+  zoomOut: function() {
     var newScale = (this.currentScale / DEFAULT_SCALE_DELTA).toFixed(2);
     newScale = Math.max(MIN_SCALE, newScale);
     this.parseScale(newScale, true);
@@ -954,7 +954,7 @@ var pdfview = {
     return div.scrollWidth > div.clientWidth;
   },
 
-  initPassiveLoading: function pdfViewInitPassiveLoading() {
+  initPassiveLoading: function() {
     if (!this.loadingBar) {
       this.loadingBar = new ProgressBar('#loadingBar', {}, this.component);
     }
@@ -981,7 +981,7 @@ var pdfview = {
     FirefoxCom.requestSync('initPassiveLoading', null);
   },
 
-  setTitleUsingUrl: function pdfViewSetTitleUsingUrl(url) {
+  setTitleUsingUrl: function(url) {
     this.url = url;
     try {
       this.setTitle(decodeURIComponent(getFileName(url)) || url);
@@ -992,11 +992,11 @@ var pdfview = {
     }
   },
 
-  setTitle: function pdfViewSetTitle(title) {
+  setTitle: function(title) {
     //document.title = title;
   },
 
-  open: function pdfViewOpen(url, scale, password) {
+  open: function(url, scale, password) {
     console.info('Opening ' + url + ' with scale ' + scale);
     var parameters = {password: password};
     if (typeof url === 'string') { // URL
@@ -1069,7 +1069,7 @@ var pdfview = {
     );
   },
 
-  download: function pdfViewDownload() {
+  download: function() {
     function noData() {
       FirefoxCom.request('download', { originalUrl: url });
     }
@@ -1104,7 +1104,7 @@ var pdfview = {
 //#endif
   },
 
-  fallback: function pdfViewFallback() {
+  fallback: function() {
 //#if !(FIREFOX || MOZCENTRAL)
 //  return;
 //#else
@@ -1122,7 +1122,7 @@ var pdfview = {
 //#endif
   },
 
-  navigateTo: function pdfViewNavigateTo(dest) {
+  navigateTo: function(dest) {
     /*** TODO: check where it is used
     if (typeof dest === 'string')
       dest = this.destinations[dest];
@@ -1142,7 +1142,7 @@ var pdfview = {
     */
   },
 
-  getDestinationHash: function pdfViewGetDestinationHash(dest) {
+  getDestinationHash: function(dest) {
     if (typeof dest === 'string')
       return this.getAnchorUrl('#' + escape(dest));
     if (dest instanceof Array) {
@@ -1172,7 +1172,7 @@ var pdfview = {
    * don't come up as resource:// urls and so open in new tab/window works.
    * @param {String} anchor The anchor hash include the #.
    */
-  getAnchorUrl: function getAnchorUrl(anchor) {
+  getAnchorUrl: function(anchor) {
 //#if !(FIREFOX || MOZCENTRAL)
     return anchor;
 //#else
@@ -1186,7 +1186,7 @@ var pdfview = {
                       scales. The scaled property is set to false if scaling is
                       not required, true otherwise.
    */
-  getOutputScale: function pdfViewGetOutputDPI() {
+  getOutputScale: function() {
     var pixelRatio = 'devicePixelRatio' in window ? window.devicePixelRatio : 1;
     return {
       sx: pixelRatio,
@@ -1202,7 +1202,7 @@ var pdfview = {
    *                            that is more technical.  Should have a 'message'
    *                            and optionally a 'stack' property.
    */
-  error: function pdfViewError(message, moreInfo) {
+  error: function(message, moreInfo) {
     var moreInfoText = mozL10n.get('error_version_info',
       {version: PDFJS.version || '?', build: PDFJS.build || '?'},
       'PDF.js v{{version}} (build: {{build}})') + '\n';
@@ -1267,12 +1267,12 @@ var pdfview = {
 //#endif
   },
 
-  progress: function pdfViewProgress(level) {
+  progress: function(level) {
     var percent = Math.round(level * 100);
     this.loadingBar.percent = percent;
   },
 
-  load: function pdfViewLoad(pdfDocument, scale) {
+  load: function(pdfDocument, scale) {
     function bindOnAfterDraw(pageView, thumbnailView) {
       // when page is painted, using the image as thumbnail base
       pageView.onAfterDraw = function pdfViewLoadOnAfterDraw() {
@@ -1399,7 +1399,7 @@ var pdfview = {
     });
   },
 
-  setInitialView: function pdfViewSetInitialView(storedHash, scale) {
+  setInitialView: function(storedHash, scale) {
     // Reset the current scale, as otherwise the page's scale might not get
     // updated if the zoom level stayed the same.
     this.currentScale = 0;
@@ -1426,7 +1426,7 @@ var pdfview = {
     }
   },
 
-  renderHighestPriority: function pdfViewRenderHighestPriority() {
+  renderHighestPriority: function() {
     // Pages have a higher priority than thumbnails, so check them first.
     var visiblePages = this.getVisiblePages();
     var pageView = this.getHighestPriority(visiblePages, this.pages,
@@ -1446,7 +1446,7 @@ var pdfview = {
     }
   },
 
-  getHighestPriority: function pdfViewGetHighestPriority(visible, views,
+  getHighestPriority: function(visible, views,
                                                          scrolledDown) {
     // The state has changed figure out which page has the highest priority to
     // render next (if any).
@@ -1482,13 +1482,13 @@ var pdfview = {
     return false;
   },
 
-  isViewFinished: function pdfViewNeedsRendering(view) {
+  isViewFinished: function(view) {
     return view.renderingState === RenderingStates.FINISHED;
   },
 
   // Render a page or thumbnail view. This calls the appropriate function based
   // on the views state. If the view is already rendered it will return false.
-  renderView: function pdfViewRender(view, type) {
+  renderView: function(view, type) {
     var state = view.renderingState;
     switch (state) {
       case RenderingStates.FINISHED:
@@ -1508,7 +1508,7 @@ var pdfview = {
     return true;
   },
 
-  setHash: function pdfViewSetHash(hash) {
+  setHash: function(hash) {
     if (!hash)
       return;
 
@@ -1546,7 +1546,7 @@ var pdfview = {
       this.navigateTo(unescape(hash));
   },
 
-  switchSidebarView: function pdfViewSwitchSidebarView(view) {
+  switchSidebarView: function(view) {
     var thumbsView = find(this.component,'thumbnailView');
     var outlineView = find(this.component,'outlineView');
 
@@ -1583,18 +1583,18 @@ var pdfview = {
     }
   },
 
-  getVisiblePages: function pdfViewGetVisiblePages() {
+  getVisiblePages: function() {
     return this.getVisibleElements(this.container,
                                    this.pages, true);
   },
 
-  getVisibleThumbs: function pdfViewGetVisibleThumbs() {
+  getVisibleThumbs: function() {
     return this.getVisibleElements(this.thumbnailContainer,
                                    this.thumbnails);
   },
 
   // Generic helper to find out what elements are visible within a scroll pane.
-  getVisibleElements: function pdfViewGetVisibleElements(
+  getVisibleElements: function(
       scrollEl, views, sortByVisibility) {
     var currentHeight = 0, view;
     var top = scrollEl.scrollTop;
@@ -1652,7 +1652,7 @@ var pdfview = {
   },
 
   // Helper function to parse query string (e.g. ?param1=value&parm2=...).
-  parseQueryString: function pdfViewParseQueryString(query) {
+  parseQueryString: function(query) {
     var parts = query.split('&');
     var params = {};
     for (var i = 0, ii = parts.length; i < parts.length; ++i) {
@@ -1664,7 +1664,7 @@ var pdfview = {
     return params;
   },
 
-  beforePrint: function pdfViewSetupBeforePrint() {
+  beforePrint: function() {
     if (!this.supportsPrinting) {
       var printMessage = mozL10n.get('printing_not_supported', null,
           'Warning: Printing is not fully supported by this browser.');
@@ -1678,13 +1678,13 @@ var pdfview = {
     }
   },
 
-  afterPrint: function pdfViewSetupAfterPrint() {
+  afterPrint: function() {
     var div = find(this.component,'printContainer');
     while (div.hasChildNodes())
       div.removeChild(div.lastChild);
   },
 
-  fullscreen: function pdfViewFullscreen() {
+  fullscreen: function() {
     var isFullscreen = document.fullscreenElement || document.mozFullScreen ||
         document.webkitIsFullScreen;
 
@@ -1717,7 +1717,7 @@ var pdfview = {
     return true;
   },
 
-  exitFullscreen: function pdfViewExitFullscreen() {
+  exitFullscreen: function() {
     this.isFullscreen = false;
     this.parseScale(this.previousScale);
     this.page = this.page;
@@ -1725,7 +1725,7 @@ var pdfview = {
     this.hidePresentationControls();
   },
 
-  showPresentationControls: function pdfViewShowPresentationControls() {
+  showPresentationControls: function() {
     var DELAY_BEFORE_HIDING_CONTROLS = 3000;
     var wrapper = find(this.component,'viewerContainer');
     if (this.presentationControlsTimeout) {
@@ -1739,7 +1739,7 @@ var pdfview = {
     }, DELAY_BEFORE_HIDING_CONTROLS);
   },
 
-  hidePresentationControls: function pdfViewShowPresentationControls() {
+  hidePresentationControls: function() {
     if (!this.presentationControlsTimeout) {
       return;
     }
@@ -1750,7 +1750,7 @@ var pdfview = {
     wrapper.classList.remove('presentationControls');
   },
 
-  rotatePages: function pdfViewPageRotation(delta) {
+  rotatePages: function(delta) {
 
     this.pageRotation = (this.pageRotation + 360 + delta) % 360;
 
@@ -1783,7 +1783,7 @@ var pdfview = {
    * @this {PDFView}
    * @param {number} mouseScrollDelta The delta value from the mouse event.
    */
-  mouseScroll: function pdfViewMouseScroll(mouseScrollDelta) {
+  mouseScroll: function(mouseScrollDelta) {
     var MOUSE_SCROLL_COOLDOWN_TIME = 50;
 
     var currentTime = (new Date()).getTime();
@@ -1836,7 +1836,7 @@ var pdfview = {
    *
    * @this {PDFView}
    */
-  clearMouseScrollState: function pdfViewClearMouseScrollState() {
+  clearMouseScrollState: function() {
     this.mouseScrollTimeStamp = 0;
     this.mouseScrollDelta = 0;
   }
@@ -1910,14 +1910,14 @@ var PageView = function pageView(container, pdfPage, id, scale,
   };
 
   Object.defineProperty(this, 'width', {
-    get: function PageView_getWidth() {
+    get: function() {
       return this.viewport.width;
     },
     enumerable: true
   });
 
   Object.defineProperty(this, 'height', {
-    get: function PageView_getHeight() {
+    get: function() {
       return this.viewport.height;
     },
     enumerable: true
@@ -2193,7 +2193,7 @@ var PageView = function pageView(container, pdfPage, id, scale,
       canvasContext: ctx,
       viewport: this.viewport,
       textLayer: textLayer,
-      continueCallback: function pdfViewcContinueCallback(cont) {
+      continueCallback: function(cont) {
         if (self.renderingState === RenderingStates.INITIAL) {
           // The page update() was called, we just need to abort any rendering.
           renderingWasReset = true;
