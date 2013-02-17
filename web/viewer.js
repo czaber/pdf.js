@@ -579,7 +579,7 @@ var PDFFindController = {
                          {result: state, findPrevious: previous});
       return;
     }
-    PDFFindBar.updateUIState(state, previous);
+    this.pdffindbar.updateUIState(state, previous);
   }
 };
 
@@ -705,10 +705,11 @@ var PDFFindBar = {
     this.toggleButton.classList.remove('toggled');
     this.bar.classList.add('hidden');
 
-    PDFFindController.active = false;
+    this.pdffindcontr.active = false;
   },
 
   toggle: function() {
+    debugger;
     if (this.opened) {
       this.close();
     } else {
@@ -750,13 +751,16 @@ var pdfview = {
     self.watchScroll(container, this.pageViewScroll, updateViewarea.bind(this));
 
     var thumbnailContainer = this.thumbnailContainer = find(component,'thumbnailView');
-    this.thumbnailViewScroll = {};
-    this.watchScroll(thumbnailContainer, this.thumbnailViewScroll,
-                     this.renderHighestPriority.bind(this));
-    this.component = component;
-    this.pdfview = this;
-    var pdffindbar = PDFFindBar.initialize(component, self);
-    var pdffindcontr = PDFFindController.initialize(component, self);
+    self.thumbnailViewScroll = {};
+    self.watchScroll(thumbnailContainer, self.thumbnailViewScroll,
+                     this.renderHighestPriority.bind(self));
+    self.component = component;
+    self.pdfview = this;
+    self.pdffindcontr = PDFFindController.initialize(component, self);
+    self.pdffindbar = PDFFindBar.initialize(component, self);
+
+    self.pdffindcontr.pdffindbar = self.pdffindbar;
+    self.pdffindbar.pdffindcontr = self.pdffindcontr;
 
     this.initialized = true;
     container.addEventListener('scroll', function() {
@@ -1346,7 +1350,7 @@ var pdfview = {
 
     // outline and initial view depends on destinations and pagesRefMap
     var promises = [pagesPromise, destinationsPromise, storePromise,
-                    PDFView.animationStartedPromise];
+                    self.animationStartedPromise];
     PDFJS.Promise.all(promises).then(function() {
       pdfDocument.getOutline().then(function(outline) {
         self.outline = new DocumentOutlineView(outline, self.component);
@@ -2658,7 +2662,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     var iIndex = 0;
     var bidiTexts = this.textContent.bidiTexts;
     var end = bidiTexts.length - 1;
-    var queryLen = PDFFindController.state.query.length;
+    var queryLen = pdfview.pdffindcontr.state.query.length;
 
     var lastDivIdx = -1;
     var pos;
@@ -2717,9 +2721,9 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     var bidiTexts = this.textContent.bidiTexts;
     var textDivs = this.textDivs;
     var prevEnd = null;
-    var isSelectedPage = this.pageIdx === PDFFindController.selected.pageIdx;
-    var selectedMatchIdx = PDFFindController.selected.matchIdx;
-    var highlightAll = PDFFindController.state.highlightAll;
+    var isSelectedPage = this.pageIdx === pdfview.pdffindcontr.selected.pageIdx;
+    var selectedMatchIdx = pdfview.pdffindcontr.selected.matchIdx;
+    var highlightAll = pdfview.pdffindcontr.state.highlightAll;
 
     var infty = {
       divIdx: -1,
@@ -2837,13 +2841,13 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
       clearedUntilDivIdx = match.end.divIdx + 1;
     }
 
-    if (!PDFFindController.active)
+    if (!pdfview.pdffindcontr.active)
       return;
 
     // Convert the matches on the page controller into the match format used
     // for the textLayer.
     this.matches = matches =
-      this.convertMatches(PDFFindController.pageMatches[this.pageIdx] || []);
+      this.convertMatches(pdfview.pdffindcontr.pageMatches[this.pageIdx] || []);
 
     this.renderMatches(this.matches);
   };
@@ -2855,12 +2859,6 @@ var PDFViewer = function pdfviewerInitialize(component, src, hashParams) {
     var pdfview = new PDFView(component);
     var file = src;
     hashParams = hashParams || {};
-
-//#if !(FIREFOX || MOZCENTRAL)
-  var file = params.file || DEFAULT_URL;
-//#else
-//var file = window.location.toString()
-//#endif
 
 //#if !(FIREFOX || MOZCENTRAL)
   if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -3284,7 +3282,7 @@ setupEventListener(component, 'keydown', function keydown(evt) {
     switch (evt.keyCode) {
       case 70:
         if (!pdfview.supportsIntegratedFind) {
-          PDFFindBar.toggle();
+          pdfview.pdffindbar.toggle();
           handled = true;
         }
         break;
@@ -3314,7 +3312,7 @@ setupEventListener(component, 'keydown', function keydown(evt) {
     switch (evt.keyCode) {
       case 71: // g
         if (!pdfview.supportsIntegratedFind) {
-          PDFFindBar.dispatchEvent('again', cmd == 5 || cmd == 12);
+          pdfview.pdffindbar.dispatchEvent('again', cmd == 5 || cmd == 12);
           handled = true;
         }
         break;
@@ -3362,8 +3360,8 @@ setupEventListener(component, 'keydown', function keydown(evt) {
         handled = true;
         break;
       case 27: // esc key
-        if (!PDFView.supportsIntegratedFind && PDFFindBar.opened) {
-          PDFFindBar.close();
+        if (!pdfview.supportsIntegratedFind && pdfview.pdffindbar.opened) {
+          pdfview.pdffindbar.close();
           handled = true;
         }
         break;
@@ -3467,3 +3465,4 @@ setupEventListener(component, 'afterprint', function afterPrint(evt) {
 //  });
 //});
 //#endif
+}
