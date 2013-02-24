@@ -67,12 +67,12 @@ function dispatch(component, e) {
 
 function setupEventListener(component, eventname, callback, arg) {
   arg = arg || true;
+  console.info("Registered event " + eventname + " for component " + component.id);
+  component["on"+eventname] = callback;
   component.el.dom.addEventListener(eventname, callback, arg);
 }
 
 function find(component, uid) {
-  if (component.el === undefined) // debugging trap
-     debugger;
   return component.el.dom.getElementsByClassName(uid)[0];
 }
 
@@ -3269,9 +3269,7 @@ setupEventListener(component, 'mousedown', function(evt) {
   }
 }, false);
 
-//setupEventListener(component, 'keydown', function(evt) {
-var c = component.el.dom.parentElement.parentElement;
-c.addEventListener('keydown', function(evt) {
+setupEventListener(component, 'keydown', function(evt) {
   var handled = false;
   var cmd = (evt.ctrlKey ? 1 : 0) |
             (evt.altKey ? 2 : 0) |
