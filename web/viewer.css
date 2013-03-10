@@ -927,7 +927,7 @@ a:focus > .thumbnail > .thumbnailSelectionRing,
   direction: ltr;
   width: 816px;
   height: 1056px;
-  margin: 1px auto -8px auto;
+  margin: 10px auto -8px auto;
   position: relative;
   overflow: visible;
   border: 9px solid transparent;
