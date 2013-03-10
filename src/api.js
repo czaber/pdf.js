@@ -37,7 +37,7 @@
  *
  * @return {Promise} A promise that is resolved with {PDFDocumentProxy} object.
  */
-PDFJS.getDocument = function getDocument(source) {
+PDFJS.getDocument = function(source) {
   var workerInitializedPromise, workerReadyPromise, transport;
 
   if (typeof source === 'string') {
@@ -106,14 +106,14 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
      * @return {Promise} A promise that is resolved with a {PDFPageProxy}
      * object.
      */
-    getPage: function PDFDocumentProxy_getPage(number) {
+    getPage: function(number) {
       return this.transport.getPage(number);
     },
     /**
      * @return {Promise} A promise that is resolved with a lookup table for
      * mapping named destinations to reference numbers.
      */
-    getDestinations: function PDFDocumentProxy_getDestinations() {
+    getDestinations: function() {
       var promise = new PDFJS.Promise();
       var destinations = this.pdfInfo.destinations;
       promise.resolve(destinations);
@@ -134,7 +134,7 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
      *  ...
      * ].
      */
-    getOutline: function PDFDocumentProxy_getOutline() {
+    getOutline: function() {
       var promise = new PDFJS.Promise();
       var outline = this.pdfInfo.outline;
       promise.resolve(outline);
@@ -146,7 +146,7 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
      * available in the information dictionary and similarly metadata is a
      * {Metadata} object with information from the metadata section of the PDF.
      */
-    getMetadata: function PDFDocumentProxy_getMetadata() {
+    getMetadata: function() {
       var promise = new PDFJS.Promise();
       var info = this.pdfInfo.info;
       var metadata = this.pdfInfo.metadata;
@@ -156,7 +156,7 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
       });
       return promise;
     },
-    isEncrypted: function PDFDocumentProxy_isEncrypted() {
+    isEncrypted: function() {
       var promise = new PDFJS.Promise();
       promise.resolve(this.pdfInfo.encrypted);
       return promise;
@@ -165,12 +165,12 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
      * @return {Promise} A promise that is resolved with a TypedArray that has
      * the raw data from the PDF.
      */
-    getData: function PDFDocumentProxy_getData() {
+    getData: function() {
       var promise = new PDFJS.Promise();
       this.transport.getData(promise);
       return promise;
     },
-    destroy: function PDFDocumentProxy_destroy() {
+    destroy: function() {
       this.transport.destroy();
     }
   };
@@ -222,7 +222,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * @return {PageViewport} Contains 'width' and 'height' properties along
      * with transforms required for rendering.
      */
-    getViewport: function PDFPageProxy_getViewport(scale, rotate) {
+    getViewport: function(scale, rotate) {
       if (arguments.length < 2)
         rotate = this.rotate;
       return new PDFJS.PageViewport(this.view, scale, rotate, 0, 0);
@@ -231,7 +231,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * @return {Promise} A promise that is resolved with an {array} of the
      * annotation objects.
      */
-    getAnnotations: function PDFPageProxy_getAnnotations() {
+    getAnnotations: function() {
       if (this.annotationsPromise)
         return this.annotationsPromise;
 
@@ -257,7 +257,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * @return {Promise} A promise that is resolved when the page finishes
      * rendering.
      */
-    render: function PDFPageProxy_render(params) {
+    render: function(params) {
       this.renderInProgress = true;
 
       var promise = new Promise();
@@ -323,7 +323,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
       var self = this;
       this.operatorList = operatorList;
 
-      var displayContinuation = function pageDisplayContinuation() {
+      var displayContinuation = function() {
         // Always defer call to display() to work around bug in
         // Firefox error reporting from XHR callbacks.
         setTimeout(function pageSetTimeout() {
@@ -340,7 +340,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
     /**
      * For internal use only.
      */
-    ensureFonts: function PDFPageProxy_ensureFonts(fonts, callback) {
+    ensureFonts: function(fonts, callback) {
       this.stats.time('Font Loading');
       // Convert the font names to the corresponding font obj.
       var fontObjs = [];
@@ -369,7 +369,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
     /**
      * For internal use only.
      */
-    display: function PDFPageProxy_display(gfx, viewport, callback,
+    display: function(gfx, viewport, callback,
                                            continueCallback) {
       var stats = this.stats;
       stats.time('Rendering');
@@ -410,7 +410,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * @return {Promise} That is resolved with the a {string} that is the text
      * content from the page.
      */
-    getTextContent: function PDFPageProxy_getTextContent() {
+    getTextContent: function() {
       var promise = new PDFJS.Promise();
       this.transport.messageHandler.send('GetTextContent', {
           pageIndex: this.pageNumber - 1
@@ -424,7 +424,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
     /**
      * Stub for future feature.
      */
-    getOperationList: function PDFPageProxy_getOperationList() {
+    getOperationList: function() {
       var promise = new PDFJS.Promise();
       var operationList = { // not implemented
         dependencyFontsID: null,
@@ -436,7 +436,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
     /**
      * Destroys resources allocated by the page.
      */
-    destroy: function PDFPageProxy_destroy() {
+    destroy: function() {
       this.destroyed = true;
 
       if (!this.renderInProgress) {
@@ -478,7 +478,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
         var messageHandler = new MessageHandler('main', worker);
         this.messageHandler = messageHandler;
 
-        messageHandler.on('test', function transportTest(supportTypedArray) {
+        messageHandler.on('test', function(supportTypedArray) {
           if (supportTypedArray) {
             this.worker = worker;
             this.setupMessageHandler(messageHandler);
@@ -505,21 +505,21 @@ var WorkerTransport = (function WorkerTransportClosure() {
     workerInitializedPromise.resolve();
   }
   WorkerTransport.prototype = {
-    destroy: function WorkerTransport_destroy() {
+    destroy: function() {
       if (this.worker)
         this.worker.terminate();
 
       this.pageCache = [];
       this.pagePromises = [];
     },
-    setupFakeWorker: function WorkerTransport_setupFakeWorker() {
+    setupFakeWorker: function() {
       warn('Setting up fake worker.');
       // If we don't use a worker, just post/sendMessage to the main thread.
       var fakeWorker = {
-        postMessage: function WorkerTransport_postMessage(obj) {
+        postMessage: function(obj) {
           fakeWorker.onmessage({data: obj});
         },
-        terminate: function WorkerTransport_terminate() {}
+        terminate: function() {}
       };
 
       var messageHandler = new MessageHandler('main', fakeWorker);
@@ -534,34 +534,34 @@ var WorkerTransport = (function WorkerTransportClosure() {
       function WorkerTransport_setupMessageHandler(messageHandler) {
       this.messageHandler = messageHandler;
 
-      messageHandler.on('GetDoc', function transportDoc(data) {
+      messageHandler.on('GetDoc', function(data) {
         var pdfInfo = data.pdfInfo;
         var pdfDocument = new PDFDocumentProxy(pdfInfo, this);
         this.pdfDocument = pdfDocument;
         this.workerReadyPromise.resolve(pdfDocument);
       }, this);
 
-      messageHandler.on('NeedPassword', function transportPassword(data) {
+      messageHandler.on('NeedPassword', function(data) {
         this.workerReadyPromise.reject(data.exception.message, data.exception);
       }, this);
 
-      messageHandler.on('IncorrectPassword', function transportBadPass(data) {
+      messageHandler.on('IncorrectPassword', function(data) {
         this.workerReadyPromise.reject(data.exception.message, data.exception);
       }, this);
 
-      messageHandler.on('InvalidPDF', function transportInvalidPDF(data) {
+      messageHandler.on('InvalidPDF', function(data) {
         this.workerReadyPromise.reject(data.exception.name, data.exception);
       }, this);
 
-      messageHandler.on('MissingPDF', function transportMissingPDF(data) {
+      messageHandler.on('MissingPDF', function(data) {
         this.workerReadyPromise.reject(data.exception.message, data.exception);
       }, this);
 
-      messageHandler.on('UnknownError', function transportUnknownError(data) {
+      messageHandler.on('UnknownError', function(data) {
         this.workerReadyPromise.reject(data.exception.message, data.exception);
       }, this);
 
-      messageHandler.on('GetPage', function transportPage(data) {
+      messageHandler.on('GetPage', function(data) {
         var pageInfo = data.pageInfo;
         var page = new PDFPageProxy(pageInfo, this);
         this.pageCache[pageInfo.pageIndex] = page;
@@ -569,13 +569,13 @@ var WorkerTransport = (function WorkerTransportClosure() {
         promise.resolve(page);
       }, this);
 
-      messageHandler.on('GetAnnotations', function transportAnnotations(data) {
+      messageHandler.on('GetAnnotations', function(data) {
         var annotations = data.annotations;
         var promise = this.pageCache[data.pageIndex].annotationsPromise;
         promise.resolve(annotations);
       }, this);
 
-      messageHandler.on('RenderPage', function transportRender(data) {
+      messageHandler.on('RenderPage', function(data) {
         var page = this.pageCache[data.pageIndex];
         var depFonts = data.depFonts;
 
@@ -583,7 +583,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
         page.startRenderingFromOperatorList(data.operatorList, depFonts);
       }, this);
 
-      messageHandler.on('commonobj', function transportObj(data) {
+      messageHandler.on('commonobj', function(data) {
         var id = data[0];
         var type = data[1];
         if (this.commonObjs.hasData(id))
@@ -607,7 +607,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
         }
       }, this);
 
-      messageHandler.on('obj', function transportObj(data) {
+      messageHandler.on('obj', function(data) {
         var id = data[0];
         var pageIndex = data[1];
         var type = data[2];
@@ -636,18 +636,18 @@ var WorkerTransport = (function WorkerTransportClosure() {
         }
       }, this);
 
-      messageHandler.on('DocProgress', function transportDocProgress(data) {
+      messageHandler.on('DocProgress', function(data) {
         this.workerReadyPromise.progress({
           loaded: data.loaded,
           total: data.total
         });
       }, this);
 
-      messageHandler.on('DocError', function transportDocError(data) {
+      messageHandler.on('DocError', function(data) {
         this.workerReadyPromise.reject(data);
       }, this);
 
-      messageHandler.on('PageError', function transportError(data) {
+      messageHandler.on('PageError', function(data) {
         var page = this.pageCache[data.pageNum - 1];
         if (page.displayReadyPromise)
           page.displayReadyPromise.reject(data.error);
@@ -691,17 +691,17 @@ var WorkerTransport = (function WorkerTransportClosure() {
       });
     },
 
-    fetchDocument: function WorkerTransport_fetchDocument(source) {
+    fetchDocument: function(source) {
       this.messageHandler.send('GetDocRequest', {source: source});
     },
 
-    getData: function WorkerTransport_getData(promise) {
+    getData: function(promise) {
       this.messageHandler.send('GetData', null, function(data) {
         promise.resolve(data);
       });
     },
 
-    getPage: function WorkerTransport_getPage(pageNumber, promise) {
+    getPage: function(pageNumber, promise) {
       var pageIndex = pageNumber - 1;
       if (pageIndex in this.pagePromises)
         return this.pagePromises[pageIndex];
@@ -711,7 +711,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
       return promise;
     },
 
-    getAnnotations: function WorkerTransport_getAnnotations(pageIndex) {
+    getAnnotations: function(pageIndex) {
       this.messageHandler.send('GetAnnotationsRequest',
         { pageIndex: pageIndex });
     }

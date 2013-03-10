@@ -25,7 +25,7 @@ var PDFFunction = (function PDFFunctionClosure() {
   var CONSTRUCT_POSTSCRIPT = 4;
 
   return {
-    getSampleArray: function PDFFunction_getSampleArray(size, outputSize, bps,
+    getSampleArray: function(size, outputSize, bps,
                                                        str) {
       var length = 1;
       for (var i = 0, ii = size.length; i < ii; i++)
@@ -53,7 +53,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       return array;
     },
 
-    getIR: function PDFFunction_getIR(xref, fn) {
+    getIR: function(xref, fn) {
       var dict = fn.dict;
       if (!dict)
         dict = fn;
@@ -72,7 +72,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       return typeFn.call(this, fn, dict, xref);
     },
 
-    fromIR: function PDFFunction_fromIR(IR) {
+    fromIR: function(IR) {
       var type = IR[0];
       switch (type) {
         case CONSTRUCT_SAMPLED:
@@ -87,12 +87,12 @@ var PDFFunction = (function PDFFunctionClosure() {
       }
     },
 
-    parse: function PDFFunction_parse(xref, fn) {
+    parse: function(xref, fn) {
       var IR = this.getIR(xref, fn);
       return this.fromIR(IR);
     },
 
-    constructSampled: function PDFFunction_constructSampled(str, dict) {
+    constructSampled: function(str, dict) {
       function toMultiArray(arr) {
         var inputLength = arr.length;
         var outputLength = arr.length / 2;
@@ -149,13 +149,13 @@ var PDFFunction = (function PDFFunctionClosure() {
       ];
     },
 
-    constructSampledFromIR: function PDFFunction_constructSampledFromIR(IR) {
+    constructSampledFromIR: function(IR) {
       // See chapter 3, page 109 of the PDF reference
       function interpolate(x, xmin, xmax, ymin, ymax) {
         return ymin + ((x - xmin) * ((ymax - ymin) / (xmax - xmin)));
       }
 
-      return function constructSampledFromIRResult(args) {
+      return function(args) {
         // See chapter 3, page 110 of the PDF reference.
         var m = IR[1];
         var domain = IR[2];
@@ -237,7 +237,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       };
     },
 
-    constructInterpolated: function PDFFunction_constructInterpolated(str,
+    constructInterpolated: function(str,
                                                                       dict) {
       var c0 = dict.get('C0') || [0];
       var c1 = dict.get('C1') || [1];
@@ -262,7 +262,7 @@ var PDFFunction = (function PDFFunctionClosure() {
 
       var length = diff.length;
 
-      return function constructInterpolatedFromIRResult(args) {
+      return function(args) {
         var x = n == 1 ? args[0] : Math.pow(args[0], n);
 
         var out = [];
@@ -274,7 +274,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       };
     },
 
-    constructStiched: function PDFFunction_constructStiched(fn, dict, xref) {
+    constructStiched: function(fn, dict, xref) {
       var domain = dict.get('Domain');
 
       if (!domain)
@@ -295,7 +295,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       return [CONSTRUCT_STICHED, domain, bounds, encode, fns];
     },
 
-    constructStichedFromIR: function PDFFunction_constructStichedFromIR(IR) {
+    constructStichedFromIR: function(IR) {
       var domain = IR[1];
       var bounds = IR[2];
       var encode = IR[3];
@@ -306,8 +306,8 @@ var PDFFunction = (function PDFFunctionClosure() {
         fns.push(PDFFunction.fromIR(fnsIR[i]));
       }
 
-      return function constructStichedFromIRResult(args) {
-        var clip = function constructStichedFromIRClip(v, min, max) {
+      return function(args) {
+        var clip = function(v, min, max) {
           if (v > max)
             v = max;
           else if (v < min)
@@ -341,7 +341,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       };
     },
 
-    constructPostScript: function PDFFunction_constructPostScript(fn, dict,
+    constructPostScript: function(fn, dict,
                                                                   xref) {
       var domain = dict.get('Domain');
       var range = dict.get('Range');
@@ -359,7 +359,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       return [CONSTRUCT_POSTSCRIPT, domain, range, code];
     },
 
-    constructPostScriptFromIR: function PDFFunction_constructPostScriptFromIR(
+    constructPostScriptFromIR: function(
                                           IR) {
       var domain = IR[1];
       var range = IR[2];
@@ -369,7 +369,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       // Cache the values for a big speed up, the cache size is limited though
       // since the number of possible values can be huge from a PS function.
       var cache = new FunctionCache();
-      return function constructPostScriptFromIRResult(args) {
+      return function(args) {
         var initialStack = [];
         for (var i = 0, ii = (domain.length / 2); i < ii; ++i) {
           initialStack.push(args[i]);
@@ -406,13 +406,13 @@ var FunctionCache = (function FunctionCacheClosure() {
     this.total = 0;
   }
   FunctionCache.prototype = {
-    has: function FunctionCache_has(key) {
+    has: function(key) {
       return key in this.cache;
     },
-    get: function FunctionCache_get(key) {
+    get: function(key) {
       return this.cache[key];
     },
-    set: function FunctionCache_set(key, value) {
+    set: function(key, value) {
       if (this.total < MAX_CACHE_SIZE) {
         this.cache[key] = value;
         this.total++;
@@ -429,28 +429,28 @@ var PostScriptStack = (function PostScriptStackClosure() {
   }
 
   PostScriptStack.prototype = {
-    push: function PostScriptStack_push(value) {
+    push: function(value) {
       if (this.stack.length >= MAX_STACK_SIZE)
         error('PostScript function stack overflow.');
       this.stack.push(value);
     },
-    pop: function PostScriptStack_pop() {
+    pop: function() {
       if (this.stack.length <= 0)
         error('PostScript function stack underflow.');
       return this.stack.pop();
     },
-    copy: function PostScriptStack_copy(n) {
+    copy: function(n) {
       if (this.stack.length + n >= MAX_STACK_SIZE)
         error('PostScript function stack overflow.');
       var stack = this.stack;
       for (var i = stack.length - n, j = n - 1; j >= 0; j--, i++)
         stack.push(stack[i]);
     },
-    index: function PostScriptStack_index(n) {
+    index: function(n) {
       this.push(this.stack[this.stack.length - n - 1]);
     },
     // rotate the last n stack elements p times
-    roll: function PostScriptStack_roll(n, p) {
+    roll: function(n, p) {
       var stack = this.stack;
       var l = stack.length - n;
       var r = stack.length - 1, c = l + (p - Math.floor(p / n) * n), i, j, t;
@@ -473,7 +473,7 @@ var PostScriptEvaluator = (function PostScriptEvaluatorClosure() {
     this.operands = operands;
   }
   PostScriptEvaluator.prototype = {
-    execute: function PostScriptEvaluator_execute(initialStack) {
+    execute: function(initialStack) {
       var stack = new PostScriptStack(initialStack);
       var counter = 0;
       var operators = this.operators;
@@ -707,31 +707,31 @@ var PostScriptParser = (function PostScriptParserClosure() {
     this.prev = null;
   }
   PostScriptParser.prototype = {
-    nextToken: function PostScriptParser_nextToken() {
+    nextToken: function() {
       this.prev = this.token;
       this.token = this.lexer.getToken();
     },
-    accept: function PostScriptParser_accept(type) {
+    accept: function(type) {
       if (this.token.type == type) {
         this.nextToken();
         return true;
       }
       return false;
     },
-    expect: function PostScriptParser_expect(type) {
+    expect: function(type) {
       if (this.accept(type))
         return true;
       error('Unexpected symbol: found ' + this.token.type + ' expected ' +
             type + '.');
     },
-    parse: function PostScriptParser_parse() {
+    parse: function() {
       this.nextToken();
       this.expect(PostScriptTokenTypes.LBRACE);
       this.parseBlock();
       this.expect(PostScriptTokenTypes.RBRACE);
       return this.operators;
     },
-    parseBlock: function PostScriptParser_parseBlock() {
+    parseBlock: function() {
       while (true) {
         if (this.accept(PostScriptTokenTypes.NUMBER)) {
           this.operators.push(this.prev.value);
@@ -744,7 +744,7 @@ var PostScriptParser = (function PostScriptParserClosure() {
         }
       }
     },
-    parseCondition: function PostScriptParser_parseCondition() {
+    parseCondition: function() {
       // Add two place holders that will be updated later
       var conditionLocation = this.operators.length;
       this.operators.push(null, null);
@@ -795,7 +795,7 @@ var PostScriptToken = (function PostScriptTokenClosure() {
 
   var opCache = {};
 
-  PostScriptToken.getOperator = function PostScriptToken_getOperator(op) {
+  PostScriptToken.getOperator = function(op) {
     var opValue = opCache[op];
     if (opValue)
       return opValue;
@@ -818,7 +818,7 @@ var PostScriptLexer = (function PostScriptLexerClosure() {
     this.stream = stream;
   }
   PostScriptLexer.prototype = {
-    getToken: function PostScriptLexer_getToken() {
+    getToken: function() {
       var s = '';
       var ch;
       var comment = false;
@@ -871,7 +871,7 @@ var PostScriptLexer = (function PostScriptLexerClosure() {
           return PostScriptToken.getOperator(str);
       }
     },
-    getNumber: function PostScriptLexer_getNumber(ch) {
+    getNumber: function(ch) {
       var str = ch;
       var stream = this.stream;
       while (true) {

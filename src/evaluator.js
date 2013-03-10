@@ -149,7 +149,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
   };
 
   PartialEvaluator.prototype = {
-    loadFont: function PartialEvaluator_loadFont(fontName, font, xref,
+    loadFont: function(fontName, font, xref,
                                                  resources, dependency) {
       var fontRes = resources.get('Font');
 
@@ -199,7 +199,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       return font;
     },
 
-    getOperatorList: function PartialEvaluator_getOperatorList(stream,
+    getOperatorList: function(stream,
                                                                resources,
                                                                dependency,
                                                                queue) {
@@ -557,7 +557,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       return queue;
     },
 
-    optimizeQueue: function PartialEvaluator_optimizeQueue(queue) {
+    optimizeQueue: function(queue) {
       var fnArray = queue.fnArray, argsArray = queue.argsArray;
       // grouping paintInlineImageXObject's into paintInlineImageXObjectGroup
       // searching for (save, transform, paintInlineImageXObject, restore)+
@@ -673,7 +673,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       }
     },
 
-    getTextContent: function PartialEvaluator_getTextContent(
+    getTextContent: function(
                                                     stream, resources, state) {
       var bidiTexts;
       var SPACE_FACTOR = 0.35;
@@ -883,7 +883,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       properties.hasEncoding = hasEncoding;
     },
 
-    readToUnicode: function PartialEvaluator_readToUnicode(toUnicode, xref,
+    readToUnicode: function(toUnicode, xref,
                                                            properties) {
       var cmapObj = toUnicode;
       var charToUnicode = [];
@@ -1008,7 +1008,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       }
       return charToUnicode;
     },
-    readCidToGidMap: function PartialEvaluator_readCidToGidMap(cidToGidStream) {
+    readCidToGidMap: function(cidToGidStream) {
       // Extract the encoding from the CIDToGIDMap
       var glyphsData = cidToGidStream.getBytes();
 
@@ -1025,7 +1025,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       return result;
     },
 
-    extractWidths: function PartialEvaluator_extractWidths(dict,
+    extractWidths: function(dict,
                                                    xref,
                                                    descriptor,
                                                    properties) {
@@ -1091,7 +1091,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       properties.widths = glyphsWidths;
     },
 
-    isSerifFont: function PartialEvaluator_isSerifFont(baseFontName) {
+    isSerifFont: function(baseFontName) {
 
       // Simulating descriptor flags attribute
       var fontNameWoStyle = baseFontName.split('-')[0];
@@ -1099,7 +1099,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
           (fontNameWoStyle.search(/serif/gi) !== -1);
     },
 
-    getBaseFontMetrics: function PartialEvaluator_getBaseFontMetrics(name) {
+    getBaseFontMetrics: function(name) {
       var defaultWidth = 0, widths = [], monospace = false;
 
       var lookupName = stdFontMap[name] || name;
@@ -1129,7 +1129,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
       };
     },
 
-    translateFont: function PartialEvaluator_translateFont(dict,
+    translateFont: function(dict,
                                                            xref,
                                                            resources,
                                                            dependency) {

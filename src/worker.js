@@ -45,7 +45,7 @@ function MessageHandler(name, comObj) {
     warn(data);
   }];
 
-  comObj.onmessage = function messageHandlerComObjOnMessage(event) {
+  comObj.onmessage = function(event) {
     var data = event.data;
     if (data.isReply) {
       var callbackId = data.callbackId;
@@ -78,7 +78,7 @@ function MessageHandler(name, comObj) {
 }
 
 MessageHandler.prototype = {
-  on: function messageHandlerOn(actionName, handler, scope) {
+  on: function(actionName, handler, scope) {
     var ah = this.actionHandler;
     if (ah[actionName]) {
       error('There is already an actionName called "' + actionName + '"');
@@ -91,7 +91,7 @@ MessageHandler.prototype = {
    * @param {JSON} data JSON data to send.
    * @param {function} [callback] Optional callback that will handle a reply.
    */
-  send: function messageHandlerSend(actionName, data, callback) {
+  send: function(actionName, data, callback) {
     var message = {
       action: actionName,
       data: data
@@ -106,7 +106,7 @@ MessageHandler.prototype = {
 };
 
 var WorkerMessageHandler = {
-  setup: function wphSetup(handler) {
+  setup: function(handler) {
     var pdfModel = null;
 
     function loadDocument(pdfData, pdfModelSource) {
@@ -160,7 +160,7 @@ var WorkerMessageHandler = {
       handler.send('GetDoc', {pdfInfo: doc});
     }
 
-    handler.on('test', function wphSetupTest(data) {
+    handler.on('test', function(data) {
       // check if Uint8Array can be sent to worker
       if (!(data instanceof Uint8Array)) {
         handler.send('test', false);
@@ -176,7 +176,7 @@ var WorkerMessageHandler = {
       handler.send('test', true);
     });
 
-    handler.on('GetDocRequest', function wphSetupDoc(data) {
+    handler.on('GetDocRequest', function(data) {
       var source = data.source;
       if (source.data) {
         // the data is array, instantiating directly from it
@@ -187,13 +187,13 @@ var WorkerMessageHandler = {
       PDFJS.getPdf(
         {
           url: source.url,
-          progress: function getPDFProgress(evt) {
+          progress: function(evt) {
             handler.send('DocProgress', {
               loaded: evt.loaded,
               total: evt.lengthComputable ? evt.total : void(0)
             });
           },
-          error: function getPDFError(e) {
+          error: function(e) {
             if (e.target.status == 404) {
               handler.send('MissingPDF', {
                 exception: new MissingPDFException(
@@ -211,7 +211,7 @@ var WorkerMessageHandler = {
         });
     });
 
-    handler.on('GetPageRequest', function wphSetupGetPage(data) {
+    handler.on('GetPageRequest', function(data) {
       var pageNumber = data.pageIndex + 1;
       var pdfPage = pdfModel.getPage(pageNumber);
       var page = {
@@ -223,11 +223,11 @@ var WorkerMessageHandler = {
       handler.send('GetPage', {pageInfo: page});
     });
 
-    handler.on('GetData', function wphSetupGetData(data, promise) {
+    handler.on('GetData', function(data, promise) {
       promise.resolve(pdfModel.stream.bytes);
     });
 
-    handler.on('GetAnnotationsRequest', function wphSetupGetAnnotations(data) {
+    handler.on('GetAnnotationsRequest', function(data) {
       var pdfPage = pdfModel.getPage(data.pageIndex + 1);
       handler.send('GetAnnotations', {
         pageIndex: data.pageIndex,
@@ -235,7 +235,7 @@ var WorkerMessageHandler = {
       });
     });
 
-    handler.on('RenderPageRequest', function wphSetupRenderPage(data) {
+    handler.on('RenderPageRequest', function(data) {
       var pageNum = data.pageIndex + 1;
 
       // The following code does quite the same as
@@ -300,7 +300,7 @@ var WorkerMessageHandler = {
       });
     }, this);
 
-    handler.on('GetTextContent', function wphExtractText(data, promise) {
+    handler.on('GetTextContent', function(data, promise) {
       var pageNum = data.pageIndex + 1;
       var start = Date.now();
 
@@ -323,7 +323,7 @@ var WorkerMessageHandler = {
 var consoleTimer = {};
 
 var workerConsole = {
-  log: function log() {
+  log: function() {
     var args = Array.prototype.slice.call(arguments);
     globalScope.postMessage({
       action: 'console_log',
@@ -331,7 +331,7 @@ var workerConsole = {
     });
   },
 
-  error: function error() {
+  error: function() {
     var args = Array.prototype.slice.call(arguments);
     globalScope.postMessage({
       action: 'console_error',
@@ -340,11 +340,11 @@ var workerConsole = {
     throw 'pdf.js execution error';
   },
 
-  time: function time(name) {
+  time: function(name) {
     consoleTimer[name] = Date.now();
   },
 
-  timeEnd: function timeEnd(name) {
+  timeEnd: function(name) {
     var time = consoleTimer[name];
     if (!time) {
       error('Unkown timer name ' + name);

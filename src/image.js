@@ -125,7 +125,7 @@ var PDFImage = (function PDFImageClosure() {
    * Handles processing of image data and calls the callback with an argument
    * of a PDFImage when the image is ready to be used.
    */
-  PDFImage.buildImage = function PDFImage_buildImage(callback, handler, xref,
+  PDFImage.buildImage = function(callback, handler, xref,
                                                      res, image, inline) {
     var imageDataPromise = new Promise();
     var smaskPromise = new Promise();
@@ -177,7 +177,7 @@ var PDFImage = (function PDFImageClosure() {
    * @param {Number} h2 New height.
    * @return {TypedArray} Resized image data.
    */
-  PDFImage.resize = function PDFImage_resize(pixels, bpc, components,
+  PDFImage.resize = function(pixels, bpc, components,
                                              w1, h1, w2, h2) {
     var length = w2 * h2 * components;
     var temp = bpc <= 8 ? new Uint8Array(length) :
@@ -216,7 +216,7 @@ var PDFImage = (function PDFImageClosure() {
         return this.height;
       return Math.max(this.height, this.smask.height);
     },
-    getComponents: function PDFImage_getComponents(buffer) {
+    getComponents: function(buffer) {
       var bpc = this.bpc;
       var needsDecode = this.needsDecode;
       var decodeMap = this.decode;
@@ -304,7 +304,7 @@ var PDFImage = (function PDFImageClosure() {
       }
       return output;
     },
-    getOpacity: function PDFImage_getOpacity(width, height, image) {
+    getOpacity: function(width, height, image) {
       var smask = this.smask;
       var mask = this.mask;
       var originalWidth = this.width;
@@ -360,7 +360,7 @@ var PDFImage = (function PDFImageClosure() {
       }
       return buf;
     },
-    applyStencilMask: function PDFImage_applyStencilMask(buffer,
+    applyStencilMask: function(buffer,
                                                          inverseDecode) {
       var width = this.width, height = this.height;
       var bitStrideLength = (width + 7) >> 3;
@@ -384,7 +384,7 @@ var PDFImage = (function PDFImageClosure() {
         }
       }
     },
-    fillRgbaBuffer: function PDFImage_fillRgbaBuffer(buffer, width, height) {
+    fillRgbaBuffer: function(buffer, width, height) {
       var numComps = this.numComps;
       var originalWidth = this.width;
       var originalHeight = this.height;
@@ -415,7 +415,7 @@ var PDFImage = (function PDFImageClosure() {
         buffer[i + 3] = opacity[opacityPos++];
       }
     },
-    fillGrayBuffer: function PDFImage_fillGrayBuffer(buffer) {
+    fillGrayBuffer: function(buffer) {
       var numComps = this.numComps;
       if (numComps != 1)
         error('Reading gray scale from a color image: ' + numComps);
@@ -435,7 +435,7 @@ var PDFImage = (function PDFImageClosure() {
       for (var i = 0; i < length; ++i)
         buffer[i] = (scale * comps[i]) | 0;
     },
-    getImageData: function PDFImage_getImageData() {
+    getImageData: function() {
       var drawWidth = this.drawWidth;
       var drawHeight = this.drawHeight;
       var imgData = {
@@ -447,7 +447,7 @@ var PDFImage = (function PDFImageClosure() {
       this.fillRgbaBuffer(pixels, drawWidth, drawHeight);
       return imgData;
     },
-    getImageBytes: function PDFImage_getImageBytes(length) {
+    getImageBytes: function(length) {
       this.image.reset();
       return this.image.getBytes(length);
     }

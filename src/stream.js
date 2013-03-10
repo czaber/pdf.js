@@ -35,14 +35,14 @@ var Stream = (function StreamClosure() {
     get length() {
       return this.end - this.start;
     },
-    getByte: function Stream_getByte() {
+    getByte: function() {
       if (this.pos >= this.end)
         return null;
       return this.bytes[this.pos++];
     },
     // returns subarray of original buffer
     // should only be read
-    getBytes: function Stream_getBytes(length) {
+    getBytes: function(length) {
       var bytes = this.bytes;
       var pos = this.pos;
       var strEnd = this.end;
@@ -57,28 +57,28 @@ var Stream = (function StreamClosure() {
       this.pos = end;
       return bytes.subarray(pos, end);
     },
-    lookChar: function Stream_lookChar() {
+    lookChar: function() {
       if (this.pos >= this.end)
         return null;
       return String.fromCharCode(this.bytes[this.pos]);
     },
-    getChar: function Stream_getChar() {
+    getChar: function() {
       if (this.pos >= this.end)
         return null;
       return String.fromCharCode(this.bytes[this.pos++]);
     },
-    skip: function Stream_skip(n) {
+    skip: function(n) {
       if (!n)
         n = 1;
       this.pos += n;
     },
-    reset: function Stream_reset() {
+    reset: function() {
       this.pos = this.start;
     },
-    moveStart: function Stream_moveStart() {
+    moveStart: function() {
       this.start = this.pos;
     },
-    makeSubStream: function Stream_makeSubStream(start, length, dict) {
+    makeSubStream: function(start, length, dict) {
       return new Stream(this.bytes.buffer, start, length, dict);
     },
     isStream: true
@@ -111,7 +111,7 @@ var DecodeStream = (function DecodeStreamClosure() {
   }
 
   DecodeStream.prototype = {
-    ensureBuffer: function DecodeStream_ensureBuffer(requested) {
+    ensureBuffer: function(requested) {
       var buffer = this.buffer;
       var current = buffer ? buffer.byteLength : 0;
       if (requested < current)
@@ -124,7 +124,7 @@ var DecodeStream = (function DecodeStreamClosure() {
         buffer2[i] = buffer[i];
       return (this.buffer = buffer2);
     },
-    getByte: function DecodeStream_getByte() {
+    getByte: function() {
       var pos = this.pos;
       while (this.bufferLength <= pos) {
         if (this.eof)
@@ -133,7 +133,7 @@ var DecodeStream = (function DecodeStreamClosure() {
       }
       return this.buffer[this.pos++];
     },
-    getBytes: function DecodeStream_getBytes(length) {
+    getBytes: function(length) {
       var end, pos = this.pos;
 
       if (length) {
@@ -161,7 +161,7 @@ var DecodeStream = (function DecodeStreamClosure() {
       this.pos = end;
       return this.buffer.subarray(pos, end);
     },
-    lookChar: function DecodeStream_lookChar() {
+    lookChar: function() {
       var pos = this.pos;
       while (this.bufferLength <= pos) {
         if (this.eof)
@@ -170,7 +170,7 @@ var DecodeStream = (function DecodeStreamClosure() {
       }
       return String.fromCharCode(this.buffer[this.pos]);
     },
-    getChar: function DecodeStream_getChar() {
+    getChar: function() {
       var pos = this.pos;
       while (this.bufferLength <= pos) {
         if (this.eof)
@@ -179,18 +179,18 @@ var DecodeStream = (function DecodeStreamClosure() {
       }
       return String.fromCharCode(this.buffer[this.pos++]);
     },
-    makeSubStream: function DecodeStream_makeSubStream(start, length, dict) {
+    makeSubStream: function(start, length, dict) {
       var end = start + length;
       while (this.bufferLength <= end && !this.eof)
         this.readBlock();
       return new Stream(this.buffer, start, length, dict);
     },
-    skip: function DecodeStream_skip(n) {
+    skip: function(n) {
       if (!n)
         n = 1;
       this.pos += n;
     },
-    reset: function DecodeStream_reset() {
+    reset: function() {
       this.pos = 0;
     }
   };
@@ -205,14 +205,14 @@ var FakeStream = (function FakeStreamClosure() {
   }
 
   FakeStream.prototype = Object.create(DecodeStream.prototype);
-  FakeStream.prototype.readBlock = function FakeStream_readBlock() {
+  FakeStream.prototype.readBlock = function() {
     var bufferLength = this.bufferLength;
     bufferLength += 1024;
     var buffer = this.ensureBuffer(bufferLength);
     this.bufferLength = bufferLength;
   };
 
-  FakeStream.prototype.getBytes = function FakeStream_getBytes(length) {
+  FakeStream.prototype.getBytes = function(length) {
     var end, pos = this.pos;
 
     if (length) {
@@ -385,7 +385,7 @@ var FlateStream = (function FlateStreamClosure() {
 
   FlateStream.prototype = Object.create(DecodeStream.prototype);
 
-  FlateStream.prototype.getBits = function FlateStream_getBits(bits) {
+  FlateStream.prototype.getBits = function(bits) {
     var codeSize = this.codeSize;
     var codeBuf = this.codeBuf;
     var bytes = this.bytes;
@@ -405,7 +405,7 @@ var FlateStream = (function FlateStreamClosure() {
     return b;
   };
 
-  FlateStream.prototype.getCode = function FlateStream_getCode(table) {
+  FlateStream.prototype.getCode = function(table) {
     var codes = table[0];
     var maxLen = table[1];
     var codeSize = this.codeSize;
@@ -470,7 +470,7 @@ var FlateStream = (function FlateStreamClosure() {
     return [codes, maxLen];
   };
 
-  FlateStream.prototype.readBlock = function FlateStream_readBlock() {
+  FlateStream.prototype.readBlock = function() {
     // read block header
     var hdr = this.getBits(3);
     if (hdr & 1)
@@ -840,7 +840,7 @@ var JpegStream = (function JpegStreamClosure() {
 
   JpegStream.prototype = Object.create(DecodeStream.prototype);
 
-  JpegStream.prototype.ensureBuffer = function JpegStream_ensureBuffer(req) {
+  JpegStream.prototype.ensureBuffer = function(req) {
     if (this.bufferLength)
       return;
     try {
@@ -857,10 +857,10 @@ var JpegStream = (function JpegStreamClosure() {
       error('JPEG error: ' + e);
     }
   };
-  JpegStream.prototype.getIR = function JpegStream_getIR() {
+  JpegStream.prototype.getIR = function() {
     return bytesToString(this.bytes);
   };
-  JpegStream.prototype.getChar = function JpegStream_getChar() {
+  JpegStream.prototype.getChar = function() {
     error('internal error: getChar is not valid on JpegStream');
   };
   /**
@@ -909,7 +909,7 @@ var JpxStream = (function JpxStreamClosure() {
 
   JpxStream.prototype = Object.create(DecodeStream.prototype);
 
-  JpxStream.prototype.ensureBuffer = function JpxStream_ensureBuffer(req) {
+  JpxStream.prototype.ensureBuffer = function(req) {
     if (this.bufferLength)
       return;
 
@@ -989,7 +989,7 @@ var JpxStream = (function JpxStreamClosure() {
     this.buffer = data;
     this.bufferLength = data.length;
   };
-  JpxStream.prototype.getChar = function JpxStream_getChar() {
+  JpxStream.prototype.getChar = function() {
     error('internal error: getChar is not valid on JpxStream');
   };
 
@@ -1010,7 +1010,7 @@ var Jbig2Stream = (function Jbig2StreamClosure() {
 
   Jbig2Stream.prototype = Object.create(DecodeStream.prototype);
 
-  Jbig2Stream.prototype.ensureBuffer = function Jbig2Stream_ensureBuffer(req) {
+  Jbig2Stream.prototype.ensureBuffer = function(req) {
     if (this.bufferLength)
       return;
 
@@ -1033,7 +1033,7 @@ var Jbig2Stream = (function Jbig2StreamClosure() {
     this.buffer = data;
     this.bufferLength = dataLength;
   };
-  Jbig2Stream.prototype.getChar = function Jbig2Stream_getChar() {
+  Jbig2Stream.prototype.getChar = function() {
     error('internal error: getChar is not valid on Jbig2Stream');
   };
 
@@ -1053,7 +1053,7 @@ var DecryptStream = (function DecryptStreamClosure() {
 
   DecryptStream.prototype = Object.create(DecodeStream.prototype);
 
-  DecryptStream.prototype.readBlock = function DecryptStream_readBlock() {
+  DecryptStream.prototype.readBlock = function() {
     var chunk = this.str.getBytes(chunkSize);
     if (!chunk || chunk.length === 0) {
       this.eof = true;
@@ -1084,7 +1084,7 @@ var Ascii85Stream = (function Ascii85StreamClosure() {
 
   Ascii85Stream.prototype = Object.create(DecodeStream.prototype);
 
-  Ascii85Stream.prototype.readBlock = function Ascii85Stream_readBlock() {
+  Ascii85Stream.prototype.readBlock = function() {
     var tildaCode = '~'.charCodeAt(0);
     var zCode = 'z'.charCodeAt(0);
     var str = this.str;
@@ -1179,7 +1179,7 @@ var AsciiHexStream = (function AsciiHexStreamClosure() {
 
   AsciiHexStream.prototype = Object.create(DecodeStream.prototype);
 
-  AsciiHexStream.prototype.readBlock = function AsciiHexStream_readBlock() {
+  AsciiHexStream.prototype.readBlock = function() {
     var gtCode = '>'.charCodeAt(0), bytes = this.str.getBytes(), c, n,
         decodeLength, buffer, bufferLength, i, length;
 
@@ -1222,7 +1222,7 @@ var RunLengthStream = (function RunLengthStreamClosure() {
 
   RunLengthStream.prototype = Object.create(DecodeStream.prototype);
 
-  RunLengthStream.prototype.readBlock = function RunLengthStream_readBlock() {
+  RunLengthStream.prototype.readBlock = function() {
     // The repeatHeader has following format. The first byte defines type of run
     // and amount of bytes to repeat/copy: n = 0 through 127 - copy next n bytes
     // (in addition to the second byte from the header), n = 129 through 255 -
@@ -1732,7 +1732,7 @@ var CCITTFaxStream = (function CCITTFaxStreamClosure() {
 
   CCITTFaxStream.prototype = Object.create(DecodeStream.prototype);
 
-  CCITTFaxStream.prototype.readBlock = function CCITTFaxStream_readBlock() {
+  CCITTFaxStream.prototype.readBlock = function() {
     while (!this.eof) {
       var c = this.lookChar();
       this.buf = EOF;
@@ -1790,7 +1790,7 @@ var CCITTFaxStream = (function CCITTFaxStreamClosure() {
     this.codingPos = codingPos;
   };
 
-  CCITTFaxStream.prototype.lookChar = function CCITTFaxStream_lookChar() {
+  CCITTFaxStream.prototype.lookChar = function() {
     if (this.buf != EOF)
       return this.buf;
 
@@ -2201,7 +2201,7 @@ var CCITTFaxStream = (function CCITTFaxStreamClosure() {
     return 1;
   };
 
-  CCITTFaxStream.prototype.lookBits = function CCITTFaxStream_lookBits(n) {
+  CCITTFaxStream.prototype.lookBits = function(n) {
     var c;
     while (this.inputBits < n) {
       if ((c = this.str.getByte()) === null || c === undefined) {
@@ -2216,7 +2216,7 @@ var CCITTFaxStream = (function CCITTFaxStreamClosure() {
     return (this.inputBuf >> (this.inputBits - n)) & (0xFFFF >> (16 - n));
   };
 
-  CCITTFaxStream.prototype.eatBits = function CCITTFaxStream_eatBits(n) {
+  CCITTFaxStream.prototype.eatBits = function(n) {
     if ((this.inputBits -= n) < 0)
       this.inputBits = 0;
   };
@@ -2253,7 +2253,7 @@ var LZWStream = (function LZWStreamClosure() {
 
   LZWStream.prototype = Object.create(DecodeStream.prototype);
 
-  LZWStream.prototype.readBits = function LZWStream_readBits(n) {
+  LZWStream.prototype.readBits = function(n) {
     var bitsCached = this.bitsCached;
     var cachedData = this.cachedData;
     while (bitsCached < n) {
@@ -2271,7 +2271,7 @@ var LZWStream = (function LZWStreamClosure() {
     return (cachedData >>> bitsCached) & ((1 << n) - 1);
   };
 
-  LZWStream.prototype.readBlock = function LZWStream_readBlock() {
+  LZWStream.prototype.readBlock = function() {
     var blockSize = 512;
     var estimatedDecodedSize = blockSize * 2, decodedSizeDelta = blockSize;
     var i, j, q;

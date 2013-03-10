@@ -30,7 +30,7 @@ var JpxImage = (function JpxImageClosure() {
     this.failOnCorruptedImage = false;
   }
   JpxImage.prototype = {
-    load: function JpxImage_load(url) {
+    load: function(url) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
       xhr.responseType = 'arraybuffer';
@@ -43,7 +43,7 @@ var JpxImage = (function JpxImageClosure() {
       }).bind(this);
       xhr.send(null);
     },
-    parse: function JpxImage_parse(data) {
+    parse: function(data) {
       function readUint(data, offset, bytes) {
         var n = 0;
         for (var i = 0; i < bytes; i++)
@@ -85,7 +85,7 @@ var JpxImage = (function JpxImageClosure() {
           position += dataLength;
       }
     },
-    parseCodestream: function JpxImage_parseCodestream(data, start, end) {
+    parseCodestream: function(data, start, end) {
       var context = {};
       try {
         var position = start;
@@ -543,7 +543,7 @@ var JpxImage = (function JpxImageClosure() {
 
     var l = 0, r = 0, i = 0, k = 0;
 
-    this.nextPacket = function JpxImage_nextPacket() {
+    this.nextPacket = function() {
       // Section B.12.1.1 Layer-resolution-component-position
       for (; l < layersCount; l++) {
         for (; r <= maxDecompositionLevelsCount; r++) {
@@ -582,7 +582,7 @@ var JpxImage = (function JpxImageClosure() {
 
     var r = 0, l = 0, i = 0, k = 0;
 
-    this.nextPacket = function JpxImage_nextPacket() {
+    this.nextPacket = function() {
       // Section B.12.1.2 Resolution-layer-component-position
       for (; r <= maxDecompositionLevelsCount; r++) {
         for (; l < layersCount; l++) {
@@ -1080,7 +1080,7 @@ var JpxImage = (function JpxImageClosure() {
       }
     }
     TagTree.prototype = {
-      reset: function TagTree_reset(i, j) {
+      reset: function(i, j) {
         var currentLevel = 0, value = 0;
         while (currentLevel < this.levels.length) {
           var level = this.levels[currentLevel];
@@ -1100,11 +1100,11 @@ var JpxImage = (function JpxImageClosure() {
         this.currentLevel = currentLevel;
         delete this.value;
       },
-      incrementValue: function TagTree_incrementValue() {
+      incrementValue: function() {
         var level = this.levels[this.currentLevel];
         level.items[level.index]++;
       },
-      nextLevel: function TagTree_nextLevel() {
+      nextLevel: function() {
         var currentLevel = this.currentLevel;
         var level = this.levels[currentLevel];
         var value = level.items[level.index];
@@ -1144,7 +1144,7 @@ var JpxImage = (function JpxImageClosure() {
       }
     }
     InclusionTree.prototype = {
-      reset: function InclusionTree_reset(i, j, stopValue) {
+      reset: function(i, j, stopValue) {
         var currentLevel = 0;
         while (currentLevel < this.levels.length) {
           var level = this.levels[currentLevel];
@@ -1169,12 +1169,12 @@ var JpxImage = (function JpxImageClosure() {
         this.currentLevel = currentLevel - 1;
         return true;
       },
-      incrementValue: function InclusionTree_incrementValue(stopValue) {
+      incrementValue: function(stopValue) {
         var level = this.levels[this.currentLevel];
         level.items[level.index] = stopValue + 1;
         this.propagateValues();
       },
-      propagateValues: function InclusionTree_propagateValues() {
+      propagateValues: function() {
         var levelIndex = this.currentLevel;
         var level = this.levels[levelIndex];
         var currentValue = level.items[level.index];
@@ -1183,7 +1183,7 @@ var JpxImage = (function JpxImageClosure() {
           level.items[level.index] = currentValue;
         }
       },
-      nextLevel: function InclusionTree_nextLevel() {
+      nextLevel: function() {
         var currentLevel = this.currentLevel;
         var level = this.levels[currentLevel];
         var value = level.items[level.index];
@@ -1270,7 +1270,7 @@ var JpxImage = (function JpxImageClosure() {
     }
 
     ArithmeticDecoder.prototype = {
-      byteIn: function ArithmeticDecoder_byteIn() {
+      byteIn: function() {
         var data = this.data;
         var bp = this.bp;
         if (data[bp] == 0xFF) {
@@ -1295,7 +1295,7 @@ var JpxImage = (function JpxImageClosure() {
           this.clow &= 0xFFFF;
         }
       },
-      readBit: function ArithmeticDecoder_readBit(cx) {
+      readBit: function(cx) {
         var qeIcx = QeTable[cx.index].qe;
         this.a -= qeIcx;
 
@@ -1314,7 +1314,7 @@ var JpxImage = (function JpxImageClosure() {
           }
         }
       },
-      renormD: function ArithmeticDecoder_renormD() {
+      renormD: function() {
         do {
           if (this.ct === 0)
             this.byteIn();
@@ -1325,7 +1325,7 @@ var JpxImage = (function JpxImageClosure() {
           this.ct--;
         } while ((this.a & 0x8000) === 0);
       },
-      exchangeMps: function ArithmeticDecoder_exchangeMps(cx) {
+      exchangeMps: function(cx) {
         var d;
         var qeTableIcx = QeTable[cx.index];
         if (this.a < qeTableIcx.qe) {
@@ -1341,7 +1341,7 @@ var JpxImage = (function JpxImageClosure() {
         }
         return d;
       },
-      exchangeLps: function ArithmeticDecoder_exchangeLps(cx) {
+      exchangeLps: function(cx) {
         var d;
         var qeTableIcx = QeTable[cx.index];
         if (this.a < qeTableIcx.qe) {
@@ -1433,10 +1433,10 @@ var JpxImage = (function JpxImageClosure() {
     }
 
     BitModel.prototype = {
-      setDecoder: function BitModel_setDecoder(decoder) {
+      setDecoder: function(decoder) {
         this.decoder = decoder;
       },
-      reset: function BitModel_reset() {
+      reset: function() {
         this.uniformContext = {index: 46, mps: 0};
         this.runLengthContext = {index: 3, mps: 0};
         this.contexts = [];
@@ -1515,7 +1515,7 @@ var JpxImage = (function JpxImageClosure() {
           }
         }
       },
-      decodeSignBit: function BitModel_decodeSignBit(row, column) {
+      decodeSignBit: function(row, column) {
         var width = this.width, height = this.height;
         var index = row * width + column;
         var coefficentsMagnitude = this.coefficentsMagnitude;
@@ -1583,7 +1583,7 @@ var JpxImage = (function JpxImageClosure() {
           }
         }
       },
-      runCleanupPass: function BitModel_runCleanupPass() {
+      runCleanupPass: function() {
         var decoder = this.decoder;
         var width = this.width, height = this.height;
         var neighborsSignificance = this.neighborsSignificance;
@@ -1666,7 +1666,7 @@ var JpxImage = (function JpxImageClosure() {
           }
         }
       },
-      checkSegmentationSymbol: function BitModel_checkSegmentationSymbol() {
+      checkSegmentationSymbol: function() {
         var decoder = this.decoder;
         var cx = this.uniformContext;
         var symbol = (decoder.readBit(cx) << 3) | (decoder.readBit(cx) << 2) |
@@ -1692,7 +1692,7 @@ var JpxImage = (function JpxImageClosure() {
       }
       return ll;
     };
-    Transform.prototype.iterate = function Transform_iterate(ll, hl, lh, hh,
+    Transform.prototype.iterate = function(ll, hl, lh, hh,
                                                             u0, v0) {
       var llWidth = ll.width, llHeight = ll.height, llItems = ll.items;
       var hlWidth = hl.width, hlHeight = hl.height, hlItems = hl.items;

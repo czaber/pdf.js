@@ -37,7 +37,7 @@ var ARCFourCipher = (function ARCFourCipherClosure() {
   }
 
   ARCFourCipher.prototype = {
-    encryptBlock: function ARCFourCipher_encryptBlock(data) {
+    encryptBlock: function(data) {
       var i, n = data.length, tmp, tmp2;
       var a = this.a, b = this.b, s = this.s;
       var output = new Uint8Array(n);
@@ -149,7 +149,7 @@ var NullCipher = (function NullCipherClosure() {
   }
 
   NullCipher.prototype = {
-    decryptBlock: function NullCipher_decryptBlock(data) {
+    decryptBlock: function(data) {
       return data;
     }
   };
@@ -387,7 +387,7 @@ var AES128Cipher = (function AES128CipherClosure() {
   }
 
   AES128Cipher.prototype = {
-    decryptBlock: function AES128Cipher_decryptBlock(data) {
+    decryptBlock: function(data) {
       var i, sourceLength = data.length;
       var buffer = this.buffer, bufferLength = this.bufferPosition;
       // waiting for IV values -- they are at the start of the stream
@@ -416,7 +416,7 @@ var CipherTransform = (function CipherTransformClosure() {
     this.streamCipherConstructor = streamCipherConstructor;
   }
   CipherTransform.prototype = {
-    createStream: function CipherTransform_createStream(stream) {
+    createStream: function(stream) {
       var cipher = new this.streamCipherConstructor();
       return new DecryptStream(stream,
         function cipherTransformDecryptStream(data) {
@@ -424,7 +424,7 @@ var CipherTransform = (function CipherTransformClosure() {
         }
       );
     },
-    decryptString: function CipherTransform_decryptString(s) {
+    decryptString: function(s) {
       var cipher = new this.stringCipherConstructor();
       var data = stringToBytes(s);
       data = cipher.decryptBlock(data);
@@ -623,18 +623,18 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
     if (cryptFilter !== null && cryptFilter !== undefined)
       cfm = cryptFilter.get('CFM');
     if (!cfm || cfm.name == 'None') {
-      return function cipherTransformFactoryBuildCipherConstructorNone() {
+      return function() {
         return new NullCipher();
       };
     }
     if ('V2' == cfm.name) {
-      return function cipherTransformFactoryBuildCipherConstructorV2() {
+      return function() {
         return new ARCFourCipher(
           buildObjectKey(num, gen, key, false));
       };
     }
     if ('AESV2' == cfm.name) {
-      return function cipherTransformFactoryBuildCipherConstructorAESV2() {
+      return function() {
         return new AES128Cipher(
           buildObjectKey(num, gen, key, true));
       };
@@ -654,7 +654,7 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
       }
       // algorithms 1 and 2
       var key = buildObjectKey(num, gen, this.encryptionKey, false);
-      var cipherConstructor = function buildCipherCipherConstructor() {
+      var cipherConstructor = function() {
         return new ARCFourCipher(key);
       };
       return new CipherTransform(cipherConstructor, cipherConstructor);

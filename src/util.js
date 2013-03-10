@@ -25,7 +25,7 @@ var log = (function() {
   if ('console' in globalScope && 'log' in globalScope['console']) {
     return globalScope['console']['log'].bind(globalScope['console']);
   } else {
-    return function nop() {
+    return function() {
     };
   }
 })();
@@ -118,7 +118,7 @@ function assertWellFormed(cond, msg) {
 var LogManager = PDFJS.LogManager = (function LogManagerClosure() {
   var loggers = [];
   return {
-    addLogger: function logManager_addLogger(logger) {
+    addLogger: function(logger) {
       loggers.push(logger);
     },
     notify: function(type, message) {
@@ -210,13 +210,13 @@ var IDENTITY_MATRIX = [1, 0, 0, 1, 0, 0];
 var Util = PDFJS.Util = (function UtilClosure() {
   function Util() {}
 
-  Util.makeCssRgb = function Util_makeCssRgb(rgb) {
+  Util.makeCssRgb = function(rgb) {
     return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
   };
 
-  Util.makeCssCmyk = function Util_makeCssCmyk(cmyk) {
+  Util.makeCssCmyk = function(cmyk) {
     var cs = new DeviceCmykCS();
-    Util.makeCssCmyk = function makeCssCmyk(cmyk) {
+    Util.makeCssCmyk = function(cmyk) {
       var rgb = cs.getRgb(cmyk, 0);
       return Util.makeCssRgb(rgb);
     };
@@ -224,20 +224,20 @@ var Util = PDFJS.Util = (function UtilClosure() {
   };
 
   // For 2d affine transforms
-  Util.applyTransform = function Util_applyTransform(p, m) {
+  Util.applyTransform = function(p, m) {
     var xt = p[0] * m[0] + p[1] * m[2] + m[4];
     var yt = p[0] * m[1] + p[1] * m[3] + m[5];
     return [xt, yt];
   };
 
-  Util.applyInverseTransform = function Util_applyInverseTransform(p, m) {
+  Util.applyInverseTransform = function(p, m) {
     var d = m[0] * m[3] - m[1] * m[2];
     var xt = (p[0] * m[3] - p[1] * m[2] + m[2] * m[5] - m[4] * m[3]) / d;
     var yt = (-p[0] * m[1] + p[1] * m[0] + m[4] * m[1] - m[5] * m[0]) / d;
     return [xt, yt];
   };
 
-  Util.inverseTransform = function Util_inverseTransform(m) {
+  Util.inverseTransform = function(m) {
     var d = m[0] * m[3] - m[1] * m[2];
     return [m[3] / d, -m[1] / d, -m[2] / d, m[0] / d,
       (m[2] * m[5] - m[4] * m[3]) / d, (m[4] * m[1] - m[5] * m[0]) / d];
@@ -249,7 +249,7 @@ var Util = PDFJS.Util = (function UtilClosure() {
   //   | g h i |   | Z |
   // M is assumed to be serialized as [a,b,c,d,e,f,g,h,i],
   // with v as [X,Y,Z]
-  Util.apply3dTransform = function Util_apply3dTransform(m, v) {
+  Util.apply3dTransform = function(m, v) {
     return [
       m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
       m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
@@ -261,7 +261,7 @@ var Util = PDFJS.Util = (function UtilClosure() {
   // For coordinate systems whose origin lies in the bottom-left, this
   // means normalization to (BL,TR) ordering. For systems with origin in the
   // top-left, this means (TL,BR) ordering.
-  Util.normalizeRect = function Util_normalizeRect(rect) {
+  Util.normalizeRect = function(rect) {
     var r = rect.slice(0); // clone rect
     if (rect[0] > rect[2]) {
       r[0] = rect[2];
@@ -277,7 +277,7 @@ var Util = PDFJS.Util = (function UtilClosure() {
   // Returns a rectangle [x1, y1, x2, y2] corresponding to the
   // intersection of rect1 and rect2. If no intersection, returns 'false'
   // The rectangle coordinates of rect1, rect2 should be [x1, y1, x2, y2]
-  Util.intersect = function Util_intersect(rect1, rect2) {
+  Util.intersect = function(rect1, rect2) {
     function compare(a, b) {
       return a - b;
     }
@@ -313,7 +313,7 @@ var Util = PDFJS.Util = (function UtilClosure() {
     return result;
   };
 
-  Util.sign = function Util_sign(num) {
+  Util.sign = function(num) {
     return num < 0 ? -1 : 1;
   };
 
@@ -378,7 +378,7 @@ var PageViewport = PDFJS.PageViewport = (function PageViewportClosure() {
     this.fontScale = scale;
   }
   PageViewport.prototype = {
-    convertToViewportPoint: function PageViewport_convertToViewportPoint(x, y) {
+    convertToViewportPoint: function(x, y) {
       return Util.applyTransform([x, y], this.transform);
     },
     convertToViewportRectangle:
@@ -387,7 +387,7 @@ var PageViewport = PDFJS.PageViewport = (function PageViewportClosure() {
       var br = Util.applyTransform([rect[2], rect[3]], this.transform);
       return [tl[0], tl[1], br[0], br[1]];
     },
-    convertToPdfPoint: function PageViewport_convertToPdfPoint(x, y) {
+    convertToPdfPoint: function(x, y) {
       return Util.applyInverseTransform([x, y], this.transform);
     }
   };
@@ -539,7 +539,7 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
    * @param {Promise[]} promises Array of promises to wait for.
    * @return {Promise} New dependant promise.
    */
-  Promise.all = function Promise_all(promises) {
+  Promise.all = function(promises) {
     var deferred = new Promise();
     var unresolved = promises.length;
     var results = [];
@@ -586,7 +586,7 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
       return this._data;
     },
 
-    onData: function Promise_onData(callback) {
+    onData: function(callback) {
       if (this._data !== EMPTY_PROMISE) {
         callback(this._data);
       } else {
@@ -594,7 +594,7 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
       }
     },
 
-    resolve: function Promise_resolve(data) {
+    resolve: function(data) {
       if (this.isResolved) {
         error('A Promise can be resolved only once ' + this.name);
       }
@@ -611,14 +611,14 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
       }
     },
 
-    progress: function Promise_progress(data) {
+    progress: function(data) {
       var callbacks = this.progressbacks;
       for (var i = 0, ii = callbacks.length; i < ii; i++) {
         callbacks[i].call(null, data);
       }
     },
 
-    reject: function Promise_reject(reason, exception) {
+    reject: function(reason, exception) {
       if (this.isRejected) {
         error('A Promise can be rejected only once ' + this.name);
       }
@@ -636,7 +636,7 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
       }
     },
 
-    then: function Promise_then(callback, errback, progressback) {
+    then: function(callback, errback, progressback) {
       if (!callback) {
         error('Requiring callback' + this.name);
       }
@@ -675,14 +675,14 @@ var StatTimer = (function StatTimerClosure() {
     this.enabled = true;
   }
   StatTimer.prototype = {
-    time: function StatTimer_time(name) {
+    time: function(name) {
       if (!this.enabled)
         return;
       if (name in this.started)
         throw 'Timer is already running for ' + name;
       this.started[name] = Date.now();
     },
-    timeEnd: function StatTimer_timeEnd(name) {
+    timeEnd: function(name) {
       if (!this.enabled)
         return;
       if (!(name in this.started))
@@ -695,7 +695,7 @@ var StatTimer = (function StatTimerClosure() {
       // Remove timer from started so it can be called again.
       delete this.started[name];
     },
-    toString: function StatTimer_toString() {
+    toString: function() {
       var times = this.times;
       var out = '';
       // Find the longest name for padding purposes.
@@ -716,7 +716,7 @@ var StatTimer = (function StatTimerClosure() {
   return StatTimer;
 })();
 
-PDFJS.createBlob = function createBlob(data, contentType) {
+PDFJS.createBlob = function(data, contentType) {
   if (typeof Blob === 'function')
     return new Blob([data], { type: contentType });
   // Blob builder is deprecated in FF14 and removed in FF18.

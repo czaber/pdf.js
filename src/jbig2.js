@@ -89,7 +89,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
     }
 
     ArithmeticDecoder.prototype = {
-      byteIn: function ArithmeticDecoder_byteIn() {
+      byteIn: function() {
         var data = this.data;
         var bp = this.bp;
         if (data[bp] == 0xFF) {
@@ -114,7 +114,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
           this.clow &= 0xFFFF;
         }
       },
-      readBit: function ArithmeticDecoder_readBit(cx) {
+      readBit: function(cx) {
         var qeIcx = QeTable[cx.index].qe;
         this.a -= qeIcx;
 
@@ -133,7 +133,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
           }
         }
       },
-      renormD: function ArithmeticDecoder_renormD() {
+      renormD: function() {
         do {
           if (this.ct === 0)
             this.byteIn();
@@ -144,7 +144,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
           this.ct--;
         } while ((this.a & 0x8000) === 0);
       },
-      exchangeMps: function ArithmeticDecoder_exchangeMps(cx) {
+      exchangeMps: function(cx) {
         var d;
         var qeTableIcx = QeTable[cx.index];
         if (this.a < qeTableIcx.qe) {
@@ -160,7 +160,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
         }
         return d;
       },
-      exchangeLps: function ArithmeticDecoder_exchangeLps(cx) {
+      exchangeLps: function(cx) {
         var d;
         var qeTableIcx = QeTable[cx.index];
         if (this.a < qeTableIcx.qe) {
@@ -951,7 +951,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
   function SimpleSegmentVisitor() {}
 
   SimpleSegmentVisitor.prototype = {
-    onPageInformation: function SimpleSegmentVisitor_onPageInformation(info) {
+    onPageInformation: function(info) {
       this.currentPageInfo = info;
       var rowSize = (info.width + 7) >> 3;
       var buffer = new Uint8Array(rowSize * info.height);
@@ -960,7 +960,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
         buffer[i] = fill;
       this.buffer = buffer;
     },
-    drawBitmap: function SimpleSegmentVisitor_drawBitmap(regionInfo, bitmap) {
+    drawBitmap: function(regionInfo, bitmap) {
       var pageInfo = this.currentPageInfo;
       var width = regionInfo.width, height = regionInfo.height;
       var rowSize = (pageInfo.width + 7) >> 3;
@@ -1069,7 +1069,7 @@ var Jbig2Image = (function Jbig2ImageClosure() {
   function Jbig2Image() {}
 
   Jbig2Image.prototype = {
-    parseChunks: function Jbig2Image_parseChunks(chunks) {
+    parseChunks: function(chunks) {
       return parseJbig2Chunks(chunks);
     }
   };

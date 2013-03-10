@@ -36,11 +36,11 @@ var Parser = (function ParserClosure() {
   }
 
   Parser.prototype = {
-    refill: function Parser_refill() {
+    refill: function() {
       this.buf1 = this.lexer.getObj();
       this.buf2 = this.lexer.getObj();
     },
-    shift: function Parser_shift() {
+    shift: function() {
       if (isCmd(this.buf2, 'ID')) {
         this.buf1 = this.buf2;
         this.buf2 = null;
@@ -51,7 +51,7 @@ var Parser = (function ParserClosure() {
         this.buf2 = this.lexer.getObj();
       }
     },
-    getObj: function Parser_getObj(cipherTransform) {
+    getObj: function(cipherTransform) {
       if (isCmd(this.buf1, 'BI')) { // inline image
         this.shift();
         return this.makeInlineImage(cipherTransform);
@@ -115,7 +115,7 @@ var Parser = (function ParserClosure() {
       this.shift();
       return obj;
     },
-    makeInlineImage: function Parser_makeInlineImage(cipherTransform) {
+    makeInlineImage: function(cipherTransform) {
       var lexer = this.lexer;
       var stream = lexer.stream;
 
@@ -169,11 +169,11 @@ var Parser = (function ParserClosure() {
 
       return imageStream;
     },
-    fetchIfRef: function Parser_fetchIfRef(obj) {
+    fetchIfRef: function(obj) {
       // not relying on the xref.fetchIfRef -- xref might not be set
       return isRef(obj) ? this.xref.fetch(obj) : obj;
     },
-    makeStream: function Parser_makeStream(dict, cipherTransform) {
+    makeStream: function(dict, cipherTransform) {
       var lexer = this.lexer;
       var stream = lexer.stream;
 
@@ -201,7 +201,7 @@ var Parser = (function ParserClosure() {
       stream.parameters = dict;
       return stream;
     },
-    filter: function Parser_filter(stream, dict, length) {
+    filter: function(stream, dict, length) {
       var filter = this.fetchIfRef(dict.get('Filter', 'F'));
       var params = this.fetchIfRef(dict.get('DecodeParms', 'DP'));
       if (isName(filter))
@@ -224,7 +224,7 @@ var Parser = (function ParserClosure() {
       }
       return stream;
     },
-    makeFilter: function Parser_makeFilter(stream, name, length, params) {
+    makeFilter: function(stream, name, length, params) {
       if (stream.dict.get('Length') === 0) {
         return new NullStream(stream);
       }
@@ -289,7 +289,7 @@ var Lexer = (function LexerClosure() {
     this.knownCommands = knownCommands;
   }
 
-  Lexer.isSpace = function Lexer_isSpace(ch) {
+  Lexer.isSpace = function(ch) {
     return ch == ' ' || ch == '\t' || ch == '\x0d' || ch == '\x0a';
   };
 
@@ -324,7 +324,7 @@ var Lexer = (function LexerClosure() {
   }
 
   Lexer.prototype = {
-    getNumber: function Lexer_getNumber(ch) {
+    getNumber: function(ch) {
       var floating = false;
       var str = ch;
       var stream = this.stream;
@@ -351,7 +351,7 @@ var Lexer = (function LexerClosure() {
         error('Invalid floating point number: ' + value);
       return value;
     },
-    getString: function Lexer_getString() {
+    getString: function() {
       var numParen = 1;
       var done = false;
       var str = '';
@@ -435,7 +435,7 @@ var Lexer = (function LexerClosure() {
       } while (!done);
       return str;
     },
-    getName: function Lexer_getName(ch) {
+    getName: function(ch) {
       var str = '';
       var stream = this.stream;
       while (!!(ch = stream.lookChar()) && !specialChars[ch.charCodeAt(0)]) {
@@ -462,7 +462,7 @@ var Lexer = (function LexerClosure() {
               str.length);
       return new Name(str);
     },
-    getHexString: function Lexer_getHexString(ch) {
+    getHexString: function(ch) {
       var str = '';
       var stream = this.stream;
       var isFirstHex = true;
@@ -497,7 +497,7 @@ var Lexer = (function LexerClosure() {
       }
       return str;
     },
-    getObj: function Lexer_getObj() {
+    getObj: function() {
       // skip whitespace and comments
       var comment = false;
       var stream = this.stream;
@@ -577,7 +577,7 @@ var Lexer = (function LexerClosure() {
         return null;
       return Cmd.get(str);
     },
-    skipToNextLine: function Lexer_skipToNextLine() {
+    skipToNextLine: function() {
       var stream = this.stream;
       while (true) {
         var ch = stream.getChar();
@@ -590,7 +590,7 @@ var Lexer = (function LexerClosure() {
         }
       }
     },
-    skip: function Lexer_skip() {
+    skip: function() {
       this.stream.skip();
     }
   };
@@ -614,7 +614,7 @@ var Linearization = (function LinearizationClosure() {
   }
 
   Linearization.prototype = {
-    getInt: function Linearization_getInt(name) {
+    getInt: function(name) {
       var linDict = this.linDict;
       var obj;
       if (isDict(linDict) &&
@@ -624,7 +624,7 @@ var Linearization = (function LinearizationClosure() {
       }
       error('"' + name + '" field in linearization table is invalid');
     },
-    getHint: function Linearization_getHint(index) {
+    getHint: function(index) {
       var linDict = this.linDict;
       var obj1, obj2;
       if (isDict(linDict) &&

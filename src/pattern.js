@@ -34,16 +34,16 @@ var Pattern = (function PatternClosure() {
   Pattern.prototype = {
     // Input: current Canvas context
     // Output: the appropriate fillStyle or strokeStyle
-    getPattern: function Pattern_getPattern(ctx) {
+    getPattern: function(ctx) {
       error('Should not call Pattern.getStyle: ' + ctx);
     }
   };
 
-  Pattern.shadingFromIR = function Pattern_shadingFromIR(raw) {
+  Pattern.shadingFromIR = function(raw) {
     return Shadings[raw[0]].fromIR(raw);
   };
 
-  Pattern.parseShading = function Pattern_parseShading(shading, matrix, xref,
+  Pattern.parseShading = function(shading, matrix, xref,
                                                        res) {
 
     var dict = isStream(shading) ? shading.dict : shading;
@@ -128,7 +128,7 @@ Shadings.RadialAxial = (function RadialAxialClosure() {
         }
         fnArray.push(PDFFunction.parse(xref, obj));
       }
-      fn = function radialAxialColorFunction(arg) {
+      fn = function(arg) {
         var out = [];
         for (var i = 0, ii = fnArray.length; i < ii; i++) {
           out.push(fnArray[i](arg)[0]);
@@ -185,7 +185,7 @@ Shadings.RadialAxial = (function RadialAxialClosure() {
     this.colorStops = colorStops;
   }
 
-  RadialAxial.fromIR = function RadialAxial_fromIR(raw) {
+  RadialAxial.fromIR = function(raw) {
     var type = raw[1];
     var colorStops = raw[2];
     var p0 = raw[3];
@@ -194,7 +194,7 @@ Shadings.RadialAxial = (function RadialAxialClosure() {
     var r1 = raw[6];
     return {
       type: 'Pattern',
-      getPattern: function RadialAxial_getPattern(ctx) {
+      getPattern: function(ctx) {
         var grad;
         if (type == PatternType.AXIAL)
           grad = ctx.createLinearGradient(p0[0], p0[1], p1[0], p1[1]);
@@ -211,7 +211,7 @@ Shadings.RadialAxial = (function RadialAxialClosure() {
   };
 
   RadialAxial.prototype = {
-    getIR: function RadialAxial_getIR() {
+    getIR: function() {
       var coordsArr = this.coordsArr;
       var type = this.shadingType;
       if (type == PatternType.AXIAL) {
@@ -246,17 +246,17 @@ Shadings.Dummy = (function DummyClosure() {
     this.type = 'Pattern';
   }
 
-  Dummy.fromIR = function Dummy_fromIR() {
+  Dummy.fromIR = function() {
     return {
       type: 'Pattern',
-      getPattern: function Dummy_fromIR_getPattern() {
+      getPattern: function() {
         return 'hotpink';
       }
     };
   };
 
   Dummy.prototype = {
-    getIR: function Dummy_getIR() {
+    getIR: function() {
       return ['Dummy'];
     }
   };
@@ -346,7 +346,7 @@ var TilingPattern = (function TilingPatternClosure() {
     this.canvas = tmpCanvas;
   }
 
-  TilingPattern.getIR = function TilingPattern_getIR(operatorList, dict, args) {
+  TilingPattern.getIR = function(operatorList, dict, args) {
     var matrix = dict.get('Matrix');
     var bbox = dict.get('BBox');
     var xstep = dict.get('XStep');
@@ -361,7 +361,7 @@ var TilingPattern = (function TilingPatternClosure() {
   };
 
   TilingPattern.prototype = {
-    getPattern: function TilingPattern_getPattern() {
+    getPattern: function() {
       var matrix = this.matrix;
       var curMatrix = this.curMatrix;
       var ctx = this.ctx;

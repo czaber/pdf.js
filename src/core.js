@@ -75,7 +75,7 @@ function getPdf(arg, callback) {
   var calledErrorBack = false;
 
   if ('error' in params) {
-    xhr.onerror = function errorBack() {
+    xhr.onerror = function() {
       if (!calledErrorBack) {
         calledErrorBack = true;
         params.error();
@@ -83,7 +83,7 @@ function getPdf(arg, callback) {
     };
   }
 
-  xhr.onreadystatechange = function getPdfOnreadystatechange(e) {
+  xhr.onreadystatechange = function(e) {
     if (xhr.readyState === 4) {
       if (xhr.status === xhr.expected) {
         var data = (xhr.mozResponseArrayBuffer || xhr.mozResponse ||
@@ -111,10 +111,10 @@ var Page = (function PageClosure() {
   }
 
   Page.prototype = {
-    getPageProp: function Page_getPageProp(key) {
+    getPageProp: function(key) {
       return this.pageDict.get(key);
     },
-    inheritPageProp: function Page_inheritPageProp(key) {
+    inheritPageProp: function(key) {
       var dict = this.pageDict;
       var obj = dict.get(key);
       while (obj === undefined) {
@@ -171,7 +171,7 @@ var Page = (function PageClosure() {
       }
       return shadow(this, 'rotate', rotate);
     },
-    getContentStream: function Page_getContentStream() {
+    getContentStream: function() {
       var content = this.content;
       if (isArray(content)) {
         // fetching items
@@ -189,7 +189,7 @@ var Page = (function PageClosure() {
       }
       return content;
     },
-    getOperatorList: function Page_getOperatorList(handler, dependency) {
+    getOperatorList: function(handler, dependency) {
       var xref = this.xref;
       var contentStream = this.getContentStream();
       var resources = this.resources;
@@ -201,10 +201,10 @@ var Page = (function PageClosure() {
       pe.optimizeQueue(list);
       return list;
     },
-    extractTextContent: function Page_extractTextContent() {
+    extractTextContent: function() {
       var handler = {
-        on: function nullHandlerOn() {},
-        send: function nullHandlerSend() {}
+        on: function() {},
+        send: function() {}
       };
 
       var xref = this.xref;
@@ -216,7 +216,7 @@ var Page = (function PageClosure() {
                      'p' + this.pageIndex + '_');
       return pe.getTextContent(contentStream, resources);
     },
-    getLinks: function Page_getLinks() {
+    getLinks: function() {
       var links = [];
       var annotations = this.getAnnotations();
       var i, n = annotations.length;
@@ -227,7 +227,7 @@ var Page = (function PageClosure() {
       }
       return links;
     },
-    getAnnotations: function Page_getAnnotations() {
+    getAnnotations: function() {
       var xref = this.xref;
       function getInheritableProperty(annotation, name) {
         var item = annotation;
@@ -501,7 +501,7 @@ var PDFDocument = (function PDFDocumentClosure() {
     },
     // Find the header, remove leading garbage and setup the stream
     // starting from the header.
-    checkHeader: function PDFDocument_checkHeader() {
+    checkHeader: function() {
       var stream = this.stream;
       stream.reset();
       if (find(stream, '%PDF-', 1024)) {
@@ -522,7 +522,7 @@ var PDFDocument = (function PDFDocumentClosure() {
       }
       // May not be a PDF file, continue anyway.
     },
-    setup: function PDFDocument_setup(password) {
+    setup: function(password) {
       this.checkHeader();
       var xref = new XRef(this.stream,
                           this.startXRef,
@@ -537,7 +537,7 @@ var PDFDocument = (function PDFDocumentClosure() {
       // shadow the prototype getter
       return shadow(this, 'numPages', num);
     },
-    getDocumentInfo: function PDFDocument_getDocumentInfo() {
+    getDocumentInfo: function() {
       var docInfo = {
         PDFFormatVersion: this.pdfFormatVersion,
         IsAcroFormPresent: !!this.acroForm
@@ -562,7 +562,7 @@ var PDFDocument = (function PDFDocumentClosure() {
       }
       return shadow(this, 'getDocumentInfo', docInfo);
     },
-    getFingerprint: function PDFDocument_getFingerprint() {
+    getFingerprint: function() {
       var xref = this.xref, fileID;
       if (xref.trailer.has('ID')) {
         fileID = '';
@@ -583,7 +583,7 @@ var PDFDocument = (function PDFDocumentClosure() {
 
       return shadow(this, 'getFingerprint', fileID);
     },
-    getPage: function PDFDocument_getPage(n) {
+    getPage: function(n) {
       return this.catalog.getPage(n);
     }
   };

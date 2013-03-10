@@ -62,13 +62,13 @@ function addContextCurrentTransform(ctx) {
     ctx._transformStack = [];
 
     Object.defineProperty(ctx, 'mozCurrentTransform', {
-      get: function getCurrentTransform() {
+      get: function() {
         return this._transformMatrix;
       }
     });
 
     Object.defineProperty(ctx, 'mozCurrentTransformInverse', {
-      get: function getCurrentTransformInverse() {
+      get: function() {
         // Calculation done using WolframAlpha:
         // http://www.wolframalpha.com/input/?
         //   i=Inverse+{{a%2C+c%2C+e}%2C+{b%2C+d%2C+f}%2C+{0%2C+0%2C+1}}
@@ -90,7 +90,7 @@ function addContextCurrentTransform(ctx) {
       }
     });
 
-    ctx.save = function ctxSave() {
+    ctx.save = function() {
       var old = this._transformMatrix;
       this._transformStack.push(old);
       this._transformMatrix = old.slice(0, 6);
@@ -98,7 +98,7 @@ function addContextCurrentTransform(ctx) {
       this._originalSave();
     };
 
-    ctx.restore = function ctxRestore() {
+    ctx.restore = function() {
       var prev = this._transformStack.pop();
       if (prev) {
         this._transformMatrix = prev;
@@ -106,7 +106,7 @@ function addContextCurrentTransform(ctx) {
       }
     };
 
-    ctx.translate = function ctxTranslate(x, y) {
+    ctx.translate = function(x, y) {
       var m = this._transformMatrix;
       m[4] = m[0] * x + m[2] * y + m[4];
       m[5] = m[1] * x + m[3] * y + m[5];
@@ -114,7 +114,7 @@ function addContextCurrentTransform(ctx) {
       this._originalTranslate(x, y);
     };
 
-    ctx.scale = function ctxScale(x, y) {
+    ctx.scale = function(x, y) {
       var m = this._transformMatrix;
       m[0] = m[0] * x;
       m[1] = m[1] * x;
@@ -124,7 +124,7 @@ function addContextCurrentTransform(ctx) {
       this._originalScale(x, y);
     };
 
-    ctx.transform = function ctxTransform(a, b, c, d, e, f) {
+    ctx.transform = function(a, b, c, d, e, f) {
       var m = this._transformMatrix;
       this._transformMatrix = [
         m[0] * a + m[2] * b,
@@ -138,7 +138,7 @@ function addContextCurrentTransform(ctx) {
       ctx._originalTransform(a, b, c, d, e, f);
     };
 
-    ctx.rotate = function ctxRotate(angle) {
+    ctx.rotate = function(angle) {
       var cosValue = Math.cos(angle);
       var sinValue = Math.sin(angle);
 
@@ -198,10 +198,10 @@ var CanvasExtraState = (function CanvasExtraStateClosure() {
   }
 
   CanvasExtraState.prototype = {
-    clone: function CanvasExtraState_clone() {
+    clone: function() {
       return Object.create(this);
     },
-    setCurrentPoint: function CanvasExtraState_setCurrentPoint(x, y) {
+    setCurrentPoint: function(x, y) {
       this.x = x;
       this.y = y;
     }
@@ -395,7 +395,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       'shadingFill': true
     },
 
-    beginDrawing: function CanvasGraphics_beginDrawing(viewport) {
+    beginDrawing: function(viewport) {
       var transform = viewport.transform;
       this.ctx.save();
       this.ctx.transform.apply(this.ctx, transform);
@@ -408,7 +408,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       }
     },
 
-    executeOperatorList: function CanvasGraphics_executeOperatorList(
+    executeOperatorList: function(
                                     operatorList,
                                     executionStartIdx, continueCallback,
                                     stepper) {
@@ -479,7 +479,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       }
     },
 
-    endDrawing: function CanvasGraphics_endDrawing() {
+    endDrawing: function() {
       this.ctx.restore();
 
       if (this.textLayer) {
@@ -491,20 +491,20 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     // Graphics state
-    setLineWidth: function CanvasGraphics_setLineWidth(width) {
+    setLineWidth: function(width) {
       this.current.lineWidth = width;
       this.ctx.lineWidth = width;
     },
-    setLineCap: function CanvasGraphics_setLineCap(style) {
+    setLineCap: function(style) {
       this.ctx.lineCap = LINE_CAP_STYLES[style];
     },
-    setLineJoin: function CanvasGraphics_setLineJoin(style) {
+    setLineJoin: function(style) {
       this.ctx.lineJoin = LINE_JOIN_STYLES[style];
     },
-    setMiterLimit: function CanvasGraphics_setMiterLimit(limit) {
+    setMiterLimit: function(limit) {
       this.ctx.miterLimit = limit;
     },
-    setDash: function CanvasGraphics_setDash(dashArray, dashPhase) {
+    setDash: function(dashArray, dashPhase) {
       var ctx = this.ctx;
       if ('setLineDash' in ctx) {
         ctx.setLineDash(dashArray);
@@ -514,16 +514,16 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.mozDashOffset = dashPhase;
       }
     },
-    setRenderingIntent: function CanvasGraphics_setRenderingIntent(intent) {
+    setRenderingIntent: function(intent) {
       // Maybe if we one day fully support color spaces this will be important
       // for now we can ignore.
       // TODO set rendering intent?
     },
-    setFlatness: function CanvasGraphics_setFlatness(flatness) {
+    setFlatness: function(flatness) {
       // There's no way to control this with canvas, but we can safely ignore.
       // TODO set flatness?
     },
-    setGState: function CanvasGraphics_setGState(states) {
+    setGState: function(states) {
       for (var i = 0, ii = states.length; i < ii; i++) {
         var state = states[i];
         var key = state[0];
@@ -564,13 +564,13 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         }
       }
     },
-    save: function CanvasGraphics_save() {
+    save: function() {
       this.ctx.save();
       var old = this.current;
       this.stateStack.push(old);
       this.current = old.clone();
     },
-    restore: function CanvasGraphics_restore() {
+    restore: function() {
       if ('textClipLayers' in this) {
         this.completeTextClipping();
       }
@@ -581,39 +581,39 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         this.ctx.restore();
       }
     },
-    transform: function CanvasGraphics_transform(a, b, c, d, e, f) {
+    transform: function(a, b, c, d, e, f) {
       this.ctx.transform(a, b, c, d, e, f);
     },
 
     // Path
-    moveTo: function CanvasGraphics_moveTo(x, y) {
+    moveTo: function(x, y) {
       this.ctx.moveTo(x, y);
       this.current.setCurrentPoint(x, y);
     },
-    lineTo: function CanvasGraphics_lineTo(x, y) {
+    lineTo: function(x, y) {
       this.ctx.lineTo(x, y);
       this.current.setCurrentPoint(x, y);
     },
-    curveTo: function CanvasGraphics_curveTo(x1, y1, x2, y2, x3, y3) {
+    curveTo: function(x1, y1, x2, y2, x3, y3) {
       this.ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
       this.current.setCurrentPoint(x3, y3);
     },
-    curveTo2: function CanvasGraphics_curveTo2(x2, y2, x3, y3) {
+    curveTo2: function(x2, y2, x3, y3) {
       var current = this.current;
       this.ctx.bezierCurveTo(current.x, current.y, x2, y2, x3, y3);
       current.setCurrentPoint(x3, y3);
     },
-    curveTo3: function CanvasGraphics_curveTo3(x1, y1, x3, y3) {
+    curveTo3: function(x1, y1, x3, y3) {
       this.curveTo(x1, y1, x3, y3, x3, y3);
       this.current.setCurrentPoint(x3, y3);
     },
-    closePath: function CanvasGraphics_closePath() {
+    closePath: function() {
       this.ctx.closePath();
     },
-    rectangle: function CanvasGraphics_rectangle(x, y, width, height) {
+    rectangle: function(x, y, width, height) {
       this.ctx.rect(x, y, width, height);
     },
-    stroke: function CanvasGraphics_stroke(consumePath) {
+    stroke: function(consumePath) {
       consumePath = typeof consumePath !== 'undefined' ? consumePath : true;
       var ctx = this.ctx;
       var strokeColor = this.current.strokeColor;
@@ -638,11 +638,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       // Restore the global alpha to the fill alpha
       ctx.globalAlpha = this.current.fillAlpha;
     },
-    closeStroke: function CanvasGraphics_closeStroke() {
+    closeStroke: function() {
       this.closePath();
       this.stroke();
     },
-    fill: function CanvasGraphics_fill(consumePath) {
+    fill: function(consumePath) {
       consumePath = typeof consumePath !== 'undefined' ? consumePath : true;
       var ctx = this.ctx;
       var fillColor = this.current.fillColor;
@@ -659,56 +659,56 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       if (consumePath)
         this.consumePath();
     },
-    eoFill: function CanvasGraphics_eoFill() {
+    eoFill: function() {
       var savedFillRule = this.setEOFillRule();
       this.fill();
       this.restoreFillRule(savedFillRule);
     },
-    fillStroke: function CanvasGraphics_fillStroke() {
+    fillStroke: function() {
       this.fill(false);
       this.stroke(false);
 
       this.consumePath();
     },
-    eoFillStroke: function CanvasGraphics_eoFillStroke() {
+    eoFillStroke: function() {
       var savedFillRule = this.setEOFillRule();
       this.fillStroke();
       this.restoreFillRule(savedFillRule);
     },
-    closeFillStroke: function CanvasGraphics_closeFillStroke() {
+    closeFillStroke: function() {
       this.closePath();
       this.fillStroke();
     },
-    closeEOFillStroke: function CanvasGraphics_closeEOFillStroke() {
+    closeEOFillStroke: function() {
       var savedFillRule = this.setEOFillRule();
       this.closePath();
       this.fillStroke();
       this.restoreFillRule(savedFillRule);
     },
-    endPath: function CanvasGraphics_endPath() {
+    endPath: function() {
       this.consumePath();
     },
 
     // Clipping
-    clip: function CanvasGraphics_clip() {
+    clip: function() {
       this.pendingClip = NORMAL_CLIP;
     },
-    eoClip: function CanvasGraphics_eoClip() {
+    eoClip: function() {
       this.pendingClip = EO_CLIP;
     },
 
     // Text
-    beginText: function CanvasGraphics_beginText() {
+    beginText: function() {
       this.current.textMatrix = IDENTITY_MATRIX;
       this.current.x = this.current.lineX = 0;
       this.current.y = this.current.lineY = 0;
     },
-    endText: function CanvasGraphics_endText() {
+    endText: function() {
       if ('textClipLayers' in this) {
         this.swapImageForTextClipping();
       }
     },
-    getCurrentTextClipping: function CanvasGraphics_getCurrentTextClipping() {
+    getCurrentTextClipping: function() {
       var ctx = this.ctx;
       var transform = ctx.mozCurrentTransform;
       if ('textClipLayers' in this) {
@@ -746,7 +746,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.restore();
     },
-    completeTextClipping: function CanvasGraphics_completeTextClipping() {
+    completeTextClipping: function() {
       var ctx = this.ctx;
       // applying mask to the image (result is saved in maskCanvas)
       var maskCtx = this.textClipLayers.maskCtx;
@@ -763,19 +763,19 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
       delete this.textClipLayers;
     },
-    setCharSpacing: function CanvasGraphics_setCharSpacing(spacing) {
+    setCharSpacing: function(spacing) {
       this.current.charSpacing = spacing;
     },
-    setWordSpacing: function CanvasGraphics_setWordSpacing(spacing) {
+    setWordSpacing: function(spacing) {
       this.current.wordSpacing = spacing;
     },
-    setHScale: function CanvasGraphics_setHScale(scale) {
+    setHScale: function(scale) {
       this.current.textHScale = scale / 100;
     },
-    setLeading: function CanvasGraphics_setLeading(leading) {
+    setLeading: function(leading) {
       this.current.leading = -leading;
     },
-    setFont: function CanvasGraphics_setFont(fontRefName, size) {
+    setFont: function(fontRefName, size) {
       var fontObj = this.commonObjs.get(fontRefName);
       var current = this.current;
 
@@ -825,30 +825,30 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var rule = italic + ' ' + bold + ' ' + browserFontSize + 'px ' + typeface;
       this.ctx.font = rule;
     },
-    setTextRenderingMode: function CanvasGraphics_setTextRenderingMode(mode) {
+    setTextRenderingMode: function(mode) {
       this.current.textRenderingMode = mode;
     },
-    setTextRise: function CanvasGraphics_setTextRise(rise) {
+    setTextRise: function(rise) {
       this.current.textRise = rise;
     },
-    moveText: function CanvasGraphics_moveText(x, y) {
+    moveText: function(x, y) {
       this.current.x = this.current.lineX += x;
       this.current.y = this.current.lineY += y;
     },
-    setLeadingMoveText: function CanvasGraphics_setLeadingMoveText(x, y) {
+    setLeadingMoveText: function(x, y) {
       this.setLeading(-y);
       this.moveText(x, y);
     },
-    setTextMatrix: function CanvasGraphics_setTextMatrix(a, b, c, d, e, f) {
+    setTextMatrix: function(a, b, c, d, e, f) {
       this.current.textMatrix = [a, b, c, d, e, f];
 
       this.current.x = this.current.lineX = 0;
       this.current.y = this.current.lineY = 0;
     },
-    nextLine: function CanvasGraphics_nextLine() {
+    nextLine: function() {
       this.moveText(0, this.current.leading);
     },
-    applyTextTransforms: function CanvasGraphics_applyTextTransforms() {
+    applyTextTransforms: function() {
       var ctx = this.ctx;
       var current = this.current;
       ctx.transform.apply(ctx, current.textMatrix);
@@ -859,7 +859,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.scale(-current.textHScale, 1);
       }
     },
-    createTextGeometry: function CanvasGraphics_createTextGeometry() {
+    createTextGeometry: function() {
       var geometry = {};
       var ctx = this.ctx;
       var font = this.current.font;
@@ -879,7 +879,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       return geometry;
     },
 
-    showText: function CanvasGraphics_showText(str, skipTextSelection) {
+    showText: function(str, skipTextSelection) {
       var ctx = this.ctx;
       var current = this.current;
       var font = current.font;
@@ -1014,7 +1014,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
       return canvasWidth;
     },
-    showSpacedText: function CanvasGraphics_showSpacedText(arr) {
+    showSpacedText: function(arr) {
       var ctx = this.ctx;
       var current = this.current;
       var font = current.font;
@@ -1058,7 +1058,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         this.textLayer.appendText(geom);
       }
     },
-    nextLineShowText: function CanvasGraphics_nextLineShowText(text) {
+    nextLineShowText: function(text) {
       this.nextLine();
       this.showText(text);
     },
@@ -1072,11 +1072,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     // Type3 fonts
-    setCharWidth: function CanvasGraphics_setCharWidth(xWidth, yWidth) {
+    setCharWidth: function(xWidth, yWidth) {
       // We can safely ignore this since the width should be the same
       // as the width in the Widths array.
     },
-    setCharWidthAndBounds: function CanvasGraphics_setCharWidthAndBounds(xWidth,
+    setCharWidthAndBounds: function(xWidth,
                                                                         yWidth,
                                                                         llx,
                                                                         lly,
@@ -1090,20 +1090,20 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     // Color
-    setStrokeColorSpace: function CanvasGraphics_setStrokeColorSpace(raw) {
+    setStrokeColorSpace: function(raw) {
       this.current.strokeColorSpace = ColorSpace.fromIR(raw);
     },
-    setFillColorSpace: function CanvasGraphics_setFillColorSpace(raw) {
+    setFillColorSpace: function(raw) {
       this.current.fillColorSpace = ColorSpace.fromIR(raw);
     },
-    setStrokeColor: function CanvasGraphics_setStrokeColor(/*...*/) {
+    setStrokeColor: function(/*...*/) {
       var cs = this.current.strokeColorSpace;
       var rgbColor = cs.getRgb(arguments, 0);
       var color = Util.makeCssRgb(rgbColor);
       this.ctx.strokeStyle = color;
       this.current.strokeColor = color;
     },
-    getColorN_Pattern: function CanvasGraphics_getColorN_Pattern(IR, cs) {
+    getColorN_Pattern: function(IR, cs) {
       if (IR[0] == 'TilingPattern') {
         var args = IR[1];
         var base = cs.base;
@@ -1121,7 +1121,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       }
       return pattern;
     },
-    setStrokeColorN: function CanvasGraphics_setStrokeColorN(/*...*/) {
+    setStrokeColorN: function(/*...*/) {
       var cs = this.current.strokeColorSpace;
 
       if (cs.name == 'Pattern') {
@@ -1130,14 +1130,14 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         this.setStrokeColor.apply(this, arguments);
       }
     },
-    setFillColor: function CanvasGraphics_setFillColor(/*...*/) {
+    setFillColor: function(/*...*/) {
       var cs = this.current.fillColorSpace;
       var rgbColor = cs.getRgb(arguments, 0);
       var color = Util.makeCssRgb(rgbColor);
       this.ctx.fillStyle = color;
       this.current.fillColor = color;
     },
-    setFillColorN: function CanvasGraphics_setFillColorN(/*...*/) {
+    setFillColorN: function(/*...*/) {
       var cs = this.current.fillColorSpace;
 
       if (cs.name == 'Pattern') {
@@ -1146,7 +1146,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         this.setFillColor.apply(this, arguments);
       }
     },
-    setStrokeGray: function CanvasGraphics_setStrokeGray(gray) {
+    setStrokeGray: function(gray) {
       if (!(this.current.strokeColorSpace instanceof DeviceGrayCS))
         this.current.strokeColorSpace = new DeviceGrayCS();
 
@@ -1155,7 +1155,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.ctx.strokeStyle = color;
       this.current.strokeColor = color;
     },
-    setFillGray: function CanvasGraphics_setFillGray(gray) {
+    setFillGray: function(gray) {
       if (!(this.current.fillColorSpace instanceof DeviceGrayCS))
         this.current.fillColorSpace = new DeviceGrayCS();
 
@@ -1164,7 +1164,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.ctx.fillStyle = color;
       this.current.fillColor = color;
     },
-    setStrokeRGBColor: function CanvasGraphics_setStrokeRGBColor(r, g, b) {
+    setStrokeRGBColor: function(r, g, b) {
       if (!(this.current.strokeColorSpace instanceof DeviceRgbCS))
         this.current.strokeColorSpace = new DeviceRgbCS();
 
@@ -1173,7 +1173,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.ctx.strokeStyle = color;
       this.current.strokeColor = color;
     },
-    setFillRGBColor: function CanvasGraphics_setFillRGBColor(r, g, b) {
+    setFillRGBColor: function(r, g, b) {
       if (!(this.current.fillColorSpace instanceof DeviceRgbCS))
         this.current.fillColorSpace = new DeviceRgbCS();
 
@@ -1182,7 +1182,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.ctx.fillStyle = color;
       this.current.fillColor = color;
     },
-    setStrokeCMYKColor: function CanvasGraphics_setStrokeCMYKColor(c, m, y, k) {
+    setStrokeCMYKColor: function(c, m, y, k) {
       if (!(this.current.strokeColorSpace instanceof DeviceCmykCS))
         this.current.strokeColorSpace = new DeviceCmykCS();
 
@@ -1190,7 +1190,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.ctx.strokeStyle = color;
       this.current.strokeColor = color;
     },
-    setFillCMYKColor: function CanvasGraphics_setFillCMYKColor(c, m, y, k) {
+    setFillCMYKColor: function(c, m, y, k) {
       if (!(this.current.fillColorSpace instanceof DeviceCmykCS))
         this.current.fillColorSpace = new DeviceCmykCS();
 
@@ -1199,7 +1199,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.current.fillColor = color;
     },
 
-    shadingFill: function CanvasGraphics_shadingFill(patternIR) {
+    shadingFill: function(patternIR) {
       var ctx = this.ctx;
 
       this.save();
@@ -1237,14 +1237,14 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     // Images
-    beginInlineImage: function CanvasGraphics_beginInlineImage() {
+    beginInlineImage: function() {
       error('Should not call beginInlineImage');
     },
-    beginImageData: function CanvasGraphics_beginImageData() {
+    beginImageData: function() {
       error('Should not call beginImageData');
     },
 
-    paintFormXObjectBegin: function CanvasGraphics_paintFormXObjectBegin(matrix,
+    paintFormXObjectBegin: function(matrix,
                                                                         bbox) {
       this.save();
       this.current.paintFormXObjectDepth++;
@@ -1261,7 +1261,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       }
     },
 
-    paintFormXObjectEnd: function CanvasGraphics_paintFormXObjectEnd() {
+    paintFormXObjectEnd: function() {
       var depth = this.current.paintFormXObjectDepth;
       do {
         this.restore();
@@ -1270,7 +1270,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       } while (this.current.paintFormXObjectDepth >= depth);
     },
 
-    paintJpegXObject: function CanvasGraphics_paintJpegXObject(objId, w, h) {
+    paintJpegXObject: function(objId, w, h) {
       var domImage = this.objs.get(objId);
       if (!domImage) {
         error('Dependent image isn\'t ready yet');
@@ -1298,7 +1298,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.restore();
     },
 
-    paintImageMaskXObject: function CanvasGraphics_paintImageMaskXObject(
+    paintImageMaskXObject: function(
                              imgArray, inverseDecode, width, height) {
       var ctx = this.ctx;
       var tmpCanvas = createScratchCanvas(width, height);
@@ -1354,7 +1354,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       }
     },
 
-    paintImageXObject: function CanvasGraphics_paintImageXObject(objId) {
+    paintImageXObject: function(objId) {
       var imgData = this.objs.get(objId);
       if (!imgData)
         error('Dependent image isn\'t ready yet');
@@ -1440,35 +1440,35 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
     // Marked content
 
-    markPoint: function CanvasGraphics_markPoint(tag) {
+    markPoint: function(tag) {
       // TODO Marked content.
     },
-    markPointProps: function CanvasGraphics_markPointProps(tag, properties) {
+    markPointProps: function(tag, properties) {
       // TODO Marked content.
     },
-    beginMarkedContent: function CanvasGraphics_beginMarkedContent(tag) {
+    beginMarkedContent: function(tag) {
       // TODO Marked content.
     },
-    beginMarkedContentProps: function CanvasGraphics_beginMarkedContentProps(
+    beginMarkedContentProps: function(
                                         tag, properties) {
       // TODO Marked content.
     },
-    endMarkedContent: function CanvasGraphics_endMarkedContent() {
+    endMarkedContent: function() {
       // TODO Marked content.
     },
 
     // Compatibility
 
-    beginCompat: function CanvasGraphics_beginCompat() {
+    beginCompat: function() {
       // TODO ignore undefined operators (should we do that anyway?)
     },
-    endCompat: function CanvasGraphics_endCompat() {
+    endCompat: function() {
       // TODO stop ignoring undefined operators
     },
 
     // Helper functions
 
-    consumePath: function CanvasGraphics_consumePath() {
+    consumePath: function() {
       if (this.pendingClip) {
         var savedFillRule = null;
         if (this.pendingClip == EO_CLIP)
@@ -1485,22 +1485,22 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     // We generally keep the canvas context set for
     // nonzero-winding, and just set evenodd for the operations
     // that need them.
-    setEOFillRule: function CanvasGraphics_setEOFillRule() {
+    setEOFillRule: function() {
       var savedFillRule = this.ctx.mozFillRule;
       this.ctx.mozFillRule = 'evenodd';
       return savedFillRule;
     },
-    restoreFillRule: function CanvasGraphics_restoreFillRule(rule) {
+    restoreFillRule: function(rule) {
       this.ctx.mozFillRule = rule;
     },
-    getSinglePixelWidth: function CanvasGraphics_getSinglePixelWidth(scale) {
+    getSinglePixelWidth: function(scale) {
       var inverse = this.ctx.mozCurrentTransformInverse;
       // max of the current horizontal and vertical scale
       return Math.sqrt(Math.max(
         (inverse[0] * inverse[0] + inverse[1] * inverse[1]),
         (inverse[2] * inverse[2] + inverse[3] * inverse[3])));
     },
-    getCanvasPosition: function CanvasGraphics_getCanvasPosition(x, y) {
+    getCanvasPosition: function(x, y) {
         var transform = this.ctx.mozCurrentTransform;
         return [
           transform[0] * x + transform[2] * y + transform[4],

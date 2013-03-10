@@ -40,7 +40,7 @@ var Cmd = (function CmdClosure() {
 
   var cmdCache = {};
 
-  Cmd.get = function Cmd_get(cmd) {
+  Cmd.get = function(cmd) {
     var cmdValue = cmdCache[cmd];
     if (cmdValue)
       return cmdValue;
@@ -57,12 +57,12 @@ var Dict = (function DictClosure() {
     // Map should only be used internally, use functions below to access.
     var map = Object.create(null);
 
-    this.assignXref = function Dict_assignXref(newXref) {
+    this.assignXref = function(newXref) {
       xref = newXref;
     };
 
     // automatically dereferences Ref objects
-    this.get = function Dict_get(key1, key2, key3) {
+    this.get = function(key1, key2, key3) {
       var value;
       if (typeof (value = map[key1]) != 'undefined' || key1 in map ||
           typeof key2 == 'undefined') {
@@ -77,12 +77,12 @@ var Dict = (function DictClosure() {
     };
 
     // no dereferencing
-    this.getRaw = function Dict_getRaw(key) {
+    this.getRaw = function(key) {
       return map[key];
     };
 
     // creates new map and dereferences all Refs
-    this.getAll = function Dict_getAll() {
+    this.getAll = function() {
       var all = {};
       for (var key in map) {
         var obj = this.get(key);
@@ -91,15 +91,15 @@ var Dict = (function DictClosure() {
       return all;
     };
 
-    this.set = function Dict_set(key, value) {
+    this.set = function(key, value) {
       map[key] = value;
     };
 
-    this.has = function Dict_has(key) {
+    this.has = function(key) {
       return key in map;
     };
 
-    this.forEach = function Dict_forEach(callback) {
+    this.forEach = function(callback) {
       for (var key in map) {
         callback(key, this.get(key));
       }
@@ -128,11 +128,11 @@ var RefSet = (function RefSetClosure() {
   }
 
   RefSet.prototype = {
-    has: function RefSet_has(ref) {
+    has: function(ref) {
       return !!this.dict['R' + ref.num + '.' + ref.gen];
     },
 
-    put: function RefSet_put(ref) {
+    put: function(ref) {
       this.dict['R' + ref.num + '.' + ref.gen] = ref;
     }
   };
@@ -249,7 +249,7 @@ var Catalog = (function CatalogClosure() {
       // shadow the prototype getter
       return shadow(this, 'num', obj);
     },
-    traverseKids: function Catalog_traverseKids(pagesDict) {
+    traverseKids: function(pagesDict) {
       var pageCache = this.pageCache;
       var kids = pagesDict.get('Kids');
       assertWellFormed(isArray(kids),
@@ -320,7 +320,7 @@ var Catalog = (function CatalogClosure() {
       }
       return shadow(this, 'destinations', dests);
     },
-    getPage: function Catalog_getPage(n) {
+    getPage: function(n) {
       var pageCache = this.pageCache;
       if (!pageCache) {
         pageCache = this.pageCache = [];
@@ -357,7 +357,7 @@ var XRef = (function XRefClosure() {
   }
 
   XRef.prototype = {
-    readXRefTable: function XRef_readXRefTable(parser) {
+    readXRefTable: function(parser) {
       // Example of cross-reference table:
       // xref
       // 0 1                    <-- subsection header (first obj #, obj count)
@@ -423,7 +423,7 @@ var XRef = (function XRefClosure() {
 
       return dict;
     },
-    readXRefStream: function XRef_readXRefStream(stream) {
+    readXRefStream: function(stream) {
       var streamParameters = stream.parameters;
       var byteWidths = streamParameters.get('W');
       var range = streamParameters.get('Index');
@@ -474,7 +474,7 @@ var XRef = (function XRefClosure() {
       }
       return streamParameters;
     },
-    indexObjects: function XRef_indexObjects() {
+    indexObjects: function() {
       // Simple scan through the PDF content to find objects,
       // trailers and XRef streams.
       function readToken(data, offset) {
@@ -584,7 +584,7 @@ var XRef = (function XRefClosure() {
       // calling error() would reject worker with an UnknownErrorException.
       throw new InvalidPDFException('Invalid PDF structure');
     },
-    readXRef: function XRef_readXRef(startXRef, recoveryMode) {
+    readXRef: function(startXRef, recoveryMode) {
       var stream = this.stream;
       stream.pos = startXRef;
 
@@ -642,18 +642,18 @@ var XRef = (function XRefClosure() {
       warn('Indexing all PDF objects');
       return this.indexObjects();
     },
-    getEntry: function XRef_getEntry(i) {
+    getEntry: function(i) {
       var e = this.entries[i];
       if (e === null)
         return null;
       return e.free || !e.offset ? null : e; // returns null if entry is free
     },
-    fetchIfRef: function XRef_fetchIfRef(obj) {
+    fetchIfRef: function(obj) {
       if (!isRef(obj))
         return obj;
       return this.fetch(obj);
     },
-    fetch: function XRef_fetch(ref, suppressEncryption) {
+    fetch: function(ref, suppressEncryption) {
       assertWellFormed(isRef(ref), 'ref object is not a reference');
       var num = ref.num;
       if (num in this.cache)
@@ -747,7 +747,7 @@ var XRef = (function XRefClosure() {
       }
       return e;
     },
-    getCatalogObj: function XRef_getCatalogObj() {
+    getCatalogObj: function() {
       return this.root;
     }
   };
@@ -772,7 +772,7 @@ var PDFObjects = (function PDFObjectsClosure() {
      * Ensures there is an object defined for `objId`. Stores `data` on the
      * object *if* it is created.
      */
-    ensureObj: function PDFObjects_ensureObj(objId, data) {
+    ensureObj: function(objId, data) {
       if (this.objs[objId])
         return this.objs[objId];
       return this.objs[objId] = new Promise(objId, data);
@@ -787,7 +787,7 @@ var PDFObjects = (function PDFObjectsClosure() {
      * function and the object is already resolved, the callback gets called
      * right away.
      */
-    get: function PDFObjects_get(objId, callback) {
+    get: function(objId, callback) {
       // If there is a callback, then the get can be async and the object is
       // not required to be resolved right now
       if (callback) {
@@ -810,7 +810,7 @@ var PDFObjects = (function PDFObjectsClosure() {
     /**
      * Resolves the object `objId` with optional `data`.
      */
-    resolve: function PDFObjects_resolve(objId, data) {
+    resolve: function(objId, data) {
       var objs = this.objs;
 
       // In case there is a promise already on this object, just resolve it.
@@ -821,11 +821,11 @@ var PDFObjects = (function PDFObjectsClosure() {
       }
     },
 
-    onData: function PDFObjects_onData(objId, callback) {
+    onData: function(objId, callback) {
       this.ensureObj(objId).onData(callback);
     },
 
-    isResolved: function PDFObjects_isResolved(objId) {
+    isResolved: function(objId) {
       var objs = this.objs;
       if (!objs[objId]) {
         return false;
@@ -834,7 +834,7 @@ var PDFObjects = (function PDFObjectsClosure() {
       }
     },
 
-    hasData: function PDFObjects_hasData(objId) {
+    hasData: function(objId) {
       var objs = this.objs;
       if (!objs[objId]) {
         return false;
@@ -846,7 +846,7 @@ var PDFObjects = (function PDFObjectsClosure() {
     /**
      * Returns the data of `objId` if object exists, null otherwise.
      */
-    getData: function PDFObjects_getData(objId) {
+    getData: function(objId) {
       var objs = this.objs;
       if (!objs[objId] || !objs[objId].hasData) {
         return null;
@@ -858,13 +858,13 @@ var PDFObjects = (function PDFObjectsClosure() {
     /**
      * Sets the data of an object but *doesn't* resolve it.
      */
-    setData: function PDFObjects_setData(objId, data) {
+    setData: function(objId, data) {
       // Watchout! If you call `this.ensureObj(objId, data)` you're going to
       // create a *resolved* promise which shouldn't be the case!
       this.ensureObj(objId).data = data;
     },
 
-    clear: function PDFObjects_clear() {
+    clear: function() {
       this.objs = {};
     }
   };
