@@ -347,22 +347,22 @@ var TilingPattern = (function TilingPatternClosure() {
   };
 
   TilingPattern.prototype = {
-    setScale: function TilingPattern_setScale(width, height, xstep, ystep) {
+    setScale: function(width, height, xstep, ystep) {
       this.scale = [width / xstep, height / ystep];
     },
 
-    transformToScale: function TilingPattern_transformToScale(graphics) {
+    transformToScale: function(graphics) {
       var scale = this.scale;
       var tmpScale = [scale[0], 0, 0, scale[1], 0, 0];
       graphics.transform.apply(graphics, tmpScale);
     },
 
-    scaleToContext: function TilingPattern_scaleToContext() {
+    scaleToContext: function() {
       var scale = this.scale;
       this.ctx.scale(1 / scale[0], 1 / scale[1]);
     },
 
-    clipBbox: function clipBbox(graphics, bbox, x0, y0, x1, y1) {
+    clipBbox: function(graphics, bbox, x0, y0, x1, y1) {
       if (bbox && isArray(bbox) && 4 == bbox.length) {
         var bboxWidth = x1 - x0;
         var bboxHeight = y1 - y0;

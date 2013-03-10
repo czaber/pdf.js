@@ -5479,7 +5479,7 @@ Type1Font.prototype = {
     return charstrings;
   },
 
-  getSeacs: function Type1Font_getSeacs(charstrings) {
+  getSeacs: function(charstrings) {
     var i, ii;
     var seacMap = [];
     for (i = 0, ii = charstrings.length; i < ii; i++) {
@@ -5750,23 +5750,23 @@ var CFFParser = (function CFFParserClosure() {
     null,
     { id: 'abs', min: 1, stackDelta: 0 },
     { id: 'add', min: 2, stackDelta: -1,
-      stackFn: function stack_div(stack, index) {
+      stackFn: function(stack, index) {
         stack[index - 2] = stack[index - 2] + stack[index - 1];
       }
     },
     { id: 'sub', min: 2, stackDelta: -1,
-      stackFn: function stack_div(stack, index) {
+      stackFn: function(stack, index) {
         stack[index - 2] = stack[index - 2] - stack[index - 1];
       }
     },
     { id: 'div', min: 2, stackDelta: -1,
-      stackFn: function stack_div(stack, index) {
+      stackFn: function(stack, index) {
         stack[index - 2] = stack[index - 2] / stack[index - 1];
       }
     },
     null,
     { id: 'neg', min: 1, stackDelta: 0,
-      stackFn: function stack_div(stack, index) {
+      stackFn: function(stack, index) {
         stack[index - 1] = -stack[index - 1];
       }
     },
@@ -5780,7 +5780,7 @@ var CFFParser = (function CFFParserClosure() {
     { id: 'ifelse', min: 4, stackDelta: -3 },
     { id: 'random', min: 0, stackDelta: 1 },
     { id: 'mul', min: 2, stackDelta: -1,
-      stackFn: function stack_div(stack, index) {
+      stackFn: function(stack, index) {
         stack[index - 2] = stack[index - 2] * stack[index - 1];
       }
     },

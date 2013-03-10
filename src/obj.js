@@ -784,7 +784,7 @@ var NameTree = (function NameTreeClosure() {
   }
 
   NameTree.prototype = {
-    getAll: function NameTree_getAll() {
+    getAll: function() {
       var dict = {};
       if (!this.root) {
         return dict;
