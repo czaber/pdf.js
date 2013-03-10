@@ -61,13 +61,13 @@ function create(component, element) {
 }
 
 function dispatch(component, e) {
-  console.info("Dispatching event " + e.type + " on component " + component.id);
+  //console.info("Dispatching event " + e.type + " on component " + component.id);
   component.el.dom.dispatchEvent(e);
 }
 
 function setupEventListener(component, eventname, callback, arg) {
   arg = arg || true;
-  console.info("Registered event " + eventname + " for component " + component.id);
+  //console.info("Registered event " + eventname + " for component " + component.id);
   component["on"+eventname] = callback;
   component.el.dom.addEventListener(eventname, callback, arg);
 }
