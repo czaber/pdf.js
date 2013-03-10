@@ -423,7 +423,7 @@ var CMapConverterList = {
   '90msp-RKSJ-V': sjisToUnicode,
   'GBK-EUC-H': gbkToUnicode,
   'ETenms-B5-H': big5ToUnicode,
-  'ETenms-B5-V': big5ToUnicode,
+  'ETenms-B5-V': big5ToUnicode
 };
 
 // CMaps using Hankaku (Halfwidth) Latin glyphs instead of proportional one.
