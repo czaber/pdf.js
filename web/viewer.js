@@ -105,9 +105,9 @@ function scrollIntoView(element, spot) {
   parent.scrollTop = offsetY;
 }
 
-var Cache = function cacheCache(size) {
+var Cache = function(size) {
   var data = [];
-  this.push = function cachePush(view) {
+  this.push = function(view) {
     var i = data.indexOf(view);
     if (i >= 0)
       data.splice(i);
@@ -1276,7 +1276,7 @@ var pdfview = {
   load: function(pdfDocument, scale) {
     function bindOnAfterDraw(pageView, thumbnailView) {
       // when page is painted, using the image as thumbnail base
-      pageView.onAfterDraw = function pdfViewLoadOnAfterDraw() {
+      pageView.onAfterDraw = function() {
         thumbnailView.setImage(pageView.canvas);
       };
     }
@@ -1847,7 +1847,7 @@ pdfview.initialize(component);
 return pdfview;
 };
 
-var PageView = function pageView(container, pdfPage, id, scale,
+var PageView = function(container, pdfPage, id, scale,
                                  stats, navigateTo, component, pdfview) {
   this.id = id;
   this.pdfPage = pdfPage;
@@ -1877,12 +1877,12 @@ var PageView = function pageView(container, pdfPage, id, scale,
   container.appendChild(anchor);
   container.appendChild(div);
 
-  this.destroy = function pageViewDestroy() {
+  this.destroy = function() {
     this.update();
     this.pdfPage.destroy();
   };
 
-  this.update = function pageViewUpdate(scale, rotation) {
+  this.update = function(scale, rotation) {
     this.renderingState = RenderingStates.INITIAL;
     this.resume = null;
 
@@ -1927,7 +1927,7 @@ var PageView = function pageView(container, pdfPage, id, scale,
   function setupAnnotations(pdfPage, viewport, component) {
     function bindLink(link, dest) {
       link.href = this.pdfview.getDestinationHash(dest);
-      link.onclick = function pageViewSetupLinksOnclick() {
+      link.onclick = function() {
         if (dest)
           this.pdfview.navigateTo(dest);
         return false;
@@ -2022,11 +2022,11 @@ var PageView = function pageView(container, pdfPage, id, scale,
     });
   }
 
-  this.getPagePoint = function pageViewGetPagePoint(x, y) {
+  this.getPagePoint = function(x, y) {
     return this.viewport.convertToPdfPoint(x, y);
   };
 
-  this.scrollIntoView = function pageViewScrollIntoView(dest) {
+  this.scrollIntoView = function(dest) {
       if (!dest) {
         scrollIntoView(div);
         return;
@@ -2092,14 +2092,14 @@ var PageView = function pageView(container, pdfPage, id, scale,
       }, 0);
   };
 
-  this.getTextContent = function pageviewGetTextContent() {
+  this.getTextContent = function() {
     if (!this.textContent) {
       this.textContent = this.pdfPage.getTextContent();
     }
     return this.textContent;
   };
 
-  this.draw = function pageviewDraw(callback) {
+  this.draw = function(callback) {
     if (this.renderingState !== RenderingStates.INITIAL)
       error('Must be in new state before drawing');
 
@@ -2203,7 +2203,7 @@ var PageView = function pageView(container, pdfPage, id, scale,
 
         if (self.pdfview.highestPriorityPage !== 'page' + self.id) {
           self.renderingState = RenderingStates.PAUSED;
-          self.resume = function resumeCallback() {
+          self.resume = function() {
             self.renderingState = RenderingStates.RUNNING;
             cont();
           };
@@ -2233,7 +2233,7 @@ var PageView = function pageView(container, pdfPage, id, scale,
     div.setAttribute('data-loaded', true);
   };
 
-  this.beforePrint = function pageViewBeforePrint() {
+  this.beforePrint = function() {
     var pdfPage = this.pdfPage;
     var viewport = pdfPage.getViewport(1);
     // Use the same hack we use for high dpi displays for printing to get better
@@ -2284,7 +2284,7 @@ var PageView = function pageView(container, pdfPage, id, scale,
     };
   };
 
-  this.updateStats = function pageViewUpdateStats() {
+  this.updateStats = function() {
     if (PDFJS.pdfBug && Stats.enabled) {
       var stats = this.stats;
       Stats.add(this.id, stats);
@@ -2292,12 +2292,12 @@ var PageView = function pageView(container, pdfPage, id, scale,
   };
 };
 
-var ThumbnailView = function thumbnailView(container, pdfPage, id, component, pdfview) {
+var ThumbnailView = function(container, pdfPage, id, component, pdfview) {
   this.pdfview = pdfview;
   var anchor = create(component,'a');
   anchor.href = this.pdfview.getAnchorUrl('#page=' + id);
   anchor.title = mozL10n.get('thumb_page_title', {page: id}, 'Page {{page}}');
-  anchor.onclick = function stopNavigation() {
+  anchor.onclick = function() {
     pdfview.page = id;
     return false;
   };
@@ -2382,11 +2382,11 @@ var ThumbnailView = function thumbnailView(container, pdfPage, id, component, pd
     return ctx;
   }
 
-  this.drawingRequired = function thumbnailViewDrawingRequired() {
+  this.drawingRequired = function() {
     return !this.hasImage;
   };
 
-  this.draw = function thumbnailViewDraw(callback) {
+  this.draw = function(callback) {
     if (this.renderingState !== RenderingStates.INITIAL) {
       error('Must be in new state before drawing');
     }
@@ -2428,7 +2428,7 @@ var ThumbnailView = function thumbnailView(container, pdfPage, id, component, pd
     this.hasImage = true;
   };
 
-  this.setImage = function thumbnailViewSetImage(img) {
+  this.setImage = function(img) {
     if (this.hasImage || !img)
       return;
     this.renderingState = RenderingStates.FINISHED;
@@ -2440,14 +2440,14 @@ var ThumbnailView = function thumbnailView(container, pdfPage, id, component, pd
   };
 };
 
-var DocumentOutlineView = function documentOutlineView(outline, component, pdfview) {
+var DocumentOutlineView = function(outline, component, pdfview) {
   var outlineView = find(component,'outlineView');
   while (outlineView.firstChild)
     outlineView.removeChild(outlineView.firstChild);
   this.pdfview = pdfview;
   function bindItemLink(domObj, item) {
     domObj.href = this.pdfview.getDestinationHash(item.dest);
-    domObj.onclick = function documentOutlineViewOnclick(e) {
+    domObj.onclick = function(e) {
       this.pdfview.navigateTo(item.dest);
       return false;
     };
@@ -2500,7 +2500,7 @@ var CustomStyle = (function CustomStyleClosure() {
   function CustomStyle() {
   }
 
-  CustomStyle.getProp = function get(propName, element) {
+  CustomStyle.getProp = function(propName, element) {
     // check cache only when no element is given
     if (arguments.length == 1 && typeof _cache[propName] == 'string') {
       return _cache[propName];
@@ -2529,7 +2529,7 @@ var CustomStyle = (function CustomStyleClosure() {
     return (_cache[propName] = 'undefined');
   };
 
-  CustomStyle.setProp = function set(propName, element, str) {
+  CustomStyle.setProp = function(propName, element, str) {
     var prop = this.getProp(propName);
     if (prop != 'undefined')
       element.style[prop] = str;
@@ -2538,7 +2538,7 @@ var CustomStyle = (function CustomStyleClosure() {
   return CustomStyle;
 })();
 
-var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, component, pdfview) {
+var TextLayerBuilder = function(textLayerDiv, pageIdx, component, pdfview) {
   var textLayerFrag = createdocfragment(component);
 
   this.textLayerDiv = textLayerDiv;
@@ -2547,18 +2547,18 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
   this.pageIdx = pageIdx;
   this.matches = [];
 
-  this.beginLayout = function textLayerBuilderBeginLayout() {
+  this.beginLayout = function() {
     this.textDivs = [];
     this.textLayerQueue = [];
     this.renderingDone = false;
   };
 
-  this.endLayout = function textLayerBuilderEndLayout() {
+  this.endLayout = function() {
     this.layoutDone = true;
     this.insertDivContent();
   };
 
-  this.renderLayer = function textLayerBuilderRenderLayer() {
+  this.renderLayer = function() {
     var self = this;
     var textDivs = this.textDivs;
     var textLayerDiv = this.textLayerDiv;
@@ -2595,7 +2595,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     textLayerDiv.appendChild(textLayerFrag);
   };
 
-  this.setupRenderLayoutTimer = function textLayerSetupRenderLayoutTimer() {
+  this.setupRenderLayoutTimer = function() {
     // Schedule renderLayout() if user has been scrolling, otherwise
     // run it right away
     var RENDER_DELAY = 200; // in ms
@@ -2613,7 +2613,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     }
   };
 
-  this.appendText = function textLayerBuilderAppendText(geom) {
+  this.appendText = function(geom) {
     var textDiv = create(component,'div');
 
     // vScale and hScale already contain the scaling to pixel units
@@ -2631,7 +2631,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     this.textDivs.push(textDiv);
   };
 
-  this.insertDivContent = function textLayerUpdateTextContent() {
+  this.insertDivContent = function() {
     // Only set the content of the divs once layout has finished, the content
     // for the divs is available and content is not yet set on the divs.
     if (!this.layoutDone || this.divContentDone || !this.textContent)
@@ -2653,12 +2653,12 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     this.setupRenderLayoutTimer();
   };
 
-  this.setTextContent = function textLayerBuilderSetTextContent(textContent) {
+  this.setTextContent = function(textContent) {
     this.textContent = textContent;
     this.insertDivContent();
   };
 
-  this.convertMatches = function textLayerBuilderConvertMatches(matches) {
+  this.convertMatches = function(matches) {
     var i = 0;
     var iIndex = 0;
     var bidiTexts = this.textContent.bidiTexts;
@@ -2713,7 +2713,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     return ret;
   };
 
-  this.renderMatches = function textLayerBuilder_renderMatches(matches) {
+  this.renderMatches = function(matches) {
     // Early exit if there is nothing to render.
     if (matches.length === 0) {
       return;
@@ -2819,7 +2819,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
     }
   };
 
-  this.updateMatches = function textLayerUpdateMatches() {
+  this.updateMatches = function() {
     // Only show matches, once all rendering is done.
     if (!this.renderingDone)
       return;
@@ -2856,7 +2856,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, componen
 
 /// TODO
 //document.addEventListener('DOMContentLoaded', function(evt) {
-var PDFViewer = function pdfviewerInitialize(component, src, hashParams) {
+var PDFViewer = function(component, src, hashParams) {
     var pdfview = new PDFView(component);
     var file = src;
     hashParams = hashParams || {};
@@ -3160,7 +3160,7 @@ setupEventListener(component, 'change', function(evt) {
 
   // Read the local file into a Uint8Array.
   var fileReader = new FileReader();
-  fileReader.onload = function webViewerChangeFileReaderOnload(evt) {
+  fileReader.onload = function(evt) {
     var buffer = evt.target.result;
     var uint8Array = new Uint8Array(buffer);
     pdfview.open(uint8Array, -1.0);
