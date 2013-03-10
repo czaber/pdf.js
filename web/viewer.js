@@ -1349,10 +1349,10 @@ var pdfview = {
       self.pagesRefMap = pagesRefMap;
 
       // Wait to do this here so all the canvases are setup.
-      if (PDFView.supportsPrinting) {
+      if (pdfview.supportsPrinting) {
         pdfDocument.getJavaScript().then(function(javaScript) {
           if (javaScript.length) {
-            PDFView.fallback();
+            pdfview.fallback();
           }
           // Hack to support auto printing.
           var regex = /\bprint\s*\(/g;
@@ -1397,7 +1397,7 @@ var pdfview = {
       // Make all navigation keys work on document load,
       // unless the viewer is embedded in another page.
       if (window.parent.location === window.location) {
-        PDFView.container.focus();
+        pdfview.container.focus();
       }
     });
 
