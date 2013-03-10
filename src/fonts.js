@@ -17,7 +17,7 @@
 /* globals assert, bytesToString, CIDToUnicodeMaps, error, ExpertCharset,
            ExpertSubsetCharset, FileReaderSync, globalScope, GlyphsUnicode,
            info, isArray, isNum, ISOAdobeCharset, isWorker, PDFJS, Stream,
-           stringToBytes, TextDecoder, warn */
+           stringToBytes, TextDecoder, TODO, warn */
 
 'use strict';
 
@@ -33,6 +33,10 @@ var PDF_GLYPH_SPACE_UNITS = 1000;
 // Hinting is currently disabled due to unknown problems on windows
 // in tracemonkey and various other pdfs with type1 fonts.
 var HINTING_ENABLED = false;
+
+// Accented charactars are not displayed properly on windows, using this flag
+// to control analysis of seac charstrings.
+var SEAC_ANALYSIS_ENABLED = false;
 
 var FONT_IDENTITY_MATRIX = [0.001, 0, 0, 0.001, 0, 0];
 
@@ -411,11 +415,15 @@ var CMapConverterList = {
   'V': jis7ToUnicode,
   'EUC-H': eucjpToUnicode,
   'EUC-V': eucjpToUnicode,
+  '83pv-RKSJ-H': sjis83pvToUnicode,
+  '90pv-RKSJ-H': sjis90pvToUnicode,
   '90ms-RKSJ-H': sjisToUnicode,
   '90ms-RKSJ-V': sjisToUnicode,
   '90msp-RKSJ-H': sjisToUnicode,
   '90msp-RKSJ-V': sjisToUnicode,
-  'GBK-EUC-H': gbkToUnicode
+  'GBK-EUC-H': gbkToUnicode,
+  'ETenms-B5-H': big5ToUnicode,
+  'ETenms-B5-V': big5ToUnicode,
 };
 
 // CMaps using Hankaku (Halfwidth) Latin glyphs instead of proportional one.
@@ -435,8 +443,8 @@ var decodeBytes;
 if (typeof TextDecoder !== 'undefined') {
   // The encodings supported by TextDecoder can be found at:
   // http://encoding.spec.whatwg.org/#concept-encoding-get
-  decodeBytes = function(bytes, encoding) {
-    return new TextDecoder(encoding).decode(bytes);
+  decodeBytes = function(bytes, encoding, fatal) {
+    return new TextDecoder(encoding, {fatal: !!fatal}).decode(bytes);
   };
 } else if (typeof FileReaderSync !== 'undefined') {
   decodeBytes = function(bytes, encoding) {
@@ -464,8 +472,36 @@ function sjisToUnicode(str) {
   return decodeBytes(stringToBytes(str), 'shift_jis');
 }
 
+function sjis83pvToUnicode(str) {
+  var bytes = stringToBytes(str);
+  try {
+    // TODO: 83pv has incompatible mappings in ed40..ee9c range.
+    return decodeBytes(bytes, 'shift_jis', true);
+  } catch (e) {
+    TODO('Unsupported 83pv character found');
+    // Just retry without checking errors for now.
+    return decodeBytes(bytes, 'shift_jis');
+  }
+}
+
+function sjis90pvToUnicode(str) {
+  var bytes = stringToBytes(str);
+  try {
+    // TODO: 90pv has incompatible mappings in 8740..879c and eb41..ee9c.
+    return decodeBytes(bytes, 'shift_jis', true);
+  } catch (e) {
+    TODO('Unsupported 90pv character found');
+    // Just retry without checking errors for now.
+    return decodeBytes(bytes, 'shift_jis');
+  }
+}
+
 function gbkToUnicode(str) {
   return decodeBytes(stringToBytes(str), 'gbk');
+}
+
+function big5ToUnicode(str) {
+  return decodeBytes(stringToBytes(str), 'big5');
 }
 
 // Some characters, e.g. copyrightserif, mapped to the private use area and
@@ -2363,8 +2399,13 @@ var Font = (function FontClosure() {
     // Trying to fix encoding using glyph CIDSystemInfo.
     this.loadCidToUnicode(properties);
     this.cidEncoding = properties.cidEncoding;
+    this.vertical = properties.vertical;
+    if (this.vertical) {
+      this.vmetrics = properties.vmetrics;
+      this.defaultVMetrics = properties.defaultVMetrics;
+    }
 
-    if (properties.toUnicode)
+    if (properties.toUnicode && properties.toUnicode.length > 0)
       this.toUnicode = properties.toUnicode;
     else
       this.rebuildToUnicode(properties);
@@ -2440,6 +2481,7 @@ var Font = (function FontClosure() {
     this.widths = properties.widths;
     this.defaultWidth = properties.defaultWidth;
     this.encoding = properties.baseEncoding;
+    this.seacMap = properties.seacMap;
 
     this.loading = true;
   }
@@ -3879,9 +3921,10 @@ var Font = (function FontClosure() {
 
         var usedUnicodes = [];
         var unassignedUnicodeItems = [];
+        var toFontChar = this.cidToFontChar || this.toFontChar;
         for (var i = 1; i < numGlyphs; i++) {
           var cid = gidToCidMap[i] || i;
-          var unicode = this.toFontChar[cid];
+          var unicode = toFontChar[cid];
           if (!unicode || typeof unicode !== 'number' ||
               isSpecialUnicode(unicode) || unicode in usedUnicodes) {
             unassignedUnicodeItems.push(i);
@@ -3891,21 +3934,25 @@ var Font = (function FontClosure() {
           glyphs.push({ unicode: unicode, code: cid });
           ids.push(i);
         }
-        // trying to fit as many unassigned symbols as we can
-        // in the range allocated for the user defined symbols
-        var unusedUnicode = CMAP_GLYPH_OFFSET;
-        for (var j = 0, jj = unassignedUnicodeItems.length; j < jj; j++) {
-          var i = unassignedUnicodeItems[j];
-          var cid = gidToCidMap[i] || i;
-          while (unusedUnicode in usedUnicodes)
-            unusedUnicode++;
-          if (unusedUnicode >= CMAP_GLYPH_OFFSET + GLYPH_AREA_SIZE)
-            break;
-          var unicode = unusedUnicode++;
-          this.toFontChar[cid] = unicode;
-          usedUnicodes[unicode] = true;
-          glyphs.push({ unicode: unicode, code: cid });
-          ids.push(i);
+        // unassigned codepoints will never be used for non-Identity CMap
+        // because the input will be Unicode
+        if (!this.cidToFontChar) {
+          // trying to fit as many unassigned symbols as we can
+          // in the range allocated for the user defined symbols
+          var unusedUnicode = CMAP_GLYPH_OFFSET;
+          for (var j = 0, jj = unassignedUnicodeItems.length; j < jj; j++) {
+            var i = unassignedUnicodeItems[j];
+            var cid = gidToCidMap[i] || i;
+            while (unusedUnicode in usedUnicodes)
+              unusedUnicode++;
+            if (unusedUnicode >= CMAP_GLYPH_OFFSET + GLYPH_AREA_SIZE)
+              break;
+            var unicode = unusedUnicode++;
+            this.toFontChar[cid] = unicode;
+            usedUnicodes[unicode] = true;
+            glyphs.push({ unicode: unicode, code: cid });
+            ids.push(i);
+          }
         }
       } else {
         this.useToFontChar = true;
@@ -4162,6 +4209,36 @@ var Font = (function FontClosure() {
       }
       this.glyphNameMap = glyphNameMap;
 
+      var seacs = font.seacs;
+      if (SEAC_ANALYSIS_ENABLED && seacs) {
+        var seacMap = [];
+        var matrix = properties.fontMatrix || FONT_IDENTITY_MATRIX;
+        for (var i = 0; i < charstrings.length; ++i) {
+          var charstring = charstrings[i];
+          var seac = seacs[charstring.gid];
+          if (!seac) {
+            continue;
+          }
+          var baseGlyphName = Encodings.StandardEncoding[seac[2]];
+          var baseUnicode = glyphNameMap[baseGlyphName];
+          var accentGlyphName = Encodings.StandardEncoding[seac[3]];
+          var accentUnicode = glyphNameMap[accentGlyphName];
+          if (!baseUnicode || !accentUnicode) {
+            continue;
+          }
+          var accentOffset = {
+            x: seac[0] * matrix[0] + seac[1] * matrix[2] + matrix[4],
+            y: seac[0] * matrix[1] + seac[1] * matrix[3] + matrix[5]
+          };
+          seacMap[charstring.unicode] = {
+            baseUnicode: baseUnicode,
+            accentUnicode: accentUnicode,
+            accentOffset: accentOffset
+          };
+        }
+        properties.seacMap = seacMap;
+      }
+
       if (!properties.hasEncoding && (properties.subtype == 'Type1C' ||
           properties.subtype == 'CIDFontType0C')) {
         var encoding = [];
@@ -4289,12 +4366,12 @@ var Font = (function FontClosure() {
     rebuildToUnicode: function(properties) {
       var firstChar = properties.firstChar, lastChar = properties.lastChar;
       var map = [];
-      if (properties.composite) {
-        var isIdentityMap = this.cidToUnicode.length === 0;
+      var toUnicode = this.toUnicode || this.cidToUnicode;
+      if (toUnicode) {
+        var isIdentityMap = toUnicode.length === 0;
         for (var i = firstChar, ii = lastChar; i <= ii; i++) {
           // TODO missing map the character according font's CMap
-          var cid = i;
-          map[i] = isIdentityMap ? cid : this.cidToUnicode[cid];
+          map[i] = isIdentityMap ? i : toUnicode[i];
         }
       } else {
         for (var i = firstChar, ii = lastChar; i <= ii; i++) {
@@ -4316,6 +4393,14 @@ var Font = (function FontClosure() {
       this.cidToUnicode = cidToUnicodeMap;
       this.unicodeToCID = unicodeToCIDMap;
 
+      var cidEncoding = properties.cidEncoding;
+      if (properties.toUnicode) {
+        if (cidEncoding && cidEncoding.indexOf('Identity-') !== 0) {
+          TODO('Need to create a reverse mapping from \'ToUnicode\' CMap');
+        }
+        return; // 'ToUnicode' CMap will be used
+      }
+
       var cidSystemInfo = properties.cidSystemInfo;
       var cidToUnicode;
       if (cidSystemInfo) {
@@ -4326,7 +4411,6 @@ var Font = (function FontClosure() {
       if (!cidToUnicode)
         return; // identity encoding
 
-      var cidEncoding = properties.cidEncoding;
       var overwrite = HalfwidthCMaps[cidEncoding];
       var cid = 1, i, j, k, ii;
       for (i = 0, ii = cidToUnicode.length; i < ii; ++i) {
@@ -4370,6 +4454,11 @@ var Font = (function FontClosure() {
       if (cidEncoding.indexOf('Identity-') !== 0) {
         // input is already Unicode for non-Identity CMap encodings.
         this.cidToUnicode = [];
+        // For CIDFontType2, however, we need cid-to-Unicode conversion
+        // to rebuild cmap.
+        if (properties.type == 'CIDFontType2') {
+          this.cidToFontChar = cidToUnicodeMap;
+        }
       } else {
         // We don't have to do reverse conversions if the string is
         // already CID.
@@ -4449,17 +4538,29 @@ var Font = (function FontClosure() {
       var fontCharCode, width, operatorList, disabled;
 
       var width = this.widths[charcode];
+      var vmetric = this.vmetrics && this.vmetrics[charcode];
 
       switch (this.type) {
         case 'CIDFontType0':
-          if (this.noUnicodeAdaptation) {
-            width = this.widths[this.unicodeToCID[charcode] || charcode];
+          var cid = this.unicodeToCID[charcode] || charcode;
+          if (this.unicodeToCID.length > 0) {
+            width = this.widths[cid];
+            vmetric = this.vmetrics && this.vmetrics[cid];
           }
-          fontCharCode = this.toFontChar[charcode] || charcode;
+          if (this.noUnicodeAdaptation) {
+            fontCharCode = this.toFontChar[charcode] || charcode;
+            break;
+          }
+          // CIDFontType0 is not encoded in Unicode.
+          fontCharCode = this.toFontChar[cid] || cid;
           break;
         case 'CIDFontType2':
-          if (this.noUnicodeAdaptation) {
-            width = this.widths[this.unicodeToCID[charcode] || charcode];
+          if (this.unicodeToCID.length > 0) {
+            var cid = this.unicodeToCID[charcode] || charcode;
+            width = this.widths[cid];
+            vmetric = this.vmetrics && this.vmetrics[cid];
+            fontCharCode = charcode;
+            break;
           }
           fontCharCode = this.toFontChar[charcode] || charcode;
           break;
@@ -4512,17 +4613,30 @@ var Font = (function FontClosure() {
 
       var unicodeChars = !('toUnicode' in this) ? charcode :
         this.toUnicode[charcode] || charcode;
-      if (typeof unicodeChars === 'number')
+      if (typeof unicodeChars === 'number') {
         unicodeChars = String.fromCharCode(unicodeChars);
+      }
 
       width = isNum(width) ? width : this.defaultWidth;
       disabled = this.unicodeIsEnabled ?
         !this.unicodeIsEnabled[fontCharCode] : false;
 
+      var accent = null;
+      if (this.seacMap && this.seacMap[fontCharCode]) {
+        var seac = this.seacMap[fontCharCode];
+        fontCharCode = seac.baseUnicode;
+        accent = {
+          fontChar: String.fromCharCode(seac.accentUnicode),
+          offset: seac.accentOffset
+        };
+      }
+
       return {
         fontChar: String.fromCharCode(fontCharCode),
         unicode: unicodeChars,
+        accent: accent,
         width: width,
+        vmetric: vmetric,
         disabled: disabled,
         operatorList: operatorList
       };
@@ -4803,7 +4917,12 @@ var Type1CharString = (function Type1CharStringClosure() {
             case (12 << 8) + 6: // seac
               // seac is like type 2's special endchar but it doesn't use the
               // first argument asb, so remove it.
-              error = this.executeCommand(4, COMMAND_MAP.endchar);
+              if (SEAC_ANALYSIS_ENABLED) {
+                this.seac = this.stack.splice(-4, 4);
+                error = this.executeCommand(0, COMMAND_MAP.endchar);
+              } else {
+                error = this.executeCommand(4, COMMAND_MAP.endchar);
+              }
               break;
             case (12 << 8) + 7: // sbw
               if (this.stack.length < 4) {
@@ -5163,6 +5282,7 @@ var Type1Parser = function() {
       program.charstrings.push({
         glyph: glyph,
         data: output,
+        seac: charString.seac,
         lsb: charString.lsb,
         width: charString.width
       });
@@ -5329,6 +5449,7 @@ var Type1Font = function(name, file, properties) {
   this.charstrings = charstrings;
   this.data = this.wrap(name, type2Charstrings, this.charstrings,
                         subrs, properties);
+  this.seacs = this.getSeacs(data.charstrings);
 };
 
 Type1Font.prototype = {
@@ -5356,6 +5477,18 @@ Type1Font.prototype = {
       return a.unicode - b.unicode;
     });
     return charstrings;
+  },
+
+  getSeacs: function Type1Font_getSeacs(charstrings) {
+    var i, ii;
+    var seacMap = [];
+    for (i = 0, ii = charstrings.length; i < ii; i++) {
+      var charstring = charstrings[i];
+      if (charstring.seac) {
+        seacMap[i] = charstring.seac;
+      }
+    }
+    return seacMap;
   },
 
   getType2Charstrings: function(
@@ -5513,6 +5646,7 @@ var CFFFont = (function CFFFontClosure() {
 
       this.charstrings = charstrings;
       this.glyphIds = glyphIds;
+      this.seacs = cff.seacs;
     },
     getCharStrings: function(charsets, encoding) {
       var charstrings = [];
@@ -5615,11 +5749,27 @@ var CFFParser = (function CFFParserClosure() {
     null,
     null,
     { id: 'abs', min: 1, stackDelta: 0 },
-    { id: 'add', min: 2, stackDelta: -1 },
-    { id: 'sub', min: 2, stackDelta: -1 },
-    { id: 'div', min: 2, stackDelta: -1 },
+    { id: 'add', min: 2, stackDelta: -1,
+      stackFn: function stack_div(stack, index) {
+        stack[index - 2] = stack[index - 2] + stack[index - 1];
+      }
+    },
+    { id: 'sub', min: 2, stackDelta: -1,
+      stackFn: function stack_div(stack, index) {
+        stack[index - 2] = stack[index - 2] - stack[index - 1];
+      }
+    },
+    { id: 'div', min: 2, stackDelta: -1,
+      stackFn: function stack_div(stack, index) {
+        stack[index - 2] = stack[index - 2] / stack[index - 1];
+      }
+    },
     null,
-    { id: 'neg', min: 1, stackDelta: 0 },
+    { id: 'neg', min: 1, stackDelta: 0,
+      stackFn: function stack_div(stack, index) {
+        stack[index - 1] = -stack[index - 1];
+      }
+    },
     { id: 'eq', min: 2, stackDelta: -1 },
     null,
     null,
@@ -5629,7 +5779,11 @@ var CFFParser = (function CFFParserClosure() {
     { id: 'get', min: 1, stackDelta: 0 },
     { id: 'ifelse', min: 4, stackDelta: -3 },
     { id: 'random', min: 0, stackDelta: 1 },
-    { id: 'mul', min: 2, stackDelta: -1 },
+    { id: 'mul', min: 2, stackDelta: -1,
+      stackFn: function stack_div(stack, index) {
+        stack[index - 2] = stack[index - 2] * stack[index - 1];
+      }
+    },
     null,
     { id: 'sqrt', min: 1, stackDelta: 0 },
     { id: 'dup', min: 1, stackDelta: 1 },
@@ -5677,7 +5831,9 @@ var CFFParser = (function CFFParserClosure() {
       cff.isCIDFont = topDict.hasName('ROS');
 
       var charStringOffset = topDict.getByName('CharStrings');
-      cff.charStrings = this.parseCharStrings(charStringOffset);
+      var charStringsAndSeacs = this.parseCharStrings(charStringOffset);
+      cff.charStrings = charStringsAndSeacs.charStrings;
+      cff.seacs = charStringsAndSeacs.seacs;
 
       var fontMatrix = topDict.getByName('FontMatrix');
       if (fontMatrix) {
@@ -5888,11 +6044,13 @@ var CFFParser = (function CFFParserClosure() {
     },
     parseCharStrings: function(charStringOffset) {
       var charStrings = this.parseIndex(charStringOffset).obj;
+      var seacs = [];
       var count = charStrings.count;
       for (var i = 0; i < count; i++) {
         var charstring = charStrings.get(i);
 
         var stackSize = 0;
+        var stack = [];
         var undefStack = true;
         var hints = 0;
         var valid = true;
@@ -5916,18 +6074,29 @@ var CFFParser = (function CFFParserClosure() {
               validationCommand = CharstringValidationData12[q];
             }
           } else if (value === 28) { // number (16 bit)
+            stack[stackSize] = ((data[j] << 24) | (data[j + 1] << 16)) >> 16;
             j += 2;
             stackSize++;
           } else if (value == 14) {
             if (stackSize >= 4) {
               stackSize -= 4;
+              if (SEAC_ANALYSIS_ENABLED) {
+                seacs[i] = stack.slice(stackSize, stackSize + 4);
+                valid = false;
+              }
             }
           } else if (value >= 32 && value <= 246) {  // number
+            stack[stackSize] = value - 139;
             stackSize++;
           } else if (value >= 247 && value <= 254) {  // number (+1 bytes)
+            stack[stackSize] = value < 251 ?
+              ((value - 247) << 8) + data[j] + 108 :
+              -((value - 251) << 8) - data[j] - 108;
             j++;
             stackSize++;
           } else if (value == 255) {  // number (32 bit)
+            stack[stackSize] = ((data[j] << 24) | (data[j + 1] << 16) |
+              (data[j + 2] << 8) | data[j + 3]) / 65536;
             j += 4;
             stackSize++;
           } else if (value == 19 || value == 20) {
@@ -5951,6 +6120,9 @@ var CFFParser = (function CFFParserClosure() {
               }
             }
             if ('stackDelta' in validationCommand) {
+              if ('stackFn' in validationCommand) {
+                validationCommand.stackFn(stack, stackSize);
+              }
               stackSize += validationCommand.stackDelta;
             } else if (validationCommand.resetStack) {
               stackSize = 0;
@@ -5966,12 +6138,21 @@ var CFFParser = (function CFFParserClosure() {
           charStrings.set(i, new Uint8Array([14]));
         }
       }
-      return charStrings;
+      return { charStrings: charStrings, seacs: seacs };
+    },
+    emptyPrivateDictionary:
+      function CFFParser_emptyPrivateDictionary(parentDict) {
+      var privateDict = this.createDict(CFFPrivateDict, [],
+                                        parentDict.strings);
+      parentDict.setByKey(18, [0, 0]);
+      parentDict.privateDict = privateDict;
     },
     parsePrivateDict: function(parentDict) {
       // no private dict, do nothing
-      if (!parentDict.hasName('Private'))
+      if (!parentDict.hasName('Private')) {
+        this.emptyPrivateDictionary(parentDict);
         return;
+      }
       var privateOffset = parentDict.getByName('Private');
       // make sure the params are formatted correctly
       if (!isArray(privateOffset) || privateOffset.length !== 2) {
@@ -5982,7 +6163,7 @@ var CFFParser = (function CFFParserClosure() {
       var offset = privateOffset[1];
       // remove empty dicts or ones that refer to invalid location
       if (size === 0 || offset >= this.bytes.length) {
-        parentDict.removeByName('Private');
+        this.emptyPrivateDictionary(parentDict);
         return;
       }
 
@@ -6000,7 +6181,7 @@ var CFFParser = (function CFFParserClosure() {
       var relativeOffset = offset + subrsOffset;
       // Validate the offset.
       if (subrsOffset === 0 || relativeOffset >= this.bytes.length) {
-        privateDict.removeByName('Subrs');
+        this.emptyPrivateDictionary(parentDict);
         return;
       }
       var subrsIndex = this.parseIndex(relativeOffset);
@@ -6581,6 +6762,10 @@ var CFFCompiler = (function CFFCompilerClosure() {
 
       this.compilePrivateDicts([cff.topDict], [topDictTracker], output);
 
+      // If the font data ends with INDEX whose object data is zero-length,
+      // the sanitizer will bail out. Add a dummy byte to avoid that.
+      output.add([0]);
+
       return output.data;
     },
     encodeNumber: function(value) {
@@ -6677,15 +6862,23 @@ var CFFCompiler = (function CFFCompilerClosure() {
                                                                   output) {
       for (var i = 0, ii = dicts.length; i < ii; ++i) {
         var fontDict = dicts[i];
-        if (!fontDict.privateDict || !fontDict.hasName('Private'))
-          continue;
+        assert(fontDict.privateDict && fontDict.hasName('Private'),
+               'There must be an private dictionary.');
         var privateDict = fontDict.privateDict;
         var privateDictTracker = new CFFOffsetTracker();
         var privateDictData = this.compileDict(privateDict, privateDictTracker);
 
-        privateDictTracker.offset(output.length);
+        var outputLength = output.length;
+        privateDictTracker.offset(outputLength);
+        if (!privateDictData.length) {
+          // The private dictionary was empty, set the output length to zero to
+          // ensure the offset length isn't out of bounds in the eyes of the
+          // sanitizer.
+          outputLength = 0;
+        }
+
         trackers[i].setEntryLocation('Private',
-                                     [privateDictData.length, output.length],
+                                     [privateDictData.length, outputLength],
                                      output);
         output.add(privateDictData);
 
@@ -6841,6 +7034,13 @@ var CFFCompiler = (function CFFCompilerClosure() {
     }
   };
   return CFFCompiler;
+})();
+
+// Workaround for seac on Windows.
+(function checkSeacSupport() {
+  if (/Windows/.test(navigator.userAgent)) {
+    SEAC_ANALYSIS_ENABLED = true;
+  }
 })();
 
 // Workaround for Private Use Area characters in Chrome on Windows

@@ -152,6 +152,7 @@ var WorkerMessageHandler = {
         numPages: pdfModel.numPages,
         fingerprint: pdfModel.getFingerprint(),
         destinations: pdfModel.catalog.destinations,
+        javaScript: pdfModel.catalog.javaScript,
         outline: pdfModel.catalog.documentOutline,
         info: pdfModel.getDocumentInfo(),
         metadata: pdfModel.catalog.metadata,
@@ -168,8 +169,14 @@ var WorkerMessageHandler = {
       }
       // check if the response property is supported by xhr
       var xhr = new XMLHttpRequest();
-      if (!('response' in xhr || 'mozResponse' in xhr ||
-          'responseArrayBuffer' in xhr || 'mozResponseArrayBuffer' in xhr)) {
+      var responseExists = 'response' in xhr;
+      // check if the property is actually implemented
+      try {
+        var dummy = xhr.responseType;
+      } catch (e) {
+        responseExists = false;
+      }
+      if (!responseExists) {
         handler.send('test', false);
         return;
       }
