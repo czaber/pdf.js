@@ -18,7 +18,7 @@
 
 'use strict';
 
-var JpxImage = (function JpxImageClosure() {
+var JpxImage = (function() {
   // Table E.1
   var SubbandsGainLog2 = {
     'LL': 0,
@@ -1064,7 +1064,7 @@ var JpxImage = (function JpxImageClosure() {
   }
 
   // Section B.10.2 Tag trees
-  var TagTree = (function TagTreeClosure() {
+  var TagTree = (function() {
     function TagTree(width, height) {
       var levelsLength = log2(Math.max(width, height)) + 1;
       this.levels = [];
@@ -1123,7 +1123,7 @@ var JpxImage = (function JpxImageClosure() {
     return TagTree;
   })();
 
-  var InclusionTree = (function InclusionTreeClosure() {
+  var InclusionTree = (function() {
     function InclusionTree(width, height,  defaultValue) {
       var levelsLength = log2(Math.max(width, height)) + 1;
       this.levels = [];
@@ -1202,7 +1202,7 @@ var JpxImage = (function JpxImageClosure() {
   })();
 
   // Implements C.3. Arithmetic decoding procedures
-  var ArithmeticDecoder = (function ArithmeticDecoderClosure() {
+  var ArithmeticDecoder = (function() {
     var QeTable = [
       {qe: 0x5601, nmps: 1, nlps: 1, switchFlag: 1},
       {qe: 0x3401, nmps: 2, nlps: 6, switchFlag: 0},
@@ -1365,7 +1365,7 @@ var JpxImage = (function JpxImageClosure() {
   })();
 
   // Section D. Coefficient bit modeling
-  var BitModel = (function BitModelClosure() {
+  var BitModel = (function() {
     // Table D-1
     // The index is binary presentation: 0dddvvhh, ddd - sum of Di (0..4),
     // vv - sum of Vi (0..2), and hh - sum of Hi (0..2)
@@ -1680,7 +1680,7 @@ var JpxImage = (function JpxImageClosure() {
   })();
 
   // Section F, Discrete wavelet transofrmation
-  var Transform = (function TransformClosure() {
+  var Transform = (function() {
     function Transform() {
     }
     Transform.prototype.calculate =
@@ -1809,7 +1809,7 @@ var JpxImage = (function JpxImageClosure() {
   })();
 
   // Section 3.8.2 Irreversible 9-7 filter
-  var IrreversibleTransform = (function IrreversibleTransformClosure() {
+  var IrreversibleTransform = (function() {
     function IrreversibleTransform() {
       Transform.call(this);
     }
@@ -1863,7 +1863,7 @@ var JpxImage = (function JpxImageClosure() {
   })();
 
   // Section 3.8.1 Reversible 5-3 filter
-  var ReversibleTransform = (function ReversibleTransformClosure() {
+  var ReversibleTransform = (function() {
     function ReversibleTransform() {
       Transform.call(this);
     }

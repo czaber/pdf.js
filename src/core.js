@@ -100,7 +100,7 @@ function getPdf(arg, callback) {
 globalScope.PDFJS.getPdf = getPdf;
 globalScope.PDFJS.pdfBug = false;
 
-var Page = (function PageClosure() {
+var Page = (function() {
   function Page(xref, pageIndex, pageDict, ref) {
     this.pageIndex = pageIndex;
     this.pageDict = pageDict;
@@ -383,7 +383,7 @@ var Page = (function PageClosure() {
  * for each worker. If there is no worker support enabled, there are two
  * `PDFDocument` objects on the main thread created.
  */
-var PDFDocument = (function PDFDocumentClosure() {
+var PDFDocument = (function() {
   function PDFDocument(arg, password) {
     if (isStream(arg))
       init.call(this, arg, password);

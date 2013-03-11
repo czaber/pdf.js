@@ -18,10 +18,10 @@
 
 'use strict';
 
-var Jbig2Image = (function Jbig2ImageClosure() {
+var Jbig2Image = (function() {
 
   // Annex E. Arithmetic Coding
-  var ArithmeticDecoder = (function ArithmeticDecoderClosure() {
+  var ArithmeticDecoder = (function() {
     var QeTable = [
       {qe: 0x5601, nmps: 1, nlps: 1, switchFlag: 1},
       {qe: 0x3401, nmps: 2, nlps: 6, switchFlag: 0},

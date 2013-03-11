@@ -23,7 +23,7 @@ var PDFJS = {};
 //#expand PDFJS.build = '__BUNDLE_BUILD__';
 //#endif
 
-(function pdfjsWrapper() {
+(function() {
   // Use strict in our context only - users might not want it
   'use strict';
 

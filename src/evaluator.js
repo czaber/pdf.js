@@ -23,7 +23,7 @@
 
 'use strict';
 
-var PartialEvaluator = (function PartialEvaluatorClosure() {
+var PartialEvaluator = (function() {
   function PartialEvaluator(xref, handler, pageIndex, uniquePrefix) {
     this.state = new EvalState();
     this.stateStack = [];
@@ -1305,7 +1305,7 @@ var PartialEvaluator = (function PartialEvaluatorClosure() {
   return PartialEvaluator;
 })();
 
-var EvalState = (function EvalStateClosure() {
+var EvalState = (function() {
   function EvalState() {
     // Are soft masks and alpha values shapes or opacities?
     this.alphaIsShape = false;

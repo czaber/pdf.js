@@ -115,7 +115,7 @@ function assertWellFormed(cond, msg) {
     error(msg);
 }
 
-var LogManager = PDFJS.LogManager = (function LogManagerClosure() {
+var LogManager = PDFJS.LogManager = (function() {
   var loggers = [];
   return {
     addLogger: function(logger) {
@@ -139,7 +139,7 @@ function shadow(obj, prop, value) {
   return value;
 }
 
-var PasswordException = (function PasswordExceptionClosure() {
+var PasswordException = (function() {
   function PasswordException(msg, code) {
     this.name = 'PasswordException';
     this.message = msg;
@@ -152,7 +152,7 @@ var PasswordException = (function PasswordExceptionClosure() {
   return PasswordException;
 })();
 
-var UnknownErrorException = (function UnknownErrorExceptionClosure() {
+var UnknownErrorException = (function() {
   function UnknownErrorException(msg, details) {
     this.name = 'UnknownErrorException';
     this.message = msg;
@@ -165,7 +165,7 @@ var UnknownErrorException = (function UnknownErrorExceptionClosure() {
   return UnknownErrorException;
 })();
 
-var InvalidPDFException = (function InvalidPDFExceptionClosure() {
+var InvalidPDFException = (function() {
   function InvalidPDFException(msg) {
     this.name = 'InvalidPDFException';
     this.message = msg;
@@ -177,7 +177,7 @@ var InvalidPDFException = (function InvalidPDFExceptionClosure() {
   return InvalidPDFException;
 })();
 
-var MissingPDFException = (function MissingPDFExceptionClosure() {
+var MissingPDFException = (function() {
   function MissingPDFException(msg) {
     this.name = 'MissingPDFException';
     this.message = msg;
@@ -207,7 +207,7 @@ function stringToBytes(str) {
 
 var IDENTITY_MATRIX = [1, 0, 0, 1, 0, 0];
 
-var Util = PDFJS.Util = (function UtilClosure() {
+var Util = PDFJS.Util = (function() {
   function Util() {}
 
   Util.makeCssRgb = function(rgb) {
@@ -344,7 +344,7 @@ var Util = PDFJS.Util = (function UtilClosure() {
   return Util;
 })();
 
-var PageViewport = PDFJS.PageViewport = (function PageViewportClosure() {
+var PageViewport = PDFJS.PageViewport = (function() {
   function PageViewport(viewBox, scale, rotate, offsetX, offsetY) {
     // creating transform to convert pdf coordinate system to the normal
     // canvas like coordinates taking in account scale and rotation
@@ -532,7 +532,7 @@ function isPDFFunction(v) {
  * can be set. If any of these happens twice or the data is required before
  * it was set, an exception is throw.
  */
-var Promise = PDFJS.Promise = (function PromiseClosure() {
+var Promise = PDFJS.Promise = (function() {
   var EMPTY_PROMISE = {};
 
   /**
@@ -687,7 +687,7 @@ var Promise = PDFJS.Promise = (function PromiseClosure() {
   return Promise;
 })();
 
-var StatTimer = (function StatTimerClosure() {
+var StatTimer = (function() {
   function rpad(str, pad, length) {
     while (str.length < length)
       str += pad;

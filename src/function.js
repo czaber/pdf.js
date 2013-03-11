@@ -18,7 +18,7 @@
 
 'use strict';
 
-var PDFFunction = (function PDFFunctionClosure() {
+var PDFFunction = (function() {
   var CONSTRUCT_SAMPLED = 0;
   var CONSTRUCT_INTERPOLATED = 2;
   var CONSTRUCT_STICHED = 3;
@@ -397,7 +397,7 @@ var PDFFunction = (function PDFFunctionClosure() {
   };
 })();
 
-var FunctionCache = (function FunctionCacheClosure() {
+var FunctionCache = (function() {
   // Of 10 PDF's with type4 functions the maxium number of distinct values seen
   // was 256. This still may need some tweaking in the future though.
   var MAX_CACHE_SIZE = 1024;
@@ -422,7 +422,7 @@ var FunctionCache = (function FunctionCacheClosure() {
   return FunctionCache;
 })();
 
-var PostScriptStack = (function PostScriptStackClosure() {
+var PostScriptStack = (function() {
   var MAX_STACK_SIZE = 100;
   function PostScriptStack(initialStack) {
     this.stack = initialStack || [];
@@ -467,7 +467,7 @@ var PostScriptStack = (function PostScriptStackClosure() {
   };
   return PostScriptStack;
 })();
-var PostScriptEvaluator = (function PostScriptEvaluatorClosure() {
+var PostScriptEvaluator = (function() {
   function PostScriptEvaluator(operators, operands) {
     this.operators = operators;
     this.operands = operands;
@@ -699,7 +699,7 @@ var PostScriptEvaluator = (function PostScriptEvaluatorClosure() {
   return PostScriptEvaluator;
 })();
 
-var PostScriptParser = (function PostScriptParserClosure() {
+var PostScriptParser = (function() {
   function PostScriptParser(lexer) {
     this.lexer = lexer;
     this.operators = [];
@@ -787,7 +787,7 @@ var PostScriptTokenTypes = {
   IFELSE: 5
 };
 
-var PostScriptToken = (function PostScriptTokenClosure() {
+var PostScriptToken = (function() {
   function PostScriptToken(type, value) {
     this.type = type;
     this.value = value;
@@ -813,7 +813,7 @@ var PostScriptToken = (function PostScriptTokenClosure() {
   return PostScriptToken;
 })();
 
-var PostScriptLexer = (function PostScriptLexerClosure() {
+var PostScriptLexer = (function() {
   function PostScriptLexer(stream) {
     this.stream = stream;
   }

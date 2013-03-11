@@ -19,7 +19,7 @@
 
 'use strict';
 
-var Stream = (function StreamClosure() {
+var Stream = (function() {
   function Stream(arrayBuffer, start, length, dict) {
     this.bytes = arrayBuffer instanceof Uint8Array ? arrayBuffer :
       new Uint8Array(arrayBuffer);
@@ -87,7 +87,7 @@ var Stream = (function StreamClosure() {
   return Stream;
 })();
 
-var StringStream = (function StringStreamClosure() {
+var StringStream = (function() {
   function StringStream(str) {
     var length = str.length;
     var bytes = new Uint8Array(length);
@@ -102,7 +102,7 @@ var StringStream = (function StringStreamClosure() {
 })();
 
 // super class for the decoding streams
-var DecodeStream = (function DecodeStreamClosure() {
+var DecodeStream = (function() {
   function DecodeStream() {
     this.pos = 0;
     this.bufferLength = 0;
@@ -198,7 +198,7 @@ var DecodeStream = (function DecodeStreamClosure() {
   return DecodeStream;
 })();
 
-var FakeStream = (function FakeStreamClosure() {
+var FakeStream = (function() {
   function FakeStream(stream) {
     this.dict = stream.dict;
     DecodeStream.call(this);
@@ -237,7 +237,7 @@ var FakeStream = (function FakeStreamClosure() {
   return FakeStream;
 })();
 
-var StreamsSequenceStream = (function StreamsSequenceStreamClosure() {
+var StreamsSequenceStream = (function() {
   function StreamsSequenceStream(streams) {
     this.streams = streams;
     DecodeStream.call(this);
@@ -265,7 +265,7 @@ var StreamsSequenceStream = (function StreamsSequenceStreamClosure() {
   return StreamsSequenceStream;
 })();
 
-var FlateStream = (function FlateStreamClosure() {
+var FlateStream = (function() {
   var codeLenCodeMap = new Uint32Array([
     16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15
   ]);
@@ -604,7 +604,7 @@ var FlateStream = (function FlateStreamClosure() {
   return FlateStream;
 })();
 
-var PredictorStream = (function PredictorStreamClosure() {
+var PredictorStream = (function() {
   function PredictorStream(stream, params) {
     var predictor = this.predictor = params.get('Predictor') || 1;
 
@@ -789,7 +789,7 @@ var PredictorStream = (function PredictorStreamClosure() {
  * a library to decode these images and the stream behaves like all the other
  * DecodeStreams.
  */
-var JpegStream = (function JpegStreamClosure() {
+var JpegStream = (function() {
   function isAdobeImage(bytes) {
     var maxBytesScanned = Math.max(bytes.length - 16, 1024);
     // Looking for APP14, 'Adobe'
@@ -899,7 +899,7 @@ var JpegStream = (function JpegStreamClosure() {
  * For JPEG 2000's we use a library to decode these images and
  * the stream behaves like all the other DecodeStreams.
  */
-var JpxStream = (function JpxStreamClosure() {
+var JpxStream = (function() {
   function JpxStream(bytes, dict) {
     this.dict = dict;
     this.bytes = bytes;
@@ -1000,7 +1000,7 @@ var JpxStream = (function JpxStreamClosure() {
  * For JBIG2's we use a library to decode these images and
  * the stream behaves like all the other DecodeStreams.
  */
-var Jbig2Stream = (function Jbig2StreamClosure() {
+var Jbig2Stream = (function() {
   function Jbig2Stream(bytes, dict) {
     this.dict = dict;
     this.bytes = bytes;
@@ -1040,7 +1040,7 @@ var Jbig2Stream = (function Jbig2StreamClosure() {
   return Jbig2Stream;
 })();
 
-var DecryptStream = (function DecryptStreamClosure() {
+var DecryptStream = (function() {
   function DecryptStream(str, decrypt) {
     this.str = str;
     this.dict = str.dict;
@@ -1073,7 +1073,7 @@ var DecryptStream = (function DecryptStreamClosure() {
   return DecryptStream;
 })();
 
-var Ascii85Stream = (function Ascii85StreamClosure() {
+var Ascii85Stream = (function() {
   function Ascii85Stream(str) {
     this.str = str;
     this.dict = str.dict;
@@ -1142,7 +1142,7 @@ var Ascii85Stream = (function Ascii85StreamClosure() {
   return Ascii85Stream;
 })();
 
-var AsciiHexStream = (function AsciiHexStreamClosure() {
+var AsciiHexStream = (function() {
   function AsciiHexStream(str) {
     this.str = str;
     this.dict = str.dict;
@@ -1212,7 +1212,7 @@ var AsciiHexStream = (function AsciiHexStreamClosure() {
   return AsciiHexStream;
 })();
 
-var RunLengthStream = (function RunLengthStreamClosure() {
+var RunLengthStream = (function() {
   function RunLengthStream(str) {
     this.str = str;
     this.dict = str.dict;
@@ -1257,7 +1257,7 @@ var RunLengthStream = (function RunLengthStreamClosure() {
   return RunLengthStream;
 })();
 
-var CCITTFaxStream = (function CCITTFaxStreamClosure() {
+var CCITTFaxStream = (function() {
 
   var ccittEOL = -2;
   var twoDimPass = 0;
@@ -2224,7 +2224,7 @@ var CCITTFaxStream = (function CCITTFaxStreamClosure() {
   return CCITTFaxStream;
 })();
 
-var LZWStream = (function LZWStreamClosure() {
+var LZWStream = (function() {
   function LZWStream(str, earlyChange) {
     this.str = str;
     this.dict = str.dict;
@@ -2353,7 +2353,7 @@ var LZWStream = (function LZWStreamClosure() {
   return LZWStream;
 })();
 
-var NullStream = (function NullStreamClosure() {
+var NullStream = (function() {
   function NullStream() {
     Stream.call(this, new Uint8Array(0));
   }

@@ -524,7 +524,7 @@ var FontLoader = {
     nextRequestId: 0
   },
 
-  isSyncFontLoadingSupported: (function detectSyncFontLoadingSupport() {
+  isSyncFontLoadingSupported: (function() {
     if (isWorker)
       return false;
 
@@ -2353,7 +2353,7 @@ function adjustWidths(properties) {
  *   var type1Font = new Font("MyFontName", binaryFile, propertiesObject);
  *   type1Font.bind();
  */
-var Font = (function FontClosure() {
+var Font = (function() {
   function Font(name, file, properties) {
     if (arguments.length === 1) {
       // importing translated data
@@ -2608,7 +2608,7 @@ var Font = (function FontClosure() {
     var length = glyphs.length;
     for (var n = 0; n < length; ++n)
       codes.push({ unicode: glyphs[n].unicode, code: n });
-    codes.sort(function fontGetRangesSort(a, b) {
+    codes.sort(function(a, b) {
       return a.unicode - b.unicode;
     });
 
@@ -4148,7 +4148,7 @@ var Font = (function FontClosure() {
       }
 
       // Tables needs to be written by ascendant alphabetic order
-      tables.sort(function tables_sort(a, b) {
+      tables.sort(function(a, b) {
         return (a.tag > b.tag) - (a.tag < b.tag);
       });
 
@@ -4270,7 +4270,7 @@ var Font = (function FontClosure() {
                                 ('glyphIds' in font) ? font.glyphIds : null),
 
         // Font header
-        'head': (function fontFieldsHead() {
+        'head': (function() {
           return stringToArray(
               '\x00\x01\x00\x00' + // Version number
               '\x00\x00\x10\x00' + // fontRevision
@@ -4292,7 +4292,7 @@ var Font = (function FontClosure() {
         })(),
 
         // Horizontal header
-        'hhea': (function fontFieldsHhea() {
+        'hhea': (function() {
           return stringToArray(
               '\x00\x01\x00\x00' + // Version number
               safeString16(properties.ascent) + // Typographic Ascent
@@ -4315,7 +4315,7 @@ var Font = (function FontClosure() {
         })(),
 
         // Horizontal metrics
-        'hmtx': (function fontFieldsHmtx() {
+        'hmtx': (function() {
           var hmtx = '\x00\x00\x00\x00'; // Fake .notdef
           for (var i = 0, ii = charstrings.length; i < ii; i++) {
             var charstring = charstrings[i];
@@ -4326,7 +4326,7 @@ var Font = (function FontClosure() {
         })(),
 
         // Maximum profile
-        'maxp': (function fontFieldsMaxp() {
+        'maxp': (function() {
           return stringToArray(
               '\x00\x00\x50\x00' + // Version number
              string16(charstrings.length + 1)); // Num of glyphs
@@ -4705,7 +4705,7 @@ var Font = (function FontClosure() {
   return Font;
 })();
 
-var ErrorFont = (function ErrorFontClosure() {
+var ErrorFont = (function() {
   function ErrorFont(error) {
     this.error = error;
   }
@@ -4760,7 +4760,7 @@ var ErrorFont = (function ErrorFontClosure() {
  * to be encoded and this encoding technique helps to minimize the length of
  * the charStrings.
  */
-var Type1CharString = (function Type1CharStringClosure() {
+var Type1CharString = (function() {
   var COMMAND_MAP = {
     'hstem': [1],
     'vstem': [3],
@@ -5473,7 +5473,7 @@ Type1Font.prototype = {
       });
     }
 
-    charstrings.sort(function charstrings_sort(a, b) {
+    charstrings.sort(function(a, b) {
       return a.unicode - b.unicode;
     });
     return charstrings;
@@ -5613,7 +5613,7 @@ Type1Font.prototype = {
   }
 };
 
-var CFFFont = (function CFFFontClosure() {
+var CFFFont = (function() {
   function CFFFont(file, properties) {
     this.properties = properties;
 
@@ -5693,7 +5693,7 @@ var CFFFont = (function CFFFontClosure() {
       }
 
       // sort the array by the unicode value (again)
-      charstrings.sort(function getCharStringsSort(a, b) {
+      charstrings.sort(function(a, b) {
         return a.unicode - b.unicode;
       });
       return charstrings;
@@ -5703,7 +5703,7 @@ var CFFFont = (function CFFFontClosure() {
   return CFFFont;
 })();
 
-var CFFParser = (function CFFParserClosure() {
+var CFFParser = (function() {
   var CharstringValidationData = [
     null,
     { id: 'hstem', min: 2, resetStack: true, stem: true },
@@ -6347,7 +6347,7 @@ var CFFParser = (function CFFParserClosure() {
 })();
 
 // Compact Font Format
-var CFF = (function CFFClosure() {
+var CFF = (function() {
   function CFF() {
     this.header = null;
     this.names = [];
@@ -6368,7 +6368,7 @@ var CFF = (function CFFClosure() {
   return CFF;
 })();
 
-var CFFHeader = (function CFFHeaderClosure() {
+var CFFHeader = (function() {
   function CFFHeader(major, minor, hdrSize, offSize) {
     this.major = major;
     this.minor = minor;
@@ -6378,7 +6378,7 @@ var CFFHeader = (function CFFHeaderClosure() {
   return CFFHeader;
 })();
 
-var CFFStrings = (function CFFStringsClosure() {
+var CFFStrings = (function() {
   function CFFStrings() {
     this.strings = [];
   }
@@ -6400,7 +6400,7 @@ var CFFStrings = (function CFFStringsClosure() {
   return CFFStrings;
 })();
 
-var CFFIndex = (function CFFIndexClosure() {
+var CFFIndex = (function() {
   function CFFIndex() {
     this.objects = [];
     this.length = 0;
@@ -6424,7 +6424,7 @@ var CFFIndex = (function CFFIndexClosure() {
   return CFFIndex;
 })();
 
-var CFFDict = (function CFFDictClosure() {
+var CFFDict = (function() {
   function CFFDict(tables, strings) {
     this.keyToNameMap = tables.keyToNameMap;
     this.nameToKeyMap = tables.nameToKeyMap;
@@ -6495,7 +6495,7 @@ var CFFDict = (function CFFDictClosure() {
   return CFFDict;
 })();
 
-var CFFTopDict = (function CFFTopDictClosure() {
+var CFFTopDict = (function() {
   var layout = [
     [[12, 30], 'ROS', ['sid', 'sid', 'num'], null],
     [[12, 20], 'SyntheticBase', 'num', null],
@@ -6546,7 +6546,7 @@ var CFFTopDict = (function CFFTopDictClosure() {
   return CFFTopDict;
 })();
 
-var CFFPrivateDict = (function CFFPrivateDictClosure() {
+var CFFPrivateDict = (function() {
   var layout = [
     [6, 'BlueValues', 'delta', null],
     [7, 'OtherBlues', 'delta', null],
@@ -6588,7 +6588,7 @@ var CFFCharsetEmbeddedTypes = {
   FORMAT1: 1,
   FORMAT2: 2
 };
-var CFFCharset = (function CFFCharsetClosure() {
+var CFFCharset = (function() {
   function CFFCharset(predefined, format, charset, raw) {
     this.predefined = predefined;
     this.format = format;
@@ -6606,7 +6606,7 @@ var CFFCharsetEmbeddedTypes = {
   FORMAT0: 0,
   FORMAT1: 1
 };
-var CFFEncoding = (function CFFEncodingClosure() {
+var CFFEncoding = (function() {
   function CFFEncoding(predefined, format, encoding, raw) {
     this.predefined = predefined;
     this.format = format;
@@ -6616,7 +6616,7 @@ var CFFEncoding = (function CFFEncodingClosure() {
   return CFFEncoding;
 })();
 
-var CFFFDSelect = (function CFFFDSelectClosure() {
+var CFFFDSelect = (function() {
   function CFFFDSelect(fdSelect, raw) {
     this.fdSelect = fdSelect;
     this.raw = raw;
@@ -6626,7 +6626,7 @@ var CFFFDSelect = (function CFFFDSelectClosure() {
 
 // Helper class to keep track of where an offset is within the data and helps
 // filling in that offset once it's known.
-var CFFOffsetTracker = (function CFFOffsetTrackerClosure() {
+var CFFOffsetTracker = (function() {
   function CFFOffsetTracker() {
     this.offsets = {};
   }
@@ -6675,7 +6675,7 @@ var CFFOffsetTracker = (function CFFOffsetTrackerClosure() {
 })();
 
 // Takes a CFF and converts it to the binary representation.
-var CFFCompiler = (function CFFCompilerClosure() {
+var CFFCompiler = (function() {
   function stringToArray(str) {
     var array = [];
     for (var i = 0, ii = str.length; i < ii; ++i)
@@ -7037,7 +7037,7 @@ var CFFCompiler = (function CFFCompilerClosure() {
 })();
 
 // Workaround for seac on Windows.
-(function checkSeacSupport() {
+(function() {
   if (/Windows/.test(navigator.userAgent)) {
     SEAC_ANALYSIS_ENABLED = true;
   }
@@ -7046,7 +7046,7 @@ var CFFCompiler = (function CFFCompilerClosure() {
 // Workaround for Private Use Area characters in Chrome on Windows
 // http://code.google.com/p/chromium/issues/detail?id=122465
 // https://github.com/mozilla/pdf.js/issues/1689
-(function checkChromeWindows() {
+(function() {
   if (/Windows.*Chrome/.test(navigator.userAgent)) {
     SYMBOLIC_FONT_GLYPH_OFFSET = 0xF100;
   }

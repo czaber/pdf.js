@@ -27,7 +27,7 @@ function isEOF(v) {
   return v == EOF;
 }
 
-var Parser = (function ParserClosure() {
+var Parser = (function() {
   function Parser(lexer, allowStreams, xref) {
     this.lexer = lexer;
     this.allowStreams = allowStreams;
@@ -276,7 +276,7 @@ var Parser = (function ParserClosure() {
   return Parser;
 })();
 
-var Lexer = (function LexerClosure() {
+var Lexer = (function() {
   function Lexer(stream, knownCommands) {
     this.stream = stream;
     // The PDFs might have "glued" commands with other commands, operands or
@@ -602,7 +602,7 @@ var Lexer = (function LexerClosure() {
   return Lexer;
 })();
 
-var Linearization = (function LinearizationClosure() {
+var Linearization = (function() {
   function Linearization(stream) {
     this.parser = new Parser(new Lexer(stream), false, null);
     var obj1 = this.parser.getObj();

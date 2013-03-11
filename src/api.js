@@ -65,7 +65,7 @@ PDFJS.getDocument = function(source) {
   workerInitializedPromise = new PDFJS.Promise();
   workerReadyPromise = new PDFJS.Promise();
   transport = new WorkerTransport(workerInitializedPromise, workerReadyPromise);
-  workerInitializedPromise.then(function transportInitialized() {
+  workerInitializedPromise.then(function() {
     transport.fetchDocument(params);
   });
   return workerReadyPromise;
@@ -75,7 +75,7 @@ PDFJS.getDocument = function(source) {
  * Proxy to a PDFDocument in the worker thread. Also, contains commonly used
  * properties that can be read synchronously.
  */
-var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
+var PDFDocumentProxy = (function() {
   function PDFDocumentProxy(pdfInfo, transport) {
     this.pdfInfo = pdfInfo;
     this.transport = transport;
@@ -187,7 +187,7 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
   return PDFDocumentProxy;
 })();
 
-var PDFPageProxy = (function PDFPageProxyClosure() {
+var PDFPageProxy = (function() {
   function PDFPageProxy(pageInfo, transport) {
     this.pageInfo = pageInfo;
     this.transport = transport;
@@ -336,7 +336,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
       var displayContinuation = function() {
         // Always defer call to display() to work around bug in
         // Firefox error reporting from XHR callbacks.
-        setTimeout(function pageSetTimeout() {
+        setTimeout(function() {
           self.displayReadyPromise.resolve();
         });
       };
@@ -461,7 +461,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
 /**
  * For internal use only.
  */
-var WorkerTransport = (function WorkerTransportClosure() {
+var WorkerTransport = (function() {
   function WorkerTransport(workerInitializedPromise, workerReadyPromise) {
     this.workerReadyPromise = workerReadyPromise;
     this.commonObjs = new PDFObjects();
@@ -672,7 +672,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
           error('Only 3 component or 1 component can be returned');
 
         var img = new Image();
-        img.onload = (function messageHandler_onloadClosure() {
+        img.onload = (function() {
           var width = img.width;
           var height = img.height;
           var size = width * height;

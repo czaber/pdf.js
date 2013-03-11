@@ -19,7 +19,7 @@
 
 'use strict';
 
-var ColorSpace = (function ColorSpaceClosure() {
+var ColorSpace = (function() {
   // Constructor should define this.numComps, this.defaultColor, this.name
   function ColorSpace() {
     error('should not call ColorSpace constructor');
@@ -257,7 +257,7 @@ var ColorSpace = (function ColorSpaceClosure() {
  * Both color spaces use a tinting function to convert colors to a base color
  * space.
  */
-var AlternateCS = (function AlternateCSClosure() {
+var AlternateCS = (function() {
   function AlternateCS(numComps, base, tintFn) {
     this.name = 'Alternate';
     this.numComps = numComps;
@@ -329,7 +329,7 @@ var AlternateCS = (function AlternateCSClosure() {
   return AlternateCS;
 })();
 
-var PatternCS = (function PatternCSClosure() {
+var PatternCS = (function() {
   function PatternCS(baseCS) {
     this.name = 'Pattern';
     this.base = baseCS;
@@ -339,7 +339,7 @@ var PatternCS = (function PatternCSClosure() {
   return PatternCS;
 })();
 
-var IndexedCS = (function IndexedCSClosure() {
+var IndexedCS = (function() {
   function IndexedCS(base, highVal, lookup) {
     this.name = 'Indexed';
     this.numComps = 1;
@@ -405,7 +405,7 @@ var IndexedCS = (function IndexedCSClosure() {
   return IndexedCS;
 })();
 
-var DeviceGrayCS = (function DeviceGrayCSClosure() {
+var DeviceGrayCS = (function() {
   function DeviceGrayCS() {
     this.name = 'DeviceGray';
     this.numComps = 1;
@@ -447,7 +447,7 @@ var DeviceGrayCS = (function DeviceGrayCSClosure() {
   return DeviceGrayCS;
 })();
 
-var DeviceRgbCS = (function DeviceRgbCSClosure() {
+var DeviceRgbCS = (function() {
   function DeviceRgbCS() {
     this.name = 'DeviceRGB';
     this.numComps = 3;
@@ -495,7 +495,7 @@ var DeviceRgbCS = (function DeviceRgbCSClosure() {
   return DeviceRgbCS;
 })();
 
-var DeviceCmykCS = (function DeviceCmykCSClosure() {
+var DeviceCmykCS = (function() {
   // Sampled RGB colors from CMYK US Web Coated (SWOP) colorspace
   var lut = new Uint8Array([
     255, 255, 254, 221, 222, 223, 191, 193, 195, 161, 163, 166, 133, 136, 138,
@@ -1248,7 +1248,7 @@ var DeviceCmykCS = (function DeviceCmykCSClosure() {
 //
 // LabCS: Based on "PDF Reference, Sixth Ed", p.250
 //
-var LabCS = (function LabCSClosure() {
+var LabCS = (function() {
   function LabCS(whitePoint, blackPoint, range) {
     this.name = 'Lab';
     this.numComps = 3;

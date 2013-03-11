@@ -157,7 +157,7 @@ function addContextCurrentTransform(ctx) {
   }
 }
 
-var CanvasExtraState = (function CanvasExtraStateClosure() {
+var CanvasExtraState = (function() {
   function CanvasExtraState(old) {
     // Are soft masks and alpha values shapes or opacities?
     this.alphaIsShape = false;
@@ -209,7 +209,7 @@ var CanvasExtraState = (function CanvasExtraStateClosure() {
   return CanvasExtraState;
 })();
 
-var CanvasGraphics = (function CanvasGraphicsClosure() {
+var CanvasGraphics = (function() {
   // Defines the time the executeOperatorList is going to be executing
   // before it stops and shedules a continue of execution.
   var EXECUTION_TIME = 15;

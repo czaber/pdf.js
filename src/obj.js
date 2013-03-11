@@ -21,7 +21,7 @@
 
 'use strict';
 
-var Name = (function NameClosure() {
+var Name = (function() {
   function Name(name) {
     this.name = name;
   }
@@ -31,7 +31,7 @@ var Name = (function NameClosure() {
   return Name;
 })();
 
-var Cmd = (function CmdClosure() {
+var Cmd = (function() {
   function Cmd(cmd) {
     this.cmd = cmd;
   }
@@ -51,7 +51,7 @@ var Cmd = (function CmdClosure() {
   return Cmd;
 })();
 
-var Dict = (function DictClosure() {
+var Dict = (function() {
   // xref is optional
   function Dict(xref) {
     // Map should only be used internally, use functions below to access.
@@ -109,7 +109,7 @@ var Dict = (function DictClosure() {
   return Dict;
 })();
 
-var Ref = (function RefClosure() {
+var Ref = (function() {
   function Ref(num, gen) {
     this.num = num;
     this.gen = gen;
@@ -122,7 +122,7 @@ var Ref = (function RefClosure() {
 
 // The reference is identified by number and generation,
 // this structure stores only one instance of the reference.
-var RefSet = (function RefSetClosure() {
+var RefSet = (function() {
   function RefSet() {
     this.dict = {};
   }
@@ -140,7 +140,7 @@ var RefSet = (function RefSetClosure() {
   return RefSet;
 })();
 
-var Catalog = (function CatalogClosure() {
+var Catalog = (function() {
   function Catalog(xref) {
     this.xref = xref;
     var obj = xref.getCatalogObj();
@@ -286,7 +286,7 @@ var Catalog = (function CatalogClosure() {
       if (nameDictionaryRef) {
         // reading simple destination dictionary
         obj = nameDictionaryRef;
-        obj.forEach(function catalogForEach(key, value) {
+        obj.forEach(function(key, value) {
           if (!value) return;
           dests[key] = fetchDestination(value);
         });
@@ -350,7 +350,7 @@ var Catalog = (function CatalogClosure() {
   return Catalog;
 })();
 
-var XRef = (function XRefClosure() {
+var XRef = (function() {
   function XRef(stream, startXRef, mainXRefEntriesOffset, password) {
     this.stream = stream;
     this.entries = [];
@@ -777,7 +777,7 @@ var XRef = (function XRefClosure() {
  * (7.9.6) for more details.
  * TODO: implement all the Dict functions and make this more efficent.
  */
-var NameTree = (function NameTreeClosure() {
+var NameTree = (function() {
   function NameTree(root, xref) {
     this.root = root;
     this.xref = xref;
@@ -827,7 +827,7 @@ var NameTree = (function NameTreeClosure() {
  * inside of a worker. The `PDFObjects` implements some basic functions to
  * manage these objects.
  */
-var PDFObjects = (function PDFObjectsClosure() {
+var PDFObjects = (function() {
   function PDFObjects() {
     this.objs = {};
   }

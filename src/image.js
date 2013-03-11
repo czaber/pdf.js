@@ -19,7 +19,7 @@
 
 'use strict';
 
-var PDFImage = (function PDFImageClosure() {
+var PDFImage = (function() {
   /**
    * Decode the image in the main thread if it supported. Resovles the promise
    * when the image data is ready.
@@ -457,7 +457,7 @@ var PDFImage = (function PDFImageClosure() {
 
 function loadJpegStream(id, imageData, objs) {
   var img = new Image();
-  img.onload = (function loadJpegStream_onloadClosure() {
+  img.onload = (function() {
     objs.resolve(id, img);
   });
   img.src = 'data:image/jpeg;base64,' + window.btoa(imageData);

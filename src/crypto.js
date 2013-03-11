@@ -19,7 +19,7 @@
 
 'use strict';
 
-var ARCFourCipher = (function ARCFourCipherClosure() {
+var ARCFourCipher = (function() {
   function ARCFourCipher(key) {
     this.a = 0;
     this.b = 0;
@@ -60,7 +60,7 @@ var ARCFourCipher = (function ARCFourCipherClosure() {
   return ARCFourCipher;
 })();
 
-var calculateMD5 = (function calculateMD5Closure() {
+var calculateMD5 = (function() {
   var r = new Uint8Array([
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
     5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
@@ -144,7 +144,7 @@ var calculateMD5 = (function calculateMD5Closure() {
   return hash;
 })();
 
-var NullCipher = (function NullCipherClosure() {
+var NullCipher = (function() {
   function NullCipher() {
   }
 
@@ -157,7 +157,7 @@ var NullCipher = (function NullCipherClosure() {
   return NullCipher;
 })();
 
-var AES128Cipher = (function AES128CipherClosure() {
+var AES128Cipher = (function() {
   var rcon = new Uint8Array([
     0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c,
     0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a,
@@ -410,7 +410,7 @@ var AES128Cipher = (function AES128CipherClosure() {
   return AES128Cipher;
 })();
 
-var CipherTransform = (function CipherTransformClosure() {
+var CipherTransform = (function() {
   function CipherTransform(stringCipherConstructor, streamCipherConstructor) {
     this.stringCipherConstructor = stringCipherConstructor;
     this.streamCipherConstructor = streamCipherConstructor;
@@ -434,7 +434,7 @@ var CipherTransform = (function CipherTransformClosure() {
   return CipherTransform;
 })();
 
-var CipherTransformFactory = (function CipherTransformFactoryClosure() {
+var CipherTransformFactory = (function() {
   var defaultPasswordBytes = new Uint8Array([
     0x28, 0xBF, 0x4E, 0x5E, 0x4E, 0x75, 0x8A, 0x41,
     0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08,

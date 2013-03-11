@@ -18,7 +18,7 @@
 
 'use strict';
 
-var Metadata = PDFJS.Metadata = (function MetadataClosure() {
+var Metadata = PDFJS.Metadata = (function() {
   function fixMetadata(meta) {
     return meta.replace(/>\\376\\377([^<]+)/g, function(all, codes) {
       var bytes = codes.replace(/\\([0-3])([0-7])([0-7])/g,
