@@ -19,14 +19,14 @@
 'use strict';
 
 // Checking if the typed arrays are supported
-(function checkTypedArrayCompatibility() {
+(function() {
   if (typeof Uint8Array !== 'undefined') {
     // some mobile versions do not support subarray (e.g. safari 5 / iOS)
     if (typeof Uint8Array.prototype.subarray === 'undefined') {
-        Uint8Array.prototype.subarray = function subarray(start, end) {
+        Uint8Array.prototype.subarray = function(start, end) {
           return new Uint8Array(this.slice(start, end));
         };
-        Float32Array.prototype.subarray = function subarray(start, end) {
+        Float32Array.prototype.subarray = function(start, end) {
           return new Float32Array(this.slice(start, end));
         };
     }
@@ -87,11 +87,11 @@
 })();
 
 // Object.create() ?
-(function checkObjectCreateCompatibility() {
+(function() {
   if (typeof Object.create !== 'undefined')
     return;
 
-  Object.create = function objectCreate(proto) {
+  Object.create = function(proto) {
     function Constructor() {}
     Constructor.prototype = proto;
     return new Constructor();
@@ -99,7 +99,7 @@
 })();
 
 // Object.defineProperty() ?
-(function checkObjectDefinePropertyCompatibility() {
+(function() {
   if (typeof Object.defineProperty !== 'undefined') {
     var definePropertyPossible = true;
     try {
@@ -107,7 +107,7 @@
       // and thus the native version is not sufficient
       Object.defineProperty(new Image(), 'id', { value: 'test' });
       // ... another test for android gb browser for non-DOM objects
-      var Test = function Test() {};
+      var Test = function() {};
       Test.prototype = { get id() { } };
       Object.defineProperty(new Test(), 'id',
         { value: '', configurable: true, enumerable: true, writable: false });
@@ -117,15 +117,15 @@
     if (definePropertyPossible) return;
   }
 
-  Object.defineProperty = function objectDefineProperty(obj, name, def) {
+  Object.defineProperty = function(obj, name, def) {
     delete obj[name];
     if ('get' in def)
       obj.__defineGetter__(name, def['get']);
     if ('set' in def)
       obj.__defineSetter__(name, def['set']);
     if ('value' in def) {
-      obj.__defineSetter__(name, function objectDefinePropertySetter(value) {
-        this.__defineGetter__(name, function objectDefinePropertyGetter() {
+      obj.__defineSetter__(name, function(value) {
+        this.__defineGetter__(name, function() {
           return value;
         });
         return value;
@@ -136,11 +136,11 @@
 })();
 
 // Object.keys() ?
-(function checkObjectKeysCompatibility() {
+(function() {
   if (typeof Object.keys !== 'undefined')
     return;
 
-  Object.keys = function objectKeys(obj) {
+  Object.keys = function(obj) {
     var result = [];
     for (var i in obj) {
       if (obj.hasOwnProperty(i))
@@ -151,7 +151,7 @@
 })();
 
 // No readAsArrayBuffer ?
-(function checkFileReaderReadAsArrayBuffer() {
+(function() {
   if (typeof FileReader === 'undefined')
     return; // FileReader is not implemented
   var frPrototype = FileReader.prototype;
@@ -159,10 +159,10 @@
   if ('readAsArrayBuffer' in frPrototype)
     return; // readAsArrayBuffer is implemented
   Object.defineProperty(frPrototype, 'readAsArrayBuffer', {
-    value: function fileReaderReadAsArrayBuffer(blob) {
+    value: function(blob) {
       var fileReader = new FileReader();
       var originalReader = this;
-      fileReader.onload = function fileReaderOnload(evt) {
+      fileReader.onload = function(evt) {
         var data = evt.target.result;
         var buffer = new ArrayBuffer(data.length);
         var uint8Array = new Uint8Array(buffer);
@@ -187,12 +187,12 @@
 })();
 
 // No XMLHttpRequest.response ?
-(function checkXMLHttpRequestResponseCompatibility() {
+(function() {
   var xhrPrototype = XMLHttpRequest.prototype;
   if (!('overrideMimeType' in xhrPrototype)) {
     // IE10 might have response, but not overrideMimeType
     Object.defineProperty(xhrPrototype, 'overrideMimeType', {
-      value: function xmlHttpRequestOverrideMimeType(mimeType) {}
+      value: function(mimeType) {}
     });
   }
   if ('response' in xhrPrototype ||
@@ -203,7 +203,7 @@
   // IE9 ?
   if (typeof VBArray !== 'undefined') {
     Object.defineProperty(xhrPrototype, 'response', {
-      get: function xmlHttpRequestResponseGet() {
+      get: function() {
         return new Uint8Array(new VBArray(this.responseBody).toArray());
       }
     });
@@ -231,14 +231,14 @@
 })();
 
 // window.btoa (base64 encode function) ?
-(function checkWindowBtoaCompatibility() {
+(function() {
   if ('btoa' in window)
     return;
 
   var digits =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
-  window.btoa = function windowBtoa(chars) {
+  window.btoa = function(chars) {
     var buffer = '';
     var i, n;
     for (i = 0, n = chars.length; i < n; i += 3) {
@@ -256,13 +256,13 @@
 })();
 
 // Function.prototype.bind ?
-(function checkFunctionPrototypeBindCompatibility() {
+(function() {
   if (typeof Function.prototype.bind !== 'undefined')
     return;
 
-  Function.prototype.bind = function functionPrototypeBind(obj) {
+  Function.prototype.bind = function(obj) {
     var fn = this, headArgs = Array.prototype.slice.call(arguments, 1);
-    var bound = function functionPrototypeBindBound() {
+    var bound = function() {
       var args = Array.prototype.concat.apply(headArgs, arguments);
       return fn.apply(obj, args);
     };
@@ -271,7 +271,7 @@
 })();
 
 // IE9/10 text/html data URI
-(function checkDataURICompatibility() {
+(function() {
   if (!('documentMode' in document) ||
       document.documentMode !== 9 && document.documentMode !== 10)
     return;
@@ -279,8 +279,8 @@
   var originalSrcDescriptor = Object.getOwnPropertyDescriptor(
     HTMLIFrameElement.prototype, 'src');
   Object.defineProperty(HTMLIFrameElement.prototype, 'src', {
-    get: function htmlIFrameElementPrototypeSrcGet() { return this.$src; },
-    set: function htmlIFrameElementPrototypeSrcSet(src) {
+    get: function() { return this.$src; },
+    set: function(src) {
       this.$src = src;
       if (src.substr(0, 14) != 'data:text/html') {
         originalSrcDescriptor.set.call(this, src);
@@ -289,7 +289,7 @@
       // for text/html, using blank document and then
       // document's open, write, and close operations
       originalSrcDescriptor.set.call(this, 'about:blank');
-      setTimeout((function htmlIFrameElementPrototypeSrcOpenWriteClose() {
+      setTimeout((function() {
         var doc = this.contentDocument;
         doc.open('text/html');
         doc.write(src.substr(src.indexOf(',') + 1));
@@ -301,7 +301,7 @@
 })();
 
 // HTMLElement dataset property
-(function checkDatasetProperty() {
+(function() {
   var div = document.createElement('div');
   if ('dataset' in div)
     return; // dataset property exists
@@ -333,7 +333,7 @@
 })();
 
 // HTMLElement classList property
-(function checkClassListProperty() {
+(function() {
   var div = document.createElement('div');
   if ('classList' in div)
     return; // classList property exists
@@ -386,7 +386,7 @@
 })();
 
 // Check console compatability
-(function checkConsoleCompatibility() {
+(function() {
   if (!('console' in window)) {
     window.console = {
       log: function() {},
@@ -404,7 +404,7 @@
 })();
 
 // Check onclick compatibility in Opera
-(function checkOnClickCompatibility() {
+(function() {
   // workaround for reported Opera bug DSK-354448:
   // onclick fires on disabled buttons with opaque content
   function ignoreIfTargetDisabled(event) {
@@ -422,11 +422,11 @@
 })();
 
 // Checks if navigator.language is supported
-(function checkNavigatorLanguage() {
+(function() {
   if ('language' in navigator)
     return;
   Object.defineProperty(navigator, 'language', {
-    get: function navigatorLanguage() {
+    get: function() {
       var language = navigator.userLanguage || 'en-US';
       return language.substring(0, 2).toLowerCase() +
         language.substring(2).toUpperCase();

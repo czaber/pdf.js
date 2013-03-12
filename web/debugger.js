@@ -18,7 +18,7 @@
 
 'use strict';
 
-var FontInspector = (function FontInspectorClosure() {
+var FontInspector = (function() {
   var fonts;
   var panelWidth = 300;
   var active = false;
@@ -64,7 +64,7 @@ var FontInspector = (function FontInspectorClosure() {
     name: 'Font Inspector',
     panel: null,
     manager: null,
-    init: function init() {
+    init: function() {
       var panel = this.panel;
       panel.setAttribute('style', 'padding: 5px;');
       var tmp = document.createElement('button');
@@ -90,7 +90,7 @@ var FontInspector = (function FontInspectorClosure() {
       }
     },
     // FontInspector specific functions.
-    fontAdded: function fontAdded(fontObj, url) {
+    fontAdded: function(fontObj, url) {
       function properties(obj, list) {
         var moreInfo = document.createElement('table');
         for (var i = 0; i < list.length; i++) {
@@ -148,7 +148,7 @@ var FontInspector = (function FontInspectorClosure() {
 })();
 
 // Manages all the page steppers.
-var StepperManager = (function StepperManagerClosure() {
+var StepperManager = (function() {
   var steppers = [];
   var stepperDiv = null;
   var stepperControls = null;
@@ -160,7 +160,7 @@ var StepperManager = (function StepperManagerClosure() {
     name: 'Stepper',
     panel: null,
     manager: null,
-    init: function init() {
+    init: function() {
       var self = this;
       this.panel.setAttribute('style', 'padding: 5px;');
       stepperControls = document.createElement('div');
@@ -178,7 +178,7 @@ var StepperManager = (function StepperManagerClosure() {
     enabled: false,
     active: false,
     // Stepper specific functions.
-    create: function create(pageIndex) {
+    create: function(pageIndex) {
       var debug = document.createElement('div');
       debug.id = 'stepper' + pageIndex;
       debug.setAttribute('hidden', true);
@@ -195,7 +195,7 @@ var StepperManager = (function StepperManagerClosure() {
         this.selectStepper(pageIndex, false);
       return stepper;
     },
-    selectStepper: function selectStepper(pageIndex, selectPanel) {
+    selectStepper: function(pageIndex, selectPanel) {
       if (selectPanel)
         this.manager.selectPanel(1);
       for (var i = 0; i < steppers.length; ++i) {
@@ -211,7 +211,7 @@ var StepperManager = (function StepperManagerClosure() {
         option.selected = option.value == pageIndex;
       }
     },
-    saveBreakPoints: function saveBreakPoints(pageIndex, bps) {
+    saveBreakPoints: function(pageIndex, bps) {
       breakPoints[pageIndex] = bps;
       sessionStorage.setItem('pdfjsBreakPoints', JSON.stringify(breakPoints));
     }
@@ -219,7 +219,7 @@ var StepperManager = (function StepperManagerClosure() {
 })();
 
 // The stepper for each page's IRQueue.
-var Stepper = (function StepperClosure() {
+var Stepper = (function() {
   function Stepper(panel, pageIndex, initialBreakPoints) {
     this.panel = panel;
     this.len = 0;
@@ -230,7 +230,7 @@ var Stepper = (function StepperClosure() {
     this.currentIdx = -1;
   }
   Stepper.prototype = {
-    init: function init(IRQueue) {
+    init: function(IRQueue) {
       // Shorter way to create element and optionally set textContent.
       function c(tag, textContent) {
         var d = document.createElement(tag);
@@ -284,7 +284,7 @@ var Stepper = (function StepperClosure() {
       panel.appendChild(content);
       var self = this;
     },
-    getNextBreakPoint: function getNextBreakPoint() {
+    getNextBreakPoint: function() {
       this.breakPoints.sort(function(a, b) { return a - b; });
       for (var i = 0; i < this.breakPoints.length; i++) {
         if (this.breakPoints[i] > this.currentIdx)
@@ -292,7 +292,7 @@ var Stepper = (function StepperClosure() {
       }
       return null;
     },
-    breakIt: function breakIt(idx, callback) {
+    breakIt: function(idx, callback) {
       StepperManager.selectStepper(this.pageIndex, true);
       var self = this;
       var dom = document;
@@ -317,7 +317,7 @@ var Stepper = (function StepperClosure() {
       dom.addEventListener('keydown', listener, false);
       self.goTo(idx);
     },
-    goTo: function goTo(idx) {
+    goTo: function(idx) {
       var allRows = this.panel.getElementsByClassName('line');
       for (var x = 0, xx = allRows.length; x < xx; ++x) {
         var row = allRows[x];
@@ -333,7 +333,7 @@ var Stepper = (function StepperClosure() {
   return Stepper;
 })();
 
-var Stats = (function Stats() {
+var Stats = (function() {
   var stats = [];
   function clear(node) {
     while (node.hasChildNodes())
@@ -351,7 +351,7 @@ var Stats = (function Stats() {
     name: 'Stats',
     panel: null,
     manager: null,
-    init: function init() {
+    init: function() {
       this.panel.setAttribute('style', 'padding: 5px;');
       PDFJS.enableStats = true;
     },
@@ -386,7 +386,7 @@ var Stats = (function Stats() {
 })();
 
 // Manages all the debugging tools.
-var PDFBug = (function PDFBugClosure() {
+var PDFBug = (function() {
   var panelWidth = 300;
   var buttons = [];
   var activePanel = null;
@@ -417,7 +417,7 @@ var PDFBug = (function PDFBugClosure() {
         });
       }
     },
-    init: function init() {
+    init: function() {
       /*
        * Basic Layout:
        * PDFBug
@@ -470,7 +470,7 @@ var PDFBug = (function PDFBugClosure() {
       }
       this.selectPanel(0);
     },
-    selectPanel: function selectPanel(index) {
+    selectPanel: function(index) {
       if (index === activePanel)
         return;
       activePanel = index;

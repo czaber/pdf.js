@@ -118,7 +118,7 @@ var Cache = function(size) {
   };
 };
 
-var ProgressBar = (function ProgressBarClosure() {
+var ProgressBar = (function() {
 
   function clamp(v, min, max) {
     return Math.min(Math.max(v, min), max);
@@ -179,9 +179,9 @@ var ProgressBar = (function ProgressBarClosure() {
 // First we see if localStorage is available
 // If not, we use FUEL in FF
 // Use asyncStorage for B2G
-var Settings = (function SettingsClosure() {
+var Settings = (function() {
 //#if !(FIREFOX || MOZCENTRAL || B2G)
-  var isLocalStorageEnabled = (function localStorageEnabledTest() {
+  var isLocalStorageEnabled = (function() {
     // Feature test as per http://diveintohtml5.info/storage.html
     // The additional localStorage call is to get around a FF quirk, see
     // bug #495747 in bugzilla
@@ -198,7 +198,7 @@ var Settings = (function SettingsClosure() {
     this.fingerprint = fingerprint;
     this.initializedPromise = new PDFJS.Promise();
 
-    var resolvePromise = (function settingsResolvePromise(db) {
+    var resolvePromise = (function(db) {
       this.initialize(db || '{}');
       this.initializedPromise.resolve();
     }).bind(this);
@@ -378,7 +378,7 @@ var PDFFindController = {
     var self = this;
     function extractPageText(pageIndex) {
       self.pdfview.pages[pageIndex].getTextContent().then(
-        function textContentResolved(data) {
+        function(data) {
           // Build the find string.
           var bidiTexts = data.bidiTexts;
           var str = '';
@@ -1018,11 +1018,11 @@ var pdfview = {
     var self = this;
     self.loading = true;
     PDFJS.getDocument(parameters).then(
-      function getDocumentCallback(pdfDocument) {
+      function(pdfDocument) {
         self.load(pdfDocument, scale);
         self.loading = false;
       },
-      function getDocumentError(message, exception) {
+      function(message, exception) {
         if (exception && exception.name === 'PasswordException') {
           if (exception.code === 'needpassword') {
             var promptString = mozL10n.get('request_password', null,
@@ -1067,7 +1067,7 @@ var pdfview = {
         self.error(loadingErrorMessage, moreInfo);
         self.loading = false;
       },
-      function getDocumentProgress(progressData) {
+      function(progressData) {
         self.progress(progressData.loaded / progressData.total);
       }
     );
@@ -1779,7 +1779,7 @@ var pdfview = {
     } else {
       wrapper.classList.add('presentationControls');
     }
-    this.presentationControlsTimeout = setTimeout(function hideControls() {
+    this.presentationControlsTimeout = setTimeout(function() {
       wrapper.classList.remove('presentationControls');
       delete this.presentationControlsTimeout;
     }, DELAY_BEFORE_HIDING_CONTROLS);
@@ -2131,7 +2131,7 @@ var PageView = function(container, pdfPage, id, scale,
         this.viewport.convertToViewportPoint(x + width, y + height)
       ];
       var self = this;
-      setTimeout(function pageViewScrollIntoViewRelayout() {
+      setTimeout(function() {
         // letting page to re-layout before scrolling
         var scale = self.pdfview.currentScale;
         var x = Math.min(boundingRect[0][0], boundingRect[1][0]);
@@ -2264,17 +2264,17 @@ var PageView = function(container, pdfPage, id, scale,
       }
     };
     this.pdfPage.render(renderContext).then(
-      function pdfPageRenderCallback() {
+      function() {
         pageViewDrawCallback(null);
       },
-      function pdfPageRenderError(error) {
+      function(error) {
         pageViewDrawCallback(error);
       }
     );
 
     if (textLayer) {
       this.getTextContent().then(
-        function textContentResolved(textContent) {
+        function(textContent) {
           textLayer.setTextContent(textContent);
         }
       );
@@ -2467,11 +2467,11 @@ var ThumbnailView = function(container, pdfPage, id, component, pdfview) {
       }
     };
     pdfPage.render(renderContext).then(
-      function pdfPageRenderCallback() {
+      function() {
         self.renderingState = RenderingStates.FINISHED;
         callback();
       },
-      function pdfPageRenderError(error) {
+      function(error) {
         self.renderingState = RenderingStates.FINISHED;
         callback();
       }
@@ -2539,7 +2539,7 @@ var DocumentOutlineView = function(outline, component, pdfview) {
 };
 
 // optimised CSS custom property getter/setter
-var CustomStyle = (function CustomStyleClosure() {
+var CustomStyle = (function() {
 
   // As noted on: http://www.zachstronaut.com/posts/2009/02/17/
   //              animate-css-transforms-firefox-webkit.html
@@ -3497,7 +3497,7 @@ setupEventListener(component, 'afterprint', function(evt) {
   pdfview.afterPrint();
 });
 
-(function fullscreenClosure() {
+(function() {
   function fullscreenChange(e) {
     var isFullscreen = document.fullscreenElement || document.mozFullScreen ||
         document.webkitIsFullScreen;
@@ -3512,7 +3512,7 @@ setupEventListener(component, 'afterprint', function(evt) {
   setupEventListener(component, 'webkitfullscreenchange', fullscreenChange, false);
 })();
 
-(function animationStartedClosure() {
+(function() {
   // The offsetParent is not set until the pdf.js iframe or object is visible.
   // Waiting for first animation.
   var requestAnimationFrame = window.requestAnimationFrame ||
@@ -3522,7 +3522,7 @@ setupEventListener(component, 'afterprint', function(evt) {
                               window.msRequestAnimationFrame ||
                               function startAtOnce(callback) { callback(); };
   pdfview.animationStartedPromise = new PDFJS.Promise();
-  requestAnimationFrame(function onAnimationFrame() {
+  requestAnimationFrame(function() {
     pdfview.animationStartedPromise.resolve();
   });
 })();
