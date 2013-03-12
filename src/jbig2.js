@@ -1031,7 +1031,7 @@ var Jbig2Image = (function() {
       }
     },
     onImmediateGenericRegion:
-      function SimpleSegmentVisitor_onImmediateGenericRegion(region, data,
+      function(region, data,
                                                              start, end) {
       var regionInfo = region.info;
       var decodingContext = new DecodingContext(data, start, end);
@@ -1041,11 +1041,11 @@ var Jbig2Image = (function() {
       this.drawBitmap(regionInfo, bitmap);
     },
     onImmediateLosslessGenericRegion:
-      function SimpleSegmentVisitor_onImmediateLosslessGenericRegion() {
+      function() {
       this.onImmediateGenericRegion.apply(this, arguments);
     },
     onSymbolDictionary:
-      function SimpleSegmentVisitor_onSymbolDictionary(dictionary,
+      function(dictionary,
                                                        currentSegment,
                                                        referredSegments,
                                                        data, start, end) {
@@ -1071,7 +1071,7 @@ var Jbig2Image = (function() {
         decodingContext);
     },
     onImmediateTextRegion:
-      function SimpleSegmentVisitor_onImmediateTextRegion(region,
+      function(region,
                                                           referredSegments,
                                                           data, start, end) {
       var regionInfo = region.info;
@@ -1094,7 +1094,7 @@ var Jbig2Image = (function() {
       this.drawBitmap(regionInfo, bitmap);
     },
     onImmediateLosslessTextRegion:
-      function SimpleSegmentVisitor_onImmediateLosslessTextRegion() {
+      function() {
         this.onImmediateTextRegion.apply(this, arguments);
     }
   };

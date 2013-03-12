@@ -213,7 +213,7 @@ var WorkerMessageHandler = {
           },
           headers: source.httpHeaders
         },
-        function getPDFLoad(data) {
+        function(data) {
           loadDocument(data, source);
         });
     });

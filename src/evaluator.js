@@ -484,7 +484,7 @@ var PartialEvaluator = (function() {
               var gsStateObj = [];
 
               gsState.forEach(
-                function canvasGraphicsSetGStateForEach(key, value) {
+                function(key, value) {
                   switch (key) {
                     case 'Type':
                       break;

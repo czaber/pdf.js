@@ -1445,7 +1445,7 @@ var JpxImage = (function() {
           this.contexts.push({index: 0, mps: 0});
       },
       setNeighborsSignificance:
-        function BitModel_setNeighborsSignificance(row, column) {
+        function(row, column) {
         var neighborsSignificance = this.neighborsSignificance;
         var width = this.width, height = this.height;
         var index = row * width + column;
@@ -1470,7 +1470,7 @@ var JpxImage = (function() {
         neighborsSignificance[index] |= 0x80;
       },
       runSignificancePropogationPass:
-        function BitModel_runSignificancePropogationPass() {
+        function() {
         var decoder = this.decoder;
         var width = this.width, height = this.height;
         var coefficentsMagnitude = this.coefficentsMagnitude;
@@ -1539,7 +1539,7 @@ var JpxImage = (function() {
         return decoded ^ contextLabelAndXor.xorBit;
       },
       runMagnitudeRefinementPass:
-        function BitModel_runMagnitudeRefinementPass() {
+        function() {
         var decoder = this.decoder;
         var width = this.width, height = this.height;
         var coefficentsMagnitude = this.coefficentsMagnitude;
@@ -1684,7 +1684,7 @@ var JpxImage = (function() {
     function Transform() {
     }
     Transform.prototype.calculate =
-      function transformCalculate(subbands, u0, v0) {
+      function(subbands, u0, v0) {
       var ll = subbands[0];
       for (var i = 1, ii = subbands.length, j = 1; i < ii; i += 3, j++) {
         ll = this.iterate(ll, subbands[i], subbands[i + 1],
@@ -1816,7 +1816,7 @@ var JpxImage = (function() {
 
     IrreversibleTransform.prototype = Object.create(Transform.prototype);
     IrreversibleTransform.prototype.filter =
-      function irreversibleTransformFilter(y, offset, length, i0, x) {
+      function(y, offset, length, i0, x) {
       var i0_ = Math.floor(i0 / 2);
       var i1_ = Math.floor((i0 + length) / 2);
       var offset_ = offset - (i0 % 1);
@@ -1870,7 +1870,7 @@ var JpxImage = (function() {
 
     ReversibleTransform.prototype = Object.create(Transform.prototype);
     ReversibleTransform.prototype.filter =
-      function reversibleTransformFilter(y, offset, length, i0, x) {
+      function(y, offset, length, i0, x) {
       var i0_ = Math.floor(i0 / 2);
       var i1_ = Math.floor((i0 + length) / 2);
       var offset_ = offset - (i0 % 1);

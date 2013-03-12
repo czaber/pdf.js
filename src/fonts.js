@@ -659,7 +659,7 @@ var FontLoader = {
 
       window.addEventListener(
         'message',
-        function fontLoaderMessage(e) {
+        function(e) {
           if (e.data !== requestId)
             return;
           for (var i = 0, ii = fonts.length; i < ii; ++i) {
@@ -6141,7 +6141,7 @@ var CFFParser = (function() {
       return { charStrings: charStrings, seacs: seacs };
     },
     emptyPrivateDictionary:
-      function CFFParser_emptyPrivateDictionary(parentDict) {
+      function(parentDict) {
       var privateDict = this.createDict(CFFPrivateDict, [],
                                         parentDict.strings);
       parentDict.setByKey(18, [0, 0]);

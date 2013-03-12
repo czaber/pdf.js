@@ -255,7 +255,7 @@ var PDFFunction = (function() {
     },
 
     constructInterpolatedFromIR:
-      function PDFFunction_constructInterpolatedFromIR(IR) {
+      function(IR) {
       var c0 = IR[1];
       var diff = IR[2];
       var n = IR[3];

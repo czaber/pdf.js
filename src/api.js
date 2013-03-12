@@ -303,7 +303,7 @@ var PDFPageProxy = (function() {
 
       // Once the operatorList and fonts are loaded, do the actual rendering.
       this.displayReadyPromise.then(
-        function pageDisplayReadyPromise() {
+        function() {
           if (self.destroyed) {
             complete();
             return;
@@ -317,7 +317,7 @@ var PDFPageProxy = (function() {
             complete(e);
           }
         }.bind(this),
-        function pageDisplayReadPromiseError(reason) {
+        function(reason) {
           complete(reason);
         }
       );
@@ -328,7 +328,7 @@ var PDFPageProxy = (function() {
      * For internal use only.
      */
     startRenderingFromOperatorList:
-      function PDFPageProxy_startRenderingFromOperatorList(operatorList,
+      function(operatorList,
                                                            fonts) {
       var self = this;
       this.operatorList = operatorList;
@@ -342,7 +342,7 @@ var PDFPageProxy = (function() {
       };
 
       this.ensureFonts(fonts,
-        function pageStartRenderingFromOperatorListEnsureFonts() {
+        function() {
           displayContinuation();
         }
       );
@@ -369,7 +369,7 @@ var PDFPageProxy = (function() {
       // Load all the fonts
       FontLoader.bind(
         fontObjs,
-        function pageEnsureFontsFontObjs(fontObjs) {
+        function(fontObjs) {
           this.stats.timeEnd('Font Loading');
 
           callback.call(this);
@@ -425,7 +425,7 @@ var PDFPageProxy = (function() {
       this.transport.messageHandler.send('GetTextContent', {
           pageIndex: this.pageNumber - 1
         },
-        function textContentCallback(textContent) {
+        function(textContent) {
           promise.resolve(textContent);
         }
       );
@@ -541,7 +541,7 @@ var WorkerTransport = (function() {
     },
 
     setupMessageHandler:
-      function WorkerTransport_setupMessageHandler(messageHandler) {
+      function(messageHandler) {
       this.messageHandler = messageHandler;
 
       messageHandler.on('GetDoc', function(data) {

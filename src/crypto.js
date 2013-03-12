@@ -419,7 +419,7 @@ var CipherTransform = (function() {
     createStream: function(stream) {
       var cipher = new this.streamCipherConstructor();
       return new DecryptStream(stream,
-        function cipherTransformDecryptStream(data) {
+        function(data) {
           return cipher.decryptBlock(data);
         }
       );
@@ -644,7 +644,7 @@ var CipherTransformFactory = (function() {
 
   CipherTransformFactory.prototype = {
     createCipherTransform:
-      function CipherTransformFactory_createCipherTransform(num, gen) {
+      function(num, gen) {
       if (this.algorithm == 4) {
         return new CipherTransform(
           buildCipherConstructor(this.cf, this.stmf,

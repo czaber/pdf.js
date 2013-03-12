@@ -734,7 +734,7 @@ var CanvasGraphics = (function() {
       return maskCtx;
     },
     swapImageForTextClipping:
-      function CanvasGraphics_swapImageForTextClipping() {
+      function() {
       var ctx = this.ctx;
       var canvasWidth = ctx.canvas.width;
       var canvasHeight = ctx.canvas.height;
@@ -1122,7 +1122,7 @@ var CanvasGraphics = (function() {
       this.showText(text);
     },
     nextLineSetSpacingShowText:
-      function CanvasGraphics_nextLineSetSpacingShowText(wordSpacing,
+      function(wordSpacing,
                                                          charSpacing,
                                                          text) {
       this.setWordSpacing(wordSpacing);
@@ -1379,7 +1379,7 @@ var CanvasGraphics = (function() {
     },
 
     paintImageMaskXObjectGroup:
-      function CanvasGraphics_paintImageMaskXObjectGroup(images) {
+      function(images) {
       var ctx = this.ctx;
       var tmpCanvasWidth = 0, tmpCanvasHeight = 0, tmpCanvas, tmpCtx;
       for (var i = 0, ii = images.length; i < ii; i++) {
@@ -1423,7 +1423,7 @@ var CanvasGraphics = (function() {
     },
 
     paintInlineImageXObject:
-      function CanvasGraphics_paintInlineImageXObject(imgData) {
+      function(imgData) {
       var width = imgData.width;
       var height = imgData.height;
       var ctx = this.ctx;
@@ -1468,7 +1468,7 @@ var CanvasGraphics = (function() {
     },
 
     paintInlineImageXObjectGroup:
-      function CanvasGraphics_paintInlineImageXObjectGroup(imgData, map) {
+      function(imgData, map) {
       var ctx = this.ctx;
       var w = imgData.width;
       var h = imgData.height;

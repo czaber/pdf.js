@@ -261,7 +261,7 @@ var Util = PDFJS.Util = (function() {
   // The SVD can be represented with formula A = USV. We are interested in the
   // matrix S here because it represents the scale values.
   Util.singularValueDecompose2dScale =
-    function Util_singularValueDecompose2dScale(m) {
+    function(m) {
 
     var transpose = [m[0], m[2], m[1], m[3]];
 
@@ -406,7 +406,7 @@ var PageViewport = PDFJS.PageViewport = (function() {
       return Util.applyTransform([x, y], this.transform);
     },
     convertToViewportRectangle:
-      function PageViewport_convertToViewportRectangle(rect) {
+      function(rect) {
       var tl = Util.applyTransform([rect[0], rect[1]], this.transform);
       var br = Util.applyTransform([rect[2], rect[3]], this.transform);
       return [tl[0], tl[1], br[0], br[1]];

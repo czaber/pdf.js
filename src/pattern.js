@@ -373,7 +373,7 @@ var TilingPattern = (function() {
     },
 
     setFillAndStrokeStyleToContext:
-      function setFillAndStrokeStyleToContext(context, paintType, color) {
+      function(context, paintType, color) {
       switch (paintType) {
         case PaintType.COLORED:
           var ctx = this.ctx;

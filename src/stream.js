@@ -246,7 +246,7 @@ var StreamsSequenceStream = (function() {
   StreamsSequenceStream.prototype = Object.create(DecodeStream.prototype);
 
   StreamsSequenceStream.prototype.readBlock =
-    function streamSequenceStreamReadBlock() {
+    function() {
 
     var streams = this.streams;
     if (streams.length === 0) {
@@ -432,7 +432,7 @@ var FlateStream = (function() {
   };
 
   FlateStream.prototype.generateHuffmanTable =
-    function flateStreamGenerateHuffmanTable(lengths) {
+    function(lengths) {
     var n = lengths.length;
 
     // find max code length
@@ -635,7 +635,7 @@ var PredictorStream = (function() {
   PredictorStream.prototype = Object.create(DecodeStream.prototype);
 
   PredictorStream.prototype.readBlockTiff =
-    function predictorStreamReadBlockTiff() {
+    function() {
     var rowBytes = this.rowBytes;
 
     var bufferLength = this.bufferLength;
@@ -698,7 +698,7 @@ var PredictorStream = (function() {
   };
 
   PredictorStream.prototype.readBlockPng =
-    function predictorStreamReadBlockPng() {
+    function() {
 
     var rowBytes = this.rowBytes;
     var pixBytes = this.pixBytes;
@@ -868,7 +868,7 @@ var JpegStream = (function() {
    * further processing such as color space conversions.
    */
   JpegStream.prototype.isNativelySupported =
-    function JpegStream_isNativelySupported(xref, res) {
+    function(xref, res) {
     var cs = ColorSpace.parse(this.dict.get('ColorSpace', 'CS'), xref, res);
     // when bug 674619 lands, let's check if browser can do
     // normal cmyk and then we won't need to decode in JS
@@ -883,7 +883,7 @@ var JpegStream = (function() {
    * Checks if the image can be decoded by the browser.
    */
   JpegStream.prototype.isNativelyDecodable =
-    function JpegStream_isNativelyDecodable(xref, res) {
+    function(xref, res) {
     var cs = ColorSpace.parse(this.dict.get('ColorSpace', 'CS'), xref, res);
     var numComps = cs.numComps;
     if (numComps == 1 || numComps == 3)
@@ -1742,7 +1742,7 @@ var CCITTFaxStream = (function() {
   };
 
   CCITTFaxStream.prototype.addPixels =
-    function ccittFaxStreamAddPixels(a1, blackPixels) {
+    function(a1, blackPixels) {
     var codingLine = this.codingLine;
     var codingPos = this.codingPos;
 
@@ -1762,7 +1762,7 @@ var CCITTFaxStream = (function() {
   };
 
   CCITTFaxStream.prototype.addPixelsNeg =
-    function ccittFaxStreamAddPixelsNeg(a1, blackPixels) {
+    function(a1, blackPixels) {
     var codingLine = this.codingLine;
     var codingPos = this.codingPos;
 
@@ -2089,7 +2089,7 @@ var CCITTFaxStream = (function() {
   // returned. The second array element is the actual code. The third array
   // element indicates whether EOF was reached.
   CCITTFaxStream.prototype.findTableCode =
-    function ccittFaxStreamFindTableCode(start, end, table, limit) {
+    function(start, end, table, limit) {
 
     var limitValue = limit || 0;
     for (var i = start; i <= end; ++i) {
@@ -2110,7 +2110,7 @@ var CCITTFaxStream = (function() {
   };
 
   CCITTFaxStream.prototype.getTwoDimCode =
-    function ccittFaxStreamGetTwoDimCode() {
+    function() {
 
     var code = 0;
     var p;
@@ -2131,7 +2131,7 @@ var CCITTFaxStream = (function() {
   };
 
   CCITTFaxStream.prototype.getWhiteCode =
-    function ccittFaxStreamGetWhiteCode() {
+    function() {
 
     var code = 0;
     var p;
@@ -2165,7 +2165,7 @@ var CCITTFaxStream = (function() {
   };
 
   CCITTFaxStream.prototype.getBlackCode =
-    function ccittFaxStreamGetBlackCode() {
+    function() {
 
     var code, p;
     if (this.eoblock) {
