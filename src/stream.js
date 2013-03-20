@@ -20,7 +20,7 @@
 'use strict';
 
 var Stream = (function() {
-  function Stream(arrayBuffer, start, length, dict) {
+  var Stream = function(arrayBuffer, start, length, dict) {
     this.bytes = arrayBuffer instanceof Uint8Array ? arrayBuffer :
       new Uint8Array(arrayBuffer);
     this.start = start || 0;
@@ -88,7 +88,7 @@ var Stream = (function() {
 })();
 
 var StringStream = (function() {
-  function StringStream(str) {
+  var StringStream = function(str) {
     var length = str.length;
     var bytes = new Uint8Array(length);
     for (var n = 0; n < length; ++n)
@@ -103,7 +103,7 @@ var StringStream = (function() {
 
 // super class for the decoding streams
 var DecodeStream = (function() {
-  function DecodeStream() {
+  var DecodeStream = function() {
     this.pos = 0;
     this.bufferLength = 0;
     this.eof = false;
@@ -199,7 +199,7 @@ var DecodeStream = (function() {
 })();
 
 var FakeStream = (function() {
-  function FakeStream(stream) {
+  var FakeStream = function(stream) {
     this.dict = stream.dict;
     DecodeStream.call(this);
   }
@@ -238,7 +238,7 @@ var FakeStream = (function() {
 })();
 
 var StreamsSequenceStream = (function() {
-  function StreamsSequenceStream(streams) {
+  var StreamsSequenceStream = function(streams) {
     this.streams = streams;
     DecodeStream.call(this);
   }
@@ -358,7 +358,7 @@ var FlateStream = (function() {
     0x50003, 0x50013, 0x5000b, 0x5001b, 0x50007, 0x50017, 0x5000f, 0x00000
   ]), 5];
 
-  function FlateStream(stream) {
+  var FlateStream = function(stream) {
     var bytes = stream.getBytes();
     var bytesPos = 0;
 
@@ -605,7 +605,7 @@ var FlateStream = (function() {
 })();
 
 var PredictorStream = (function() {
-  function PredictorStream(stream, params) {
+  var PredictorStream = function(stream, params) {
     var predictor = this.predictor = params.get('Predictor') || 1;
 
     if (predictor <= 1)
@@ -790,7 +790,7 @@ var PredictorStream = (function() {
  * DecodeStreams.
  */
 var JpegStream = (function() {
-  function isAdobeImage(bytes) {
+  var isAdobeImage = function(bytes) {
     var maxBytesScanned = Math.max(bytes.length - 16, 1024);
     // Looking for APP14, 'Adobe'
     for (var i = 0; i < maxBytesScanned; ++i) {
@@ -807,7 +807,7 @@ var JpegStream = (function() {
     return false;
   }
 
-  function fixAdobeImage(bytes) {
+  var fixAdobeImage = function(bytes) {
     // Inserting 'EMBED' marker after JPEG signature
     var embedMarker = new Uint8Array([0xFF, 0xEC, 0, 8, 0x45, 0x4D, 0x42, 0x45,
                                       0x44, 0]);
@@ -820,7 +820,7 @@ var JpegStream = (function() {
     return newBytes;
   }
 
-  function JpegStream(bytes, dict, xref) {
+  var JpegStream = function(bytes, dict, xref) {
     // TODO: per poppler, some images may have 'junk' before that
     // need to be removed
     this.dict = dict;
@@ -900,7 +900,7 @@ var JpegStream = (function() {
  * the stream behaves like all the other DecodeStreams.
  */
 var JpxStream = (function() {
-  function JpxStream(bytes, dict) {
+  var JpxStream = function(bytes, dict) {
     this.dict = dict;
     this.bytes = bytes;
 
@@ -1001,7 +1001,7 @@ var JpxStream = (function() {
  * the stream behaves like all the other DecodeStreams.
  */
 var Jbig2Stream = (function() {
-  function Jbig2Stream(bytes, dict) {
+  var Jbig2Stream = function(bytes, dict) {
     this.dict = dict;
     this.bytes = bytes;
 
@@ -1041,7 +1041,7 @@ var Jbig2Stream = (function() {
 })();
 
 var DecryptStream = (function() {
-  function DecryptStream(str, decrypt) {
+  var DecryptStream = function(str, decrypt) {
     this.str = str;
     this.dict = str.dict;
     this.decrypt = decrypt;
@@ -1074,7 +1074,7 @@ var DecryptStream = (function() {
 })();
 
 var Ascii85Stream = (function() {
-  function Ascii85Stream(str) {
+  var Ascii85Stream = function(str) {
     this.str = str;
     this.dict = str.dict;
     this.input = new Uint8Array(5);
@@ -1143,7 +1143,7 @@ var Ascii85Stream = (function() {
 })();
 
 var AsciiHexStream = (function() {
-  function AsciiHexStream(str) {
+  var AsciiHexStream = function(str) {
     this.str = str;
     this.dict = str.dict;
 
@@ -1213,7 +1213,7 @@ var AsciiHexStream = (function() {
 })();
 
 var RunLengthStream = (function() {
-  function RunLengthStream(str) {
+  var RunLengthStream = function(str) {
     this.str = str;
     this.dict = str.dict;
 
@@ -1685,7 +1685,7 @@ var CCITTFaxStream = (function() {
     [2, 2], [2, 2], [2, 2], [2, 2]
   ];
 
-  function CCITTFaxStream(str, params) {
+  var CCITTFaxStream = function(str, params) {
     this.str = str;
     this.dict = str.dict;
 
@@ -2225,7 +2225,7 @@ var CCITTFaxStream = (function() {
 })();
 
 var LZWStream = (function() {
-  function LZWStream(str, earlyChange) {
+  var LZWStream = function(str, earlyChange) {
     this.str = str;
     this.dict = str.dict;
     this.cachedData = 0;
@@ -2354,7 +2354,7 @@ var LZWStream = (function() {
 })();
 
 var NullStream = (function() {
-  function NullStream() {
+  var NullStream = function() {
     Stream.call(this, new Uint8Array(0));
   }
 

@@ -24,7 +24,7 @@ var PDFImage = (function() {
    * Decode the image in the main thread if it supported. Resovles the promise
    * when the image data is ready.
    */
-  function handleImageData(handler, xref, res, image, promise) {
+  var handleImageData = function(handler, xref, res, image, promise) {
     if (image instanceof JpegStream && image.isNativelyDecodable(xref, res)) {
       // For natively supported jpegs send them to the main thread for decoding.
       var dict = image.dict;
@@ -44,12 +44,12 @@ var PDFImage = (function() {
    * Decode and clamp a value. The formula is different from the spec because we
    * don't decode to float range [0,1], we decode it in the [0,max] range.
    */
-  function decodeAndClamp(value, addend, coefficient, max) {
+  var decodeAndClamp = function(value, addend, coefficient, max) {
     value = addend + value * coefficient;
     // Clamp the value to the range
     return value < 0 ? 0 : value > max ? max : value;
   }
-  function PDFImage(xref, res, image, inline, smask, mask) {
+  var PDFImage = function(xref, res, image, inline, smask, mask) {
     this.image = image;
     if (image.getParams) {
       // JPX/JPEG2000 streams directly contain bits per component
@@ -86,7 +86,7 @@ var PDFImage = (function() {
     if (!this.imageMask) {
       var colorSpace = dict.get('ColorSpace', 'CS');
       if (!colorSpace) {
-        TODO('JPX images (which don"t require color spaces');
+        TODO('JPX images which dont require color spaces');
         colorSpace = new Name('DeviceRGB');
       }
       this.colorSpace = ColorSpace.parse(colorSpace, xref, res);
@@ -455,11 +455,11 @@ var PDFImage = (function() {
   return PDFImage;
 })();
 
-function loadJpegStream(id, imageData, objs) {
+var loadJpegStream = function(id, imageData, objs) {
   var img = new Image();
   img.onload = (function() {
     objs.resolve(id, img);
   });
   img.src = 'data:image/jpeg;base64,' + window.btoa(imageData);
-}
+};
 

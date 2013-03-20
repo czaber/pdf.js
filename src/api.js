@@ -76,7 +76,7 @@ PDFJS.getDocument = function(source) {
  * properties that can be read synchronously.
  */
 var PDFDocumentProxy = (function() {
-  function PDFDocumentProxy(pdfInfo, transport) {
+  var PDFDocumentProxy = function(pdfInfo, transport) {
     this.pdfInfo = pdfInfo;
     this.transport = transport;
   }
@@ -188,7 +188,7 @@ var PDFDocumentProxy = (function() {
 })();
 
 var PDFPageProxy = (function() {
-  function PDFPageProxy(pageInfo, transport) {
+  var PDFPageProxy = function(pageInfo, transport) {
     this.pageInfo = pageInfo;
     this.transport = transport;
     this.stats = new StatTimer();
@@ -286,7 +286,7 @@ var PDFPageProxy = (function() {
       }
 
       var self = this;
-      function complete(error) {
+      var complete = function(error) {
         self.renderInProgress = false;
         if (self.destroyed || self.cleanupAfterRender) {
           delete self.displayReadyPromise;
@@ -404,7 +404,7 @@ var PDFPageProxy = (function() {
         continueWrapper = next;
 
       var self = this;
-      function next() {
+      var next = function() {
         startIdx = gfx.executeOperatorList(operatorList, startIdx,
                                            continueWrapper, stepper);
         if (startIdx == length) {
@@ -462,7 +462,7 @@ var PDFPageProxy = (function() {
  * For internal use only.
  */
 var WorkerTransport = (function() {
-  function WorkerTransport(workerInitializedPromise, workerReadyPromise) {
+  var WorkerTransport = function(workerInitializedPromise, workerReadyPromise) {
     this.workerReadyPromise = workerReadyPromise;
     this.commonObjs = new PDFObjects();
 

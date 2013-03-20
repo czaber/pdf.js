@@ -38,14 +38,14 @@ var TextRenderingMode = {
 // Minimal font size that would be used during canvas fillText operations.
 var MIN_FONT_SIZE = 1;
 
-function createScratchCanvas(width, height) {
+var createScratchCanvas = function(width, height) {
   var canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   return canvas;
 }
 
-function addContextCurrentTransform(ctx) {
+var addContextCurrentTransform = function(ctx) {
   // If the context doesn't expose a `mozCurrentTransform`, add a JS based on.
   if (!ctx.mozCurrentTransform) {
     // Store the original context
@@ -158,7 +158,7 @@ function addContextCurrentTransform(ctx) {
 }
 
 var CanvasExtraState = (function() {
-  function CanvasExtraState(old) {
+  var CanvasExtraState = function(old) {
     // Are soft masks and alpha values shapes or opacities?
     this.alphaIsShape = false;
     this.fontSize = 0;
@@ -214,7 +214,7 @@ var CanvasGraphics = (function() {
   // before it stops and shedules a continue of execution.
   var EXECUTION_TIME = 15;
 
-  function CanvasGraphics(canvasCtx, commonObjs, objs, textLayer, imageLayer) {
+  var CanvasGraphics = function(canvasCtx, commonObjs, objs, textLayer, imageLayer) {
     this.ctx = canvasCtx;
     this.current = new CanvasExtraState();
     this.stateStack = [];
@@ -230,7 +230,7 @@ var CanvasGraphics = (function() {
     }
   }
 
-  function applyStencilMask(imgArray, width, height, inverseDecode, buffer) {
+  var applyStencilMask = function(imgArray, width, height, inverseDecode, buffer) {
     var imgArrayPos = 0;
     var i, j, mask, buf;
     // removing making non-masked pixels transparent
@@ -251,7 +251,7 @@ var CanvasGraphics = (function() {
     }
   }
 
-  function putBinaryImageData(ctx, data, w, h) {
+  var putBinaryImageData = function(ctx, data, w, h) {
     var tmpImgData = 'createImageData' in ctx ? ctx.createImageData(w, h) :
       ctx.getImageData(0, 0, w, h);
 
@@ -267,7 +267,7 @@ var CanvasGraphics = (function() {
     ctx.putImageData(tmpImgData, 0, 0);
   }
 
-  function prescaleImage(pixels, width, height, widthScale, heightScale) {
+  var prescaleImage = function(pixels, width, height, widthScale, heightScale) {
     pixels = new Uint8Array(pixels); // creating a copy
     while (widthScale > 2 || heightScale > 2) {
       if (heightScale > 2) {

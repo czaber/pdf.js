@@ -33,7 +33,7 @@ var log = (function() {
 // A notice for devs that will not trigger the fallback UI.  These are good
 // for things that are helpful to devs, such as warning that Workers were
 // disabled, which is important to devs but not end users.
-function info(msg) {
+var info = function(msg) {
   if (verbosity >= INFOS) {
     log('Info: ' + msg);
     PDFJS.LogManager.notify('info', msg);
@@ -41,7 +41,7 @@ function info(msg) {
 }
 
 // Non-fatal warnings that should trigger the fallback UI.
-function warn(msg) {
+var warn = function(msg) {
   if (verbosity >= WARNINGS) {
     log('Warning: ' + msg);
     PDFJS.LogManager.notify('warn', msg);
@@ -50,7 +50,7 @@ function warn(msg) {
 
 // Fatal errors that should trigger the fallback UI and halt execution by
 // throwing an exception.
-function error(msg) {
+var error = function(msg) {
   // If multiple arguments were passed, pass them all to the log function.
   if (arguments.length > 1) {
     var logArguments = ['Error:'];
@@ -67,11 +67,11 @@ function error(msg) {
 }
 
 // Missing features that should trigger the fallback UI.
-function TODO(what) {
+var TODO = function(what) {
   warn('TODO: ' + what);
 }
 
-function backtrace() {
+var backtrace = function() {
   try {
     throw new Error();
   } catch (e) {
@@ -79,14 +79,14 @@ function backtrace() {
   }
 }
 
-function assert(cond, msg) {
+var assert = function(cond, msg) {
   if (!cond)
     error(msg);
 }
 
 // Combines two URLs. The baseUrl shall be absolute URL. If the url is an
 // absolute URL, it will be returned as is.
-function combineUrl(baseUrl, url) {
+var combineUrl = function(baseUrl, url) {
   if (!url)
     return baseUrl;
   if (url.indexOf(':') >= 0)
@@ -110,7 +110,7 @@ function combineUrl(baseUrl, url) {
 
 // In a well-formed PDF, |cond| holds.  If it doesn't, subsequent
 // behavior is undefined.
-function assertWellFormed(cond, msg) {
+var assertWellFormed = function(cond, msg) {
   if (!cond)
     error(msg);
 }
@@ -131,7 +131,7 @@ var LogManager = PDFJS.LogManager = (function() {
   };
 })();
 
-function shadow(obj, prop, value) {
+var shadow = function(obj, prop, value) {
   Object.defineProperty(obj, prop, { value: value,
                                      enumerable: true,
                                      configurable: true,
@@ -140,7 +140,7 @@ function shadow(obj, prop, value) {
 }
 
 var PasswordException = (function() {
-  function PasswordException(msg, code) {
+  var PasswordException = function(msg, code) {
     this.name = 'PasswordException';
     this.message = msg;
     this.code = code;
@@ -153,7 +153,7 @@ var PasswordException = (function() {
 })();
 
 var UnknownErrorException = (function() {
-  function UnknownErrorException(msg, details) {
+  var UnknownErrorException = function(msg, details) {
     this.name = 'UnknownErrorException';
     this.message = msg;
     this.details = details;
@@ -166,7 +166,7 @@ var UnknownErrorException = (function() {
 })();
 
 var InvalidPDFException = (function() {
-  function InvalidPDFException(msg) {
+  var InvalidPDFException = function(msg) {
     this.name = 'InvalidPDFException';
     this.message = msg;
   }
@@ -178,7 +178,7 @@ var InvalidPDFException = (function() {
 })();
 
 var MissingPDFException = (function() {
-  function MissingPDFException(msg) {
+  var MissingPDFException = function(msg) {
     this.name = 'MissingPDFException';
     this.message = msg;
   }
@@ -189,7 +189,7 @@ var MissingPDFException = (function() {
   return MissingPDFException;
 })();
 
-function bytesToString(bytes) {
+var bytesToString = function(bytes) {
   var str = '';
   var length = bytes.length;
   for (var n = 0; n < length; ++n)
@@ -197,7 +197,7 @@ function bytesToString(bytes) {
   return str;
 }
 
-function stringToBytes(str) {
+var stringToBytes = function(str) {
   var length = str.length;
   var bytes = new Uint8Array(length);
   for (var n = 0; n < length; ++n)
@@ -208,7 +208,7 @@ function stringToBytes(str) {
 var IDENTITY_MATRIX = [1, 0, 0, 1, 0, 0];
 
 var Util = PDFJS.Util = (function() {
-  function Util() {}
+  var Util = function() {}
 
   Util.makeCssRgb = function(rgb) {
     return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
@@ -302,7 +302,7 @@ var Util = PDFJS.Util = (function() {
   // intersection of rect1 and rect2. If no intersection, returns 'false'
   // The rectangle coordinates of rect1, rect2 should be [x1, y1, x2, y2]
   Util.intersect = function(rect1, rect2) {
-    function compare(a, b) {
+    var compare = function(a, b) {
       return a - b;
     }
 
@@ -345,7 +345,7 @@ var Util = PDFJS.Util = (function() {
 })();
 
 var PageViewport = PDFJS.PageViewport = (function() {
-  function PageViewport(viewBox, scale, rotate, offsetX, offsetY) {
+  var PageViewport = function(viewBox, scale, rotate, offsetX, offsetY) {
     // creating transform to convert pdf coordinate system to the normal
     // canvas like coordinates taking in account scale and rotation
     var centerX = (viewBox[2] + viewBox[0]) / 2;
@@ -430,7 +430,7 @@ var PDFStringTranslateTable = [
   0x178, 0x17D, 0x131, 0x142, 0x153, 0x161, 0x17E, 0, 0x20AC
 ];
 
-function stringToPDFString(str) {
+var stringToPDFString = function(str) {
   var i, n = str.length, str2 = '';
   if (str[0] === '\xFE' && str[1] === '\xFF') {
     // UTF16BE BOM
@@ -446,39 +446,39 @@ function stringToPDFString(str) {
   return str2;
 }
 
-function stringToUTF8String(str) {
+var stringToUTF8String = function(str) {
   return decodeURIComponent(escape(str));
 }
 
-function isBool(v) {
+var isBool = function(v) {
   return typeof v == 'boolean';
 }
 
-function isInt(v) {
+var isInt = function(v) {
   return typeof v == 'number' && ((v | 0) == v);
 }
 
-function isNum(v) {
+var isNum = function(v) {
   return typeof v == 'number';
 }
 
-function isString(v) {
+var isString = function(v) {
   return typeof v == 'string';
 }
 
-function isNull(v) {
+var isNull = function(v) {
   return v === null;
 }
 
-function isName(v) {
+var isName = function(v) {
   return v instanceof Name;
 }
 
-function isCmd(v, cmd) {
+var isCmd = function(v, cmd) {
   return v instanceof Cmd && (!cmd || v.cmd == cmd);
 }
 
-function isDict(v, type) {
+var isDict = function(v, type) {
   if (!(v instanceof Dict)) {
     return false;
   }
@@ -489,25 +489,25 @@ function isDict(v, type) {
   return isName(dictType) && dictType.name == type;
 }
 
-function isArray(v) {
+var isArray = function(v) {
   return v instanceof Array;
 }
 
-function isStream(v) {
+var isStream = function(v) {
   return typeof v == 'object' && v !== null && v !== undefined &&
          ('getChar' in v);
 }
 
-function isArrayBuffer(v) {
+var isArrayBuffer = function(v) {
   return typeof v == 'object' && v !== null && v !== undefined &&
          ('byteLength' in v);
 }
 
-function isRef(v) {
+var isRef = function(v) {
   return v instanceof Ref;
 }
 
-function isPDFFunction(v) {
+var isPDFFunction = function(v) {
   var fnDict;
   if (typeof v != 'object')
     return false;
@@ -539,7 +539,7 @@ var Promise = PDFJS.Promise = (function() {
    * If `data` is passed in this constructor, the promise is created resolved.
    * If there isn't data, it isn't resolved at the beginning.
    */
-  function Promise(name, data) {
+  var Promise = function(name, data) {
     this.name = name;
     this.isRejected = false;
     this.error = null;
@@ -688,12 +688,12 @@ var Promise = PDFJS.Promise = (function() {
 })();
 
 var StatTimer = (function() {
-  function rpad(str, pad, length) {
+  var rpad = function(str, pad, length) {
     while (str.length < length)
       str += pad;
     return str;
   }
-  function StatTimer() {
+  var StatTimer = function() {
     this.started = {};
     this.times = [];
     this.enabled = true;

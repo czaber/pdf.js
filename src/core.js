@@ -43,7 +43,7 @@ if (!globalScope.PDFJS) {
 //                 [,progress:Function, error:Function]
 //               },
 //               callback)
-function getPdf(arg, callback) {
+var getPdf = function(arg, callback) {
   var params = arg;
   if (typeof arg === 'string')
     params = { url: arg };
@@ -101,7 +101,7 @@ globalScope.PDFJS.getPdf = getPdf;
 globalScope.PDFJS.pdfBug = false;
 
 var Page = (function() {
-  function Page(xref, pageIndex, pageDict, ref) {
+  var Page = function(xref, pageIndex, pageDict, ref) {
     this.pageIndex = pageIndex;
     this.pageDict = pageDict;
     this.xref = xref;
@@ -229,7 +229,7 @@ var Page = (function() {
     },
     getAnnotations: function() {
       var xref = this.xref;
-      function getInheritableProperty(annotation, name) {
+      var getInheritableProperty = function(annotation, name) {
         var item = annotation;
         while (item && !item.has(name)) {
           item = item.get('Parent');
@@ -238,7 +238,7 @@ var Page = (function() {
           return null;
         return item.get(name);
       }
-      function isValidUrl(url) {
+      var isValidUrl = function(url) {
         if (!url)
           return false;
         var colon = url.indexOf(':');
@@ -384,7 +384,7 @@ var Page = (function() {
  * `PDFDocument` objects on the main thread created.
  */
 var PDFDocument = (function() {
-  function PDFDocument(arg, password) {
+  var PDFDocument = function(arg, password) {
     if (isStream(arg))
       init.call(this, arg, password);
     else if (isArrayBuffer(arg))
@@ -393,14 +393,14 @@ var PDFDocument = (function() {
       error('PDFDocument: Unknown argument type');
   }
 
-  function init(stream, password) {
+  var init = function(stream, password) {
     assertWellFormed(stream.length > 0, 'stream must have data');
     this.stream = stream;
     this.setup(password);
     this.acroForm = this.catalog.catDict.get('AcroForm');
   }
 
-  function find(stream, needle, limit, backwards) {
+  var find = function(stream, needle, limit, backwards) {
     var pos = stream.pos;
     var end = stream.end;
     var str = '';

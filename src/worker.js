@@ -20,7 +20,7 @@
 
 'use strict';
 
-function MessageHandler(name, comObj) {
+var MessageHandler = function(name, comObj) {
   this.name = name;
   this.comObj = comObj;
   this.callbackIndex = 1;
@@ -109,7 +109,7 @@ var WorkerMessageHandler = {
   setup: function(handler) {
     var pdfModel = null;
 
-    function loadDocument(pdfData, pdfModelSource) {
+    var loadDocument = function(pdfData, pdfModelSource) {
       // Create only the model of the PDFDoc, which is enough for
       // processing the content of the pdf.
       var pdfPassword = pdfModelSource.password;

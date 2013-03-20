@@ -24,7 +24,7 @@
 'use strict';
 
 var PartialEvaluator = (function() {
-  function PartialEvaluator(xref, handler, pageIndex, uniquePrefix) {
+  var PartialEvaluator = function(xref, handler, pageIndex, uniquePrefix) {
     this.state = new EvalState();
     this.stateStack = [];
 
@@ -210,7 +210,7 @@ var PartialEvaluator = (function() {
       var pageIndex = this.pageIndex;
       var uniquePrefix = this.uniquePrefix || '';
 
-      function insertDependency(depList) {
+      var insertDependency = function(depList) {
         fnArray.push('dependency');
         argsArray.push(depList);
         for (var i = 0, ii = depList.length; i < ii; i++) {
@@ -221,7 +221,7 @@ var PartialEvaluator = (function() {
         }
       }
 
-      function handleSetFont(fontName, font) {
+      var handleSetFont = function(fontName, font) {
         font = self.loadFont(fontName, font, xref, resources, dependency);
 
         var loadedName = font.loadedName;
@@ -244,7 +244,7 @@ var PartialEvaluator = (function() {
         return loadedName;
       }
 
-      function buildPaintImageXObject(image, inline) {
+      var buildPaintImageXObject = function(image, inline) {
         var dict = image.dict;
         var w = dict.get('Width', 'W');
         var h = dict.get('Height', 'H');
@@ -691,7 +691,7 @@ var PartialEvaluator = (function() {
       var self = this;
       var xref = this.xref;
 
-      function handleSetFont(fontName, fontRef) {
+      var handleSetFont = function(fontName, fontRef) {
         return self.loadFont(fontName, fontRef, xref, resources, null);
       }
 
@@ -1306,7 +1306,7 @@ var PartialEvaluator = (function() {
 })();
 
 var EvalState = (function() {
-  function EvalState() {
+  var EvalState = function() {
     // Are soft masks and alpha values shapes or opacities?
     this.alphaIsShape = false;
     this.fontSize = 0;

@@ -19,7 +19,7 @@
 'use strict';
 
 var Metadata = PDFJS.Metadata = (function() {
-  function fixMetadata(meta) {
+  var fixMetadata = function(meta) {
     return meta.replace(/>\\376\\377([^<]+)/g, function(all, codes) {
       var bytes = codes.replace(/\\([0-3])([0-7])([0-7])/g,
                                 function(code, d1, d2, d3) {
@@ -36,7 +36,7 @@ var Metadata = PDFJS.Metadata = (function() {
     });
   }
 
-  function Metadata(meta) {
+  var Metadata = function(meta) {
     if (typeof meta === 'string') {
       // Ghostscript produces invalid metadata
       meta = fixMetadata(meta);

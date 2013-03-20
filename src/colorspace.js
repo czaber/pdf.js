@@ -21,7 +21,7 @@
 
 var ColorSpace = (function() {
   // Constructor should define this.numComps, this.defaultColor, this.name
-  function ColorSpace() {
+  var ColorSpace = function() {
     error('should not call ColorSpace constructor');
   }
 
@@ -258,7 +258,7 @@ var ColorSpace = (function() {
  * space.
  */
 var AlternateCS = (function() {
-  function AlternateCS(numComps, base, tintFn) {
+  var AlternateCS = function(numComps, base, tintFn) {
     this.name = 'Alternate';
     this.numComps = numComps;
     this.defaultColor = new Float32Array(numComps);
@@ -330,17 +330,18 @@ var AlternateCS = (function() {
 })();
 
 var PatternCS = (function() {
-  function PatternCS(baseCS) {
+  var PatternCS = function(baseCS) {
     this.name = 'Pattern';
     this.base = baseCS;
   }
+
   PatternCS.prototype = {};
 
   return PatternCS;
 })();
 
 var IndexedCS = (function() {
-  function IndexedCS(base, highVal, lookup) {
+  var IndexedCS = function(base, highVal, lookup) {
     this.name = 'Indexed';
     this.numComps = 1;
     this.defaultColor = new Uint8Array([0]);
@@ -406,7 +407,7 @@ var IndexedCS = (function() {
 })();
 
 var DeviceGrayCS = (function() {
-  function DeviceGrayCS() {
+  var DeviceGrayCS = function() {
     this.name = 'DeviceGray';
     this.numComps = 1;
     this.defaultColor = new Float32Array([0]);
@@ -448,7 +449,7 @@ var DeviceGrayCS = (function() {
 })();
 
 var DeviceRgbCS = (function() {
-  function DeviceRgbCS() {
+  var DeviceRgbCS = function() {
     this.name = 'DeviceRGB';
     this.numComps = 3;
     this.defaultColor = new Float32Array([0, 0, 0]);
@@ -1165,7 +1166,7 @@ var DeviceCmykCS = (function() {
     15, 13, 26, 2, 1, 11, 0, 0, 0, 0, 0, 0, 54, 54, 57, 47, 44, 47, 39, 35, 39,
     28, 25, 29, 17, 13, 17, 4, 1, 3, 0, 0, 0, 0, 0, 0]);
 
-  function convertToRgb(src, srcOffset, srcScale, dest, destOffset) {
+  var convertToRgb = function(src, srcOffset, srcScale, dest, destOffset) {
     // using lut as in spline interpolation (see function.js)
     var cubeVertices = 16; // 1 << number of colors
     var cubeN = new Float32Array(cubeVertices);
@@ -1208,7 +1209,7 @@ var DeviceCmykCS = (function() {
     dest[destOffset + 2] = y2 > 255 ? 255 : y2;
   }
 
-  function DeviceCmykCS() {
+  var DeviceCmykCS = function() {
     this.name = 'DeviceCMYK';
     this.numComps = 4;
     this.defaultColor = new Float32Array([0, 0, 0, 1]);
@@ -1249,7 +1250,7 @@ var DeviceCmykCS = (function() {
 // LabCS: Based on "PDF Reference, Sixth Ed", p.250
 //
 var LabCS = (function() {
-  function LabCS(whitePoint, blackPoint, range) {
+  var LabCS = function(whitePoint, blackPoint, range) {
     this.name = 'Lab';
     this.numComps = 3;
     this.defaultColor = new Float32Array([0, 0, 0]);
@@ -1293,14 +1294,14 @@ var LabCS = (function() {
   }
 
   // Function g(x) from spec
-  function fn_g(x) {
+  var fn_g = function(x) {
     if (x >= 6 / 29)
       return x * x * x;
     else
       return (108 / 841) * (x - 4 / 29);
   }
 
-  function convertToRgb(cs, src, srcOffset, dest, destOffset) {
+  var convertToRgb = function(cs, src, srcOffset, dest, destOffset) {
     // Ls,as,bs <---> L*,a*,b* in the spec
     var Ls = src[srcOffset];
     var as = src[srcOffset + 1];

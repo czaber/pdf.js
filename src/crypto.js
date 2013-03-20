@@ -20,7 +20,7 @@
 'use strict';
 
 var ARCFourCipher = (function() {
-  function ARCFourCipher(key) {
+  var ARCFourCipher = function(key) {
     this.a = 0;
     this.b = 0;
     var s = new Uint8Array(256);
@@ -80,7 +80,7 @@ var calculateMD5 = (function() {
     -1051523, -2054922799, 1873313359, -30611744, -1560198380, 1309151649,
     -145523070, -1120210379, 718787259, -343485551]);
 
-  function hash(data, offset, length) {
+  var hash = function(data, offset, length) {
     var h0 = 1732584193, h1 = -271733879, h2 = -1732584194, h3 = 271733878;
     // pre-processing
     var paddedLength = (length + 72) & ~63; // data + 9 extra bytes
@@ -145,7 +145,7 @@ var calculateMD5 = (function() {
 })();
 
 var NullCipher = (function() {
-  function NullCipher() {
+  var NullCipher = function() {
   }
 
   NullCipher.prototype = {
@@ -275,7 +275,7 @@ var AES128Cipher = (function() {
     0xf307f2f0, 0xfd0efffb, 0xa779b492, 0xa970b999, 0xbb6bae84, 0xb562a38f,
     0x9f5d80be, 0x91548db5, 0x834f9aa8, 0x8d4697a3]);
 
-  function expandKey128(cipherKey) {
+  var expandKey128 = function(cipherKey) {
     var b = 176, result = new Uint8Array(b);
     result.set(cipherKey);
     for (var j = 16, i = 1; j < b; ++i) {
@@ -296,7 +296,7 @@ var AES128Cipher = (function() {
     return result;
   }
 
-  function decrypt128(input, key) {
+  var decrypt128 = function(input, key) {
     var state = new Uint8Array(16);
     state.set(input);
     var i, j, k;
@@ -346,13 +346,13 @@ var AES128Cipher = (function() {
     return state;
   }
 
-  function AES128Cipher(key) {
+  var AES128Cipher = function(key) {
     this.key = expandKey128(key);
     this.buffer = new Uint8Array(16);
     this.bufferPosition = 0;
   }
 
-  function decryptBlock2(data) {
+  var decryptBlock2 = function(data) {
     var i, j, ii, sourceLength = data.length,
         buffer = this.buffer, bufferLength = this.bufferPosition,
         result = [], iv = this.iv;
@@ -411,7 +411,7 @@ var AES128Cipher = (function() {
 })();
 
 var CipherTransform = (function() {
-  function CipherTransform(stringCipherConstructor, streamCipherConstructor) {
+  var CipherTransform = function(stringCipherConstructor, streamCipherConstructor) {
     this.stringCipherConstructor = stringCipherConstructor;
     this.streamCipherConstructor = streamCipherConstructor;
   }
@@ -441,7 +441,7 @@ var CipherTransformFactory = (function() {
     0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80,
     0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A]);
 
-  function prepareKeyData(fileId, password, ownerPassword, userPassword,
+  var prepareKeyData = function(fileId, password, ownerPassword, userPassword,
                           flags, revision, keyLength, encryptMetadata) {
     var hashData = new Uint8Array(100), i = 0, j, n;
     if (password) {
@@ -507,7 +507,8 @@ var CipherTransformFactory = (function() {
     }
     return encryptionKey;
   }
-  function decodeUserPassword(password, ownerPassword, revision, keyLength) {
+
+  var decodeUserPassword = function(password, ownerPassword, revision, keyLength) {
     var hashData = new Uint8Array(32), i = 0, j, n;
     n = Math.min(32, password.length);
     for (; i < n; ++i)
@@ -543,7 +544,7 @@ var CipherTransformFactory = (function() {
 
   var identityName = new Name('Identity');
 
-  function CipherTransformFactory(dict, fileId, password) {
+  var CipherTransformFactory = function(dict, fileId, password) {
     var filter = dict.get('Filter');
     if (!isName(filter) || filter.name != 'Standard')
       error('unknown encryption method');
@@ -598,7 +599,7 @@ var CipherTransformFactory = (function() {
     }
   }
 
-  function buildObjectKey(num, gen, encryptionKey, isAes) {
+  var buildObjectKey = function(num, gen, encryptionKey, isAes) {
     var key = new Uint8Array(encryptionKey.length + 9), i, n;
     for (i = 0, n = encryptionKey.length; i < n; ++i)
       key[i] = encryptionKey[i];
@@ -617,7 +618,7 @@ var CipherTransformFactory = (function() {
     return hash.subarray(0, Math.min(encryptionKey.length + 5, 16));
   }
 
-  function buildCipherConstructor(cf, name, num, gen, key) {
+  var buildCipherConstructor = function(cf, name, num, gen, key) {
     var cryptFilter = cf.get(name.name);
     var cfm;
     if (cryptFilter !== null && cryptFilter !== undefined)

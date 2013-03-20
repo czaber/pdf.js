@@ -32,7 +32,7 @@
  * Build a charset by assigning the glyph name and the human readable form
  * of the glyph data.
  */
-function readCharset(aStream, aCharstrings) {
+var readCharset = function(aStream, aCharstrings) {
   var charset = {};
 
   var format = aStream.getByte();
@@ -69,7 +69,7 @@ function readCharset(aStream, aCharstrings) {
  * readable representation as specified by the 'The Type 2 Charstring Format',
  * chapter 3.1.
  */
-function readCharstringEncoding(aString) {
+var readCharstringEncoding = function(aString) {
   if (!aString)
     return '';
 
@@ -119,7 +119,7 @@ function readCharstringEncoding(aString) {
  * Take a binary DICT Data as input and transform it into a human readable
  * form as specified by 'The Compact Font Format Specification', chapter 5.
  */
-function readFontDictData(aString, aMap) {
+var readFontDictData = function(aString, aMap) {
   var fontDictDataTokens = [];
 
   var count = aString.length;
@@ -201,11 +201,11 @@ function readFontDictData(aString, aMap) {
  *  More explanation are given in the 'CFF Font Format Specification',
  *  chapter 5.
  */
-function readFontIndexData(aStream, aIsByte) {
+var readFontIndexData = function(aStream, aIsByte) {
   var count = aStream.getByte() << 8 | aStream.getByte();
   var offsize = aStream.getByte();
 
-  function getNextOffset() {
+  var getNextOffset = function() {
     switch (offsize) {
       case 0:
         return 0;
@@ -262,12 +262,12 @@ var Type2Parser = function(aFilePath) {
   // Turn on this flag for additional debugging logs
   var debug = false;
 
-  function dump(aStr) {
+  var dump = function(aStr) {
     if (debug)
       log(aStr);
   }
 
-  function parseAsToken(aString, aMap) {
+  var parseAsToken = function(aString, aMap) {
     var decoded = readFontDictData(aString, aMap);
 
     var stack = [];
@@ -403,7 +403,7 @@ var Type2Parser = function(aFilePath) {
  *
  * writeToFile(fontData, "/tmp/pdf.js." + fontCount + ".cff");
  */
-function writeToFile(aBytes, aFilePath) {
+var writeToFile = function(aBytes, aFilePath) {
   if (!('netscape' in window))
     return;
 

@@ -23,12 +23,12 @@
 
 var EOF = {};
 
-function isEOF(v) {
+var isEOF = function(v) {
   return v == EOF;
 }
 
 var Parser = (function() {
-  function Parser(lexer, allowStreams, xref) {
+  var Parser = function(lexer, allowStreams, xref) {
     this.lexer = lexer;
     this.allowStreams = allowStreams;
     this.xref = xref;
@@ -277,7 +277,7 @@ var Parser = (function() {
 })();
 
 var Lexer = (function() {
-  function Lexer(stream, knownCommands) {
+  var Lexer = function(stream, knownCommands) {
     this.stream = stream;
     // The PDFs might have "glued" commands with other commands, operands or
     // literals, e.g. "q1". The knownCommands is a dictionary of the valid
@@ -314,7 +314,7 @@ var Lexer = (function() {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    // fx
   ];
 
-  function toHexDigit(ch) {
+  var toHexDigit = function(ch) {
     if (ch >= '0' && ch <= '9')
       return ch.charCodeAt(0) - 48;
     ch = ch.toUpperCase();
@@ -603,7 +603,7 @@ var Lexer = (function() {
 })();
 
 var Linearization = (function() {
-  function Linearization(stream) {
+  var Linearization = function(stream) {
     this.parser = new Parser(new Lexer(stream), false, null);
     var obj1 = this.parser.getObj();
     var obj2 = this.parser.getObj();

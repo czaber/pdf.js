@@ -27,7 +27,7 @@ var PatternType = {
 
 var Pattern = (function() {
   // Constructor should define this.getPattern
-  function Pattern() {
+  var Pattern = function() {
     error('should not call Pattern constructor');
   }
 
@@ -73,7 +73,7 @@ Shadings.SMALL_NUMBER = 1e-2;
 // Radial and axial shading have very similar implementations
 // If needed, the implementations can be broken into two classes
 Shadings.RadialAxial = (function() {
-  function RadialAxial(dict, matrix, xref, res, ctx) {
+  var RadialAxial = function(dict, matrix, xref, res, ctx) {
     this.matrix = matrix;
     this.coordsArr = dict.get('Coords');
     this.shadingType = dict.get('ShadingType');
@@ -242,7 +242,7 @@ Shadings.RadialAxial = (function() {
 })();
 
 Shadings.Dummy = (function() {
-  function Dummy() {
+  var Dummy = function() {
     this.type = 'Pattern';
   }
 
@@ -270,7 +270,7 @@ var TilingPattern = (function() {
   };
   var MAX_PATTERN_SIZE = 4096;
 
-  function TilingPattern(IR, color, ctx, objs, commonObjs) {
+  var TilingPattern = function(IR, color, ctx, objs, commonObjs) {
     var operatorList = IR[2];
     this.matrix = IR[3] || [1, 0, 0, 1, 0, 0];
     var bbox = IR[4];

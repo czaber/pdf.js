@@ -68,15 +68,15 @@ var bidi = PDFJS.bidi = (function() {
     'AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL'
   ];
 
-  function isOdd(i) {
+  var isOdd = function(i) {
     return (i & 1) !== 0;
   }
 
-  function isEven(i) {
+  var isEven = function(i) {
     return (i & 1) === 0;
   }
 
-  function findUnequal(arr, start, value) {
+  var findUnequal = function(arr, start, value) {
     var j;
     for (var j = start, jj = arr.length; j < jj; ++j) {
       if (arr[j] != value)
@@ -85,13 +85,13 @@ var bidi = PDFJS.bidi = (function() {
     return j;
   }
 
-  function setValues(arr, start, end, value) {
+  var setValues = function(arr, start, end, value) {
     for (var j = start; j < end; ++j) {
       arr[j] = value;
     }
   }
 
-  function reverseValues(arr, start, end) {
+  var reverseValues = function(arr, start, end) {
     for (var i = start, j = end - 1; i < j; ++i, --j) {
       var temp = arr[i];
       arr[i] = arr[j];
@@ -99,7 +99,7 @@ var bidi = PDFJS.bidi = (function() {
     }
   }
 
-  function mirrorGlyphs(c) {
+  var mirrorGlyphs = function(c) {
     /*
      # BidiMirroring-1.txt
      0028; 0029 # LEFT PARENTHESIS
@@ -139,12 +139,12 @@ var bidi = PDFJS.bidi = (function() {
     }
   }
 
-  function BidiResult(str, isLTR, vertical) {
+  var BidiResult = function(str, isLTR, vertical) {
     this.str = str;
     this.dir = vertical ? 'ttb' : isLTR ? 'ltr' : 'rtl';
   }
 
-  function bidi(str, startLevel, vertical) {
+  var bidi = function(str, startLevel, vertical) {
     var isLTR = true;
     var strLength = str.length;
     if (strLength === 0 || vertical)

@@ -22,7 +22,7 @@
 'use strict';
 
 var Name = (function() {
-  function Name(name) {
+  var Name = function(name) {
     this.name = name;
   }
 
@@ -32,7 +32,7 @@ var Name = (function() {
 })();
 
 var Cmd = (function() {
-  function Cmd(cmd) {
+  var Cmd = function(cmd) {
     this.cmd = cmd;
   }
 
@@ -53,7 +53,7 @@ var Cmd = (function() {
 
 var Dict = (function() {
   // xref is optional
-  function Dict(xref) {
+  var Dict = function(xref) {
     // Map should only be used internally, use functions below to access.
     var map = Object.create(null);
 
@@ -110,7 +110,7 @@ var Dict = (function() {
 })();
 
 var Ref = (function() {
-  function Ref(num, gen) {
+  var Ref = function(num, gen) {
     this.num = num;
     this.gen = gen;
   }
@@ -123,7 +123,7 @@ var Ref = (function() {
 // The reference is identified by number and generation,
 // this structure stores only one instance of the reference.
 var RefSet = (function() {
-  function RefSet() {
+  var RefSet = function() {
     this.dict = {};
   }
 
@@ -141,7 +141,7 @@ var RefSet = (function() {
 })();
 
 var Catalog = (function() {
-  function Catalog(xref) {
+  var Catalog = function(xref) {
     this.xref = xref;
     var obj = xref.getCatalogObj();
     assertWellFormed(isDict(obj), 'catalog object is not a dictionary');
@@ -271,7 +271,7 @@ var Catalog = (function() {
       }
     },
     get destinations() {
-      function fetchDestination(dest) {
+      var fetchDestination = function(dest) {
         return isDict(dest) ? dest.get('D') : dest;
       }
 
@@ -351,7 +351,7 @@ var Catalog = (function() {
 })();
 
 var XRef = (function() {
-  function XRef(stream, startXRef, mainXRefEntriesOffset, password) {
+  var XRef = function(stream, startXRef, mainXRefEntriesOffset, password) {
     this.stream = stream;
     this.entries = [];
     this.xrefstms = {};
@@ -494,7 +494,7 @@ var XRef = (function() {
     indexObjects: function() {
       // Simple scan through the PDF content to find objects,
       // trailers and XRef streams.
-      function readToken(data, offset) {
+      var readToken = function(data, offset) {
         var token = '', ch = data[offset];
         while (ch !== 13 && ch !== 10) {
           if (++offset >= data.length)
@@ -504,7 +504,7 @@ var XRef = (function() {
         }
         return token;
       }
-      function skipUntil(data, offset, what) {
+      var skipUntil = function(data, offset, what) {
         var length = what.length, dataLength = data.length;
         var skipped = 0;
         // finding byte sequence
@@ -778,7 +778,7 @@ var XRef = (function() {
  * TODO: implement all the Dict functions and make this more efficent.
  */
 var NameTree = (function() {
-  function NameTree(root, xref) {
+  var NameTree = function(root, xref) {
     this.root = root;
     this.xref = xref;
   }
@@ -828,7 +828,7 @@ var NameTree = (function() {
  * manage these objects.
  */
 var PDFObjects = (function() {
-  function PDFObjects() {
+  var PDFObjects = function() {
     this.objs = {};
   }
 

@@ -72,7 +72,7 @@ var Jbig2Image = (function() {
       {qe: 0x5601, nmps: 46, nlps: 46, switchFlag: 0}
     ];
 
-    function ArithmeticDecoder(data, start, end) {
+    var ArithmeticDecoder = function(data, start, end) {
       this.data = data;
       this.bp = start;
       this.dataEnd = end;
@@ -184,7 +184,7 @@ var Jbig2Image = (function() {
   })();
 
   // Utility data structures
-  function ContextCache() {}
+  var ContextCache = function() {}
 
   ContextCache.prototype = {
     getContexts: function(id) {
@@ -194,7 +194,7 @@ var Jbig2Image = (function() {
     }
   };
 
-  function DecodingContext(data, start, end) {
+  var DecodingContext = function(data, start, end) {
     this.data = data;
     this.start = start;
     this.end = end;
@@ -213,7 +213,7 @@ var Jbig2Image = (function() {
 
   // Annex A. Arithmetic Integer Decoding Procedure
   // A.2 Procedure for decoding values
-  function decodeInteger(contextCache, procedure, decoder) {
+  var decodeInteger = function(contextCache, procedure, decoder) {
     var contexts = contextCache.getContexts(procedure);
 
     var prev = 1;
@@ -273,7 +273,7 @@ var Jbig2Image = (function() {
   }
 
   // A.3 The IAID decoding procedure
-  function decodeIAID(contextCache, decoder, codeLength) {
+  var decodeIAID = function(contextCache, decoder, codeLength) {
     var contexts = contextCache.getContexts('IAID');
 
     var prev = 1;
@@ -346,7 +346,7 @@ var Jbig2Image = (function() {
     0x0008  // '0000' + '001000'
   ];
 
-  function log2(x) {
+  var log2 = function(x) {
     var n = 1, i = 0;
     while (x > n) {
       n <<= 1;
@@ -355,26 +355,26 @@ var Jbig2Image = (function() {
     return i;
   }
 
-  function readInt32(data, start) {
+  var readInt32 = function(data, start) {
     return (data[start] << 24) | (data[start + 1] << 16) |
            (data[start + 2] << 8) | data[start + 3];
   }
 
-  function readUint32(data, start) {
+  var readUint32 = function(data, start) {
     var value = readInt32(data, start);
     return value & 0x80000000 ? (value + 4294967296) : value;
   }
 
-  function readUint16(data, start) {
+  var readUint16 = function(data, start) {
     return (data[start] << 8) | data[start + 1];
   }
 
-  function readInt8(data, start) {
+  var readInt8 = function(data, start) {
     return (data[start] << 24) >> 24;
   }
 
   // 6.2 Generic Region Decoding Procedure
-  function decodeBitmap(mmr, width, height, templateIndex, prediction, skip, at,
+  var decodeBitmap = function(mmr, width, height, templateIndex, prediction, skip, at,
                         decodingContext) {
     if (mmr)
       error('JBIG2 error: MMR encoding is not supported');
@@ -434,7 +434,7 @@ var Jbig2Image = (function() {
   }
 
   // 6.3.2 Generic Refinement Region Decoding Procedure
-  function decodeRefinement(width, height, templateIndex, referenceBitmap,
+  var decodeRefinement = function(width, height, templateIndex, referenceBitmap,
                             offsetX, offsetY, prediction, at,
                             decodingContext) {
     var codingTemplate = RefinementTemplates[templateIndex].coding;
@@ -509,7 +509,7 @@ var Jbig2Image = (function() {
   }
 
   // 6.5.5 Decoding the symbol dictionary
-  function decodeSymbolDictionary(huffman, refinement, symbols,
+  var decodeSymbolDictionary = function(huffman, refinement, symbols,
                                   numberOfNewSymbols, numberOfExportedSymbols,
                                   huffmanTables, templateIndex, at,
                                   refinementTemplateIndex, refinementAt,
@@ -574,7 +574,7 @@ var Jbig2Image = (function() {
     return exportedSymbols;
   }
 
-  function decodeTextRegion(huffman, refinement, width, height,
+  var decodeTextRegion = function(huffman, refinement, width, height,
                             defaultPixelValue, numberOfSymbolInstances,
                             stripSize, inputSymbols, symbolCodeLength,
                             transposed, dsOffset, referenceCorner,
@@ -666,7 +666,7 @@ var Jbig2Image = (function() {
     return bitmap;
   }
 
-  function readSegmentHeader(data, start) {
+  var readSegmentHeader = function(data, start) {
     var segmentHeader = {};
     segmentHeader.number = readUint32(data, start);
     var flags = data[start + 4];
@@ -750,7 +750,7 @@ var Jbig2Image = (function() {
     return segmentHeader;
   }
 
-  function readSegments(header, data, start, end) {
+  var readSegments = function(header, data, start, end) {
     var segments = [];
     var position = start;
     while (position < end) {
@@ -780,7 +780,7 @@ var Jbig2Image = (function() {
   }
 
   // 7.4.1 Region segment information field
-  function readRegionSegmentInformation(data, start) {
+  var readRegionSegmentInformation = function(data, start) {
     return {
       width: readUint32(data, start),
       height: readUint32(data, start + 4),
@@ -791,7 +791,7 @@ var Jbig2Image = (function() {
   }
   var RegionSegmentInformationFieldLength = 17;
 
-  function processSegment(segment, visitor) {
+  var processSegment = function(segment, visitor) {
     var header = segment.header;
 
     var data = segment.data, position = segment.start, end = segment.end;
@@ -946,12 +946,12 @@ var Jbig2Image = (function() {
       visitor[callbackName].apply(visitor, args);
   }
 
-  function processSegments(segments, visitor) {
+  var processSegments = function(segments, visitor) {
     for (var i = 0, ii = segments.length; i < ii; i++)
       processSegment(segments[i], visitor);
   }
 
-  function parseJbig2(data, start, end) {
+  var parseJbig2 = function(data, start, end) {
     var position = start;
     if (data[position] != 0x97 || data[position + 1] != 0x4A ||
         data[position + 2] != 0x42 || data[position + 3] != 0x32 ||
@@ -971,7 +971,7 @@ var Jbig2Image = (function() {
     // processSegments(segments, new SimpleSegmentVisitor());
   }
 
-  function parseJbig2Chunks(chunks) {
+  var parseJbig2Chunks = function(chunks) {
     var visitor = new SimpleSegmentVisitor();
     for (var i = 0, ii = chunks.length; i < ii; i++) {
       var chunk = chunks[i];
@@ -981,7 +981,7 @@ var Jbig2Image = (function() {
     return visitor.buffer;
   }
 
-  function SimpleSegmentVisitor() {}
+  var SimpleSegmentVisitor = function() {}
 
   SimpleSegmentVisitor.prototype = {
     onPageInformation: function(info) {
@@ -1099,7 +1099,7 @@ var Jbig2Image = (function() {
     }
   };
 
-  function Jbig2Image() {}
+  var Jbig2Image = function() {}
 
   Jbig2Image.prototype = {
     parseChunks: function(chunks) {

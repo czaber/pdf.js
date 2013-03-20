@@ -93,7 +93,7 @@ var PDFFunction = (function() {
     },
 
     constructSampled: function(str, dict) {
-      function toMultiArray(arr) {
+      var toMultiArray = function(arr) {
         var inputLength = arr.length;
         var outputLength = arr.length / 2;
         var out = [];
@@ -151,7 +151,7 @@ var PDFFunction = (function() {
 
     constructSampledFromIR: function(IR) {
       // See chapter 3, page 109 of the PDF reference
-      function interpolate(x, xmin, xmax, ymin, ymax) {
+      var interpolate = function(x, xmin, xmax, ymin, ymax) {
         return ymin + ((x - xmin) * ((ymax - ymin) / (xmax - xmin)));
       }
 
@@ -401,7 +401,7 @@ var FunctionCache = (function() {
   // Of 10 PDF's with type4 functions the maxium number of distinct values seen
   // was 256. This still may need some tweaking in the future though.
   var MAX_CACHE_SIZE = 1024;
-  function FunctionCache() {
+  var FunctionCache = function() {
     this.cache = {};
     this.total = 0;
   }
@@ -424,7 +424,7 @@ var FunctionCache = (function() {
 
 var PostScriptStack = (function() {
   var MAX_STACK_SIZE = 100;
-  function PostScriptStack(initialStack) {
+  var PostScriptStack = function(initialStack) {
     this.stack = initialStack || [];
   }
 
@@ -468,7 +468,7 @@ var PostScriptStack = (function() {
   return PostScriptStack;
 })();
 var PostScriptEvaluator = (function() {
-  function PostScriptEvaluator(operators, operands) {
+  var PostScriptEvaluator = function(operators, operands) {
     this.operators = operators;
     this.operands = operands;
   }
@@ -700,7 +700,7 @@ var PostScriptEvaluator = (function() {
 })();
 
 var PostScriptParser = (function() {
-  function PostScriptParser(lexer) {
+  var PostScriptParser = function(lexer) {
     this.lexer = lexer;
     this.operators = [];
     this.token = null;
@@ -788,7 +788,7 @@ var PostScriptTokenTypes = {
 };
 
 var PostScriptToken = (function() {
-  function PostScriptToken(type, value) {
+  var PostScriptToken = function(type, value) {
     this.type = type;
     this.value = value;
   }
@@ -814,7 +814,7 @@ var PostScriptToken = (function() {
 })();
 
 var PostScriptLexer = (function() {
-  function PostScriptLexer(stream) {
+  var PostScriptLexer = function(stream) {
     this.stream = stream;
   }
   PostScriptLexer.prototype = {
