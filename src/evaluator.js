@@ -812,8 +812,7 @@ var PartialEvaluator = (function() {
       return state;
     },
 
-    extractDataStructures: function
-      partialEvaluatorExtractDataStructures(dict, baseDict,
+    extractDataStructures: function(dict, baseDict,
                                             xref, properties) {
       // 9.10.2
       var toUnicode = dict.get('ToUnicode') ||
