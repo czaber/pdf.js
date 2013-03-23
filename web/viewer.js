@@ -1379,7 +1379,7 @@ var pdfview = {
                     self.animationStartedPromise];
     PDFJS.Promise.all(promises).then(function() {
       pdfDocument.getOutline().then(function(outline) {
-        self.outline = new DocumentOutlineView(outline, self.component);
+        self.outline = new DocumentOutlineView(outline, self.component, pdfview);
       });
 
       var storedHash = null;
@@ -2492,14 +2492,15 @@ var ThumbnailView = function(container, pdfPage, id, component, pdfview) {
 };
 
 var DocumentOutlineView = function(outline, component, pdfview) {
+  var self = this;
   var outlineView = find(component,'outlineView');
   while (outlineView.firstChild)
     outlineView.removeChild(outlineView.firstChild);
-  this.pdfview = pdfview;
+  self.pdfview = pdfview;
   function bindItemLink(domObj, item) {
-    domObj.href = this.pdfview.getDestinationHash(item.dest);
+    domObj.href = self.pdfview.getDestinationHash(item.dest);
     domObj.onclick = function(e) {
-      this.pdfview.navigateTo(item.dest);
+      self.pdfview.navigateTo(item.dest);
       return false;
     };
   }
