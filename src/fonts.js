@@ -657,9 +657,7 @@ var FontLoader = {
       div.innerHTML = html;
       document.body.appendChild(div);
 
-      window.addEventListener(
-        'message',
-        function(e) {
+      var fontLoaderMessage = function(e) {
           if (e.data !== requestId)
             return;
           for (var i = 0, ii = fonts.length; i < ii; ++i) {
@@ -672,7 +670,10 @@ var FontLoader = {
             document.body.removeChild(frame);
           }
           window.removeEventListener('message', fontLoaderMessage, false);
-        },
+        };
+      window.addEventListener(
+        'message',
+        fontLoaderMessage,
         false);
 
       // XXX we should have a time-out here too, and maybe fire
