@@ -3102,7 +3102,7 @@ var PDFViewer = function(component, src, hashParams) {
       pdfview.rotatePages(90);
     });
 
-    find(component,'fullscreen').setAttribute('hidden', 'true');
+    //find(component,'fullscreen').setAttribute('hidden', 'true');
     find(component,'openFile').setAttribute('hidden', 'true');
     //find(component,'print').setAttribute('hidden', 'true');
     //find(component,'download').setAttribute('hidden', 'true');
