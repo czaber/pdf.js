@@ -1058,7 +1058,7 @@ var pdfview = {
 //#endif
         }
 
-        var loadingIndicator = find(this.component,'loading');
+        var loadingIndicator = find(self.component,'loading');
         loadingIndicator.textContent = mozL10n.get('loading_error_indicator',
           null, 'Error');
         var moreInfo = {
@@ -1748,7 +1748,7 @@ var pdfview = {
     } else {
       return false;
     }
-
+    this.beforeFullscreen && this.beforeFullscreen();
     this.isFullscreen = true;
     var currentPage = this.pages[this.page - 1];
     this.previousScale = this.currentScaleValue;
@@ -1765,6 +1765,7 @@ var pdfview = {
 
   exitFullscreen: function() {
     this.isFullscreen = false;
+    this.afterFullscreen && this.afterFullscreen();
     this.parseScale(this.previousScale);
     this.page = this.page;
     this.clearMouseScrollState();
@@ -1969,9 +1970,9 @@ var PageView = function(container, pdfPage, id, scale,
     enumerable: true
   });
 
-  function setupAnnotations(pdfPage, viewport, component) {
+  function setupAnnotations(pdfview, dfPage, viewport, component) {
     function bindLink(link, dest) {
-      link.href = this.pdfview.getDestinationHash(dest);
+      link.href = pdfview.getDestinationHash(dest);
       link.onclick = function() {
         if (dest)
           this.pdfview.navigateTo(dest);
@@ -2280,7 +2281,7 @@ var PageView = function(container, pdfPage, id, scale,
       );
     }
 
-    setupAnnotations(this.pdfPage, this.viewport, this.component);
+    setupAnnotations(this.pdfview, this.pdfPage, this.viewport, this.component);
     div.setAttribute('data-loaded', true);
   };
 
